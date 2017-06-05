@@ -9,29 +9,29 @@ using namespace boost;
 
 struct
 error:
-	std::exception
-	{
-	};
+    std::exception
+    {
+    };
 struct
 wrong_error:
-	std::exception
-	{
-	};
+    std::exception
+    {
+    };
 fallible<int>
 fail1()
-	{
-	return noexcept_propagate(error());
-	}
+    {
+    return noexcept_propagate(error());
+    }
 int
 fail2()
-	{
-	auto tr=noexcept_try(fail1());
-	BOOST_TEST(tr.noexcept_catch<wrong_error>()==0);
-	return 42;
-	}
+    {
+    auto tr=noexcept_try(fail1());
+    BOOST_TEST(tr.noexcept_catch<wrong_error>()==0);
+    return 42;
+    }
 int
 main()
-	{
-	(void) fail2();
-	return 0;
-	}
+    {
+    (void) fail2();
+    return 0;
+    }

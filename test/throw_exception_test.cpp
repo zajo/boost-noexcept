@@ -12,26 +12,26 @@ struct failure: std::exception { };
 
 fallible<int>
 succeeds()
-	{
-	return 42;
-	}
+    {
+    return 42;
+    }
 fallible<int>
 fails()
-	{
-	return noexcept_propagate(failure());
-	}
+    {
+    return noexcept_propagate(failure());
+    }
 int
 main()
-	{
-	BOOST_TEST(succeeds().value()==42);
-	BOOST_TEST(noexcept_try(succeeds()).value()==42);
-	try
-		{
-		(void) noexcept_try(fails()).value();
-		BOOST_TEST(false);
-		}
-	catch( failure & )
-		{
-		}
-	return boost::report_errors();
-	}
+    {
+    BOOST_TEST(succeeds().value()==42);
+    BOOST_TEST(noexcept_try(succeeds()).value()==42);
+    try
+        {
+        (void) noexcept_try(fails()).value();
+        BOOST_TEST(false);
+        }
+    catch( failure & )
+        {
+        }
+    return boost::report_errors();
+    }

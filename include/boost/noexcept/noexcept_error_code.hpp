@@ -10,53 +10,53 @@
 
 namespace
 boost
-	{
-	class
-	propagate_error_code:
-		public noexcept_propagate
-		{
-		propagate_error_code( propagate_error_code const & )=delete;
-		propagate_error_code & operator=( propagate_error_code const & )=delete;
+    {
+    class
+    propagate_error_code:
+        public noexcept_propagate
+        {
+        propagate_error_code( propagate_error_code const & )=delete;
+        propagate_error_code & operator=( propagate_error_code const & )=delete;
 
-		public:
+        public:
 
-		template <class ErrorCodeType>
-		class
-		wrapper:
-			public std::exception
-			{
-			public:
-			ErrorCodeType const err;
-			explicit
-			wrapper( ErrorCodeType err ):
-				err(err)
-				{
-				}
-			};
+        template <class ErrorCodeType>
+        class
+        wrapper:
+            public std::exception
+            {
+            public:
+            ErrorCodeType const err;
+            explicit
+            wrapper( ErrorCodeType err ):
+                err(err)
+                {
+                }
+            };
 
-		template <class ErrorCodeType>
-		propagate_error_code( ErrorCodeType err )
-			{
-			BOOST_NOEXCEPT_ASSERT(noexcept_detail::current_exception().empty());
-			noexcept_detail::current_exception().put(wrapper<ErrorCodeType>(std::move(err)));
-			}
-		};
+        template <class ErrorCodeType>
+        propagate_error_code( ErrorCodeType err )
+            {
+            BOOST_NOEXCEPT_ASSERT(noexcept_detail::current_exception().empty());
+            noexcept_detail::current_exception().put(wrapper<ErrorCodeType>(std::move(err)));
+            }
+        };
 
-	template <class T>
-	template <class ErrorCodeType>
-	ErrorCodeType const *
-	noexcept_handler<T>::
-	noexcept_catch_error_code() noexcept
-		{
-		std::exception * f=caught().get();
-		BOOST_NOEXCEPT_ASSERT(f!=0);
-		if( auto * e=dynamic_cast<propagate_error_code::wrapper<ErrorCodeType> *>(f) )
-			{
-			handled_=true;
-			return &e->err;
-			}
-		return 0;
-		}
-	}
+    template <class T>
+    template <class ErrorCodeType>
+    ErrorCodeType const *
+    noexcept_handler<T>::
+    noexcept_catch_error_code() noexcept
+        {
+        std::exception * f=caught().get();
+        BOOST_NOEXCEPT_ASSERT(f!=0);
+        if( auto * e=dynamic_cast<propagate_error_code::wrapper<ErrorCodeType> *>(f) )
+            {
+            handled_=true;
+            return &e->err;
+            }
+        return 0;
+        }
+    }
 
 #endif

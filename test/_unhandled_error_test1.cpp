@@ -8,17 +8,17 @@ using namespace boost;
 
 struct
 error:
-	std::exception
-	{
-	};
+    std::exception
+    {
+    };
 fallible<int>
 fail()
-	{
-	return noexcept_propagate(error());
-	}
+    {
+    return noexcept_propagate(error());
+    }
 int
 main()
-	{
-	(void) fail();
-	return 0;
-	}
+    {
+    (void) fail();
+    return 0;
+    }

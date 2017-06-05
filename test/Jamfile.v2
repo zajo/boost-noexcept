@@ -9,8 +9,9 @@ import path ;
 project
     : requirements
         <link>static
-		<source>/boost/thread
-		<source>/boost/sync
+        <source>/boost/thread
+        <source>/boost/sync
+        <cxxflags>-std=c++14
     ;
 
 rule

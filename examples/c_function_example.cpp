@@ -14,32 +14,32 @@ using namespace boost;
 
 int
 erratic( float * answer ) noexcept
-	{
-	switch( rand() % 3 )
-		{
-		case 0: return ERROR_FOO;
-		case 1: return ERROR_BAR;
-		default: *answer=42; return 0;
-		}
-	}
+    {
+    switch( rand() % 3 )
+        {
+        case 0: return ERROR_FOO;
+        case 1: return ERROR_BAR;
+        default: *answer=42; return 0;
+        }
+    }
 
 fallible<float>
 erratic_caller() noexcept
-	{
-	float answer;
-	if( int err=erratic(&answer) )
-		return propagate_error_code(err);
-	else
-		return answer;
-	}
+    {
+    float answer;
+    if( int err=erratic(&answer) )
+        return propagate_error_code(err);
+    else
+        return answer;
+    }
 
 int
 main()
-	{
-	for( int i=0; i!=10; ++i )
-		if( auto tr=noexcept_try(erratic_caller()) )
-			std::cout << "Answer: " << tr.value() << std::endl;
-		else if( int const * err = tr.noexcept_catch_error_code<int>() )
-			std::cout << "FAILED! error=" << *err << std::endl;
-	return 0;
-	}
+    {
+    for( int i=0; i!=10; ++i )
+        if( auto tr=noexcept_try(erratic_caller()) )
+            std::cout << "Answer: " << tr.value() << std::endl;
+        else if( int const * err = tr.noexcept_catch_error_code<int>() )
+            std::cout << "FAILED! error=" << *err << std::endl;
+    return 0;
+    }
