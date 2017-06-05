@@ -156,6 +156,32 @@ boost
 		{
 		return noexcept_handler<T>(std::move(x.opt_));
 		}
+	namespace
+	noexcept_detail
+		{
+		inline
+		current_exception_holder::
+		handler::
+		~handler() noexcept
+			{
+			}
+		inline
+		void
+		current_exception_holder::
+		set_handler( handler * h ) noexcept
+			{
+			BOOST_NOEXCEPT_ASSERT(!empty());
+			h_=h;
+			}
+		inline
+		void
+		current_exception_holder::
+		unset_handler( handler * h ) noexcept
+			{
+			BOOST_NOEXCEPT_ASSERT(h_==0 || h_==h);
+			h_=0;
+			}
+		}
 	}
 
 #endif

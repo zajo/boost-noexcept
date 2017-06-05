@@ -27,27 +27,13 @@ boost
 				public:
 				virtual void store_internally() noexcept=0;
 				protected:
-				~handler() noexcept
-					{
-					}
+				~handler() noexcept;
 				};
 			~current_exception_holder() noexcept
 				{
 				BOOST_NOEXCEPT_ASSERT(empty()); //The thread terminates with unhandled error
 				if( !empty() )
 					abort();
-				}
-			void
-			set_handler( handler * h ) noexcept
-				{
-				BOOST_NOEXCEPT_ASSERT(!empty());
-				h_=h;
-				}
-			void
-			unset_handler( handler * h ) noexcept
-				{
-				BOOST_NOEXCEPT_ASSERT(h_==0 || h_==h);
-				h_=0;
 				}
 			template <class T>
 			void
@@ -61,6 +47,8 @@ boost
 				BOOST_NOEXCEPT_ASSERT(empty());
 				exception_holder::put(std::move(obj));
 				}
+			void set_handler( handler * ) noexcept;
+			void unset_handler( handler * ) noexcept;
 			private:
 			handler * h_;
 			};
