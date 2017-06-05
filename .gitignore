@@ -1,0 +1,9 @@
+.DS_Store
+.Trashes
+*.suo
+*.sdf
+*.opensdf
+*.vcxproj.user
+*.xcuserstate
+bld/*
+.vscode/tasks.json
