@@ -1,0 +1,43 @@
+# Copyright (c) 2017 Emil Dotchevski and Reverge Studios, Inc.
+
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+import testing ;
+import path ;
+
+project
+    : requirements
+        <link>static
+		<source>/boost/thread
+		<source>/boost/sync
+    ;
+
+rule
+headers-compile-test ( headers * : requirements * : target-tag ? )
+    {
+    local test-names = ;
+    for local header in $(headers)
+        {
+        local target = hdr$(target-tag)-$(header:D=) ;
+        compile header-test.cpp : $(requirements) <define>REVERGE_HEADER=\"\<boost/noexcept/$(header:B).hpp\>\" <dependency>$(header) : $(target) ;
+        test-names += $(target) ;
+        }
+    alias hdrtest$(target-tag) : $(test-names) ;
+    }
+
+headers-compile-test [ glob ../include/boost/noexcept/*.hpp ]
+    : # requirements
+    : # target-tag
+        noexcept
+    ;
+
+run exception_holder_test.cpp ;
+run multiple_active_errors_test.cpp ;
+run propagate_test.cpp ;
+run propagate_error_code_test.cpp ;
+run throw_exception_test.cpp ;
+
+run-fail _unhandled_error_test1.cpp ;
+run-fail _unhandled_error_test2.cpp ;
+run-fail _unhandled_error_test3.cpp ;

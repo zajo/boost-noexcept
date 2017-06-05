@@ -1,0 +1,9 @@
+{
+	"files.associations": {
+		"xmemory0": "cpp",
+		"xstring": "cpp",
+		"xutility": "cpp",
+		"type_traits": "cpp",
+		"xmemory": "cpp"
+	}
+}
