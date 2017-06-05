@@ -101,6 +101,11 @@ boost
 			{
 			BOOST_NOEXCEPT_ASSERT(!noexcept_detail::current_exception().empty());
 			}
+		fallible( T const & v ) noexcept:
+			opt_(v)
+			{
+			BOOST_NOEXCEPT_ASSERT(noexcept_detail::current_exception().empty());
+			}
 		fallible( T && v ) noexcept:
 			opt_(std::move(v))
 			{
