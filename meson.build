@@ -48,14 +48,14 @@ test( 'multiple_active_errors_test',
 		'test/multiple_active_errors_test.cpp',
 		include_directories:includes) )
 
-test( 'propagate_test',
-	executable( 'propagate_test',
-		'test/propagate_test.cpp',
+test( 'throw_test',
+	executable( 'throw_test',
+		'test/throw_test.cpp',
 		include_directories:includes) )
 
-test( 'propagate_error_code_test',
-	executable( 'propagate_error_code_test',
-		'test/propagate_error_code_test.cpp',
+test( 'throw_error_code_test',
+	executable( 'throw_error_code_test',
+		'test/throw_error_code_test.cpp',
 		include_directories:includes) )
 
 test( 'throw_exception_test',
@@ -63,9 +63,9 @@ test( 'throw_exception_test',
 		'test/throw_exception_test.cpp',
 		include_directories:includes) )
 
-test( 'noexcept_result_traits_ptr_test',
-	executable( 'noexcept_result_traits_ptr_test',
-		'test/noexcept_result_traits_ptr_test.cpp',
+test( 'result_traits_ptr_test',
+	executable( 'result_traits_ptr_test',
+		'test/result_traits_ptr_test.cpp',
 		include_directories:includes) )
 
 test( '_unhandled_error_test1',

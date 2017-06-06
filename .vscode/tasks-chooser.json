@@ -2,11 +2,11 @@
 	"selectDescription": "Select build setting",
 	"items": [
 		{
-			"displayName": "noexcept_result_traits_ptr_test",
+			"displayName": "result_traits_ptr_test",
 			"description": "Unit test",
 			"isBuildCommand": "true",
 			"command": "sh",
-			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest noexcept_result_traits_ptr_test" ]
+			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest result_traits_ptr_test" ]
 		},
 		{
 			"displayName": "All unit tests",
@@ -23,18 +23,18 @@
 			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest throw_exception_test" ]
 		},
 		{
-			"displayName": "propagate_error_code_test",
+			"displayName": "throw_error_code_test",
 			"description": "Unit test",
 			"isBuildCommand": "true",
 			"command": "sh",
-			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest propagate_error_code_test" ]
+			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest throw_error_code_test" ]
 		},
 		{
-			"displayName": "propagate_test",
+			"displayName": "throw_test",
 			"description": "Unit test",
 			"isBuildCommand": "true",
 			"command": "sh",
-			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest propagate_test" ]
+			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest throw_test" ]
 		},
 		{
 			"displayName": "multiple_active_errors_test",

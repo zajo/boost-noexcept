@@ -99,7 +99,7 @@ big:
         --big_count_;
         }
     };
-typedef boost::noexcept_detail::any_movable<max_static_size,common_base> test_type;
+typedef boost::noexcept_::noexcept_detail::any_movable<max_static_size,common_base> test_type;
 bool
 check_counts( int sc, int bc )
     {
@@ -111,7 +111,7 @@ check_counts( int sc, int bc )
 void
 test_lifetime()
     {
-    using namespace boost::noexcept_detail;
+    using namespace boost::noexcept_::noexcept_detail;
         {
         test_type ex;
         BOOST_TEST(ex.empty());
@@ -190,7 +190,7 @@ throw_( common_base * obj )
 void
 test_throw_exception()
     {
-    using namespace boost::noexcept_detail;
+    using namespace boost::noexcept_::noexcept_detail;
         {
         test_type ex;
         ex.put(big(),&throw_<big>);

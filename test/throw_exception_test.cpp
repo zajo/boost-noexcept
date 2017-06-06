@@ -3,13 +3,13 @@
 //Distributed under the Boost Software License, Version 1.0. (See accompanying
 //file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#include <boost/noexcept/noexcept_result_traits_optional.hpp>
-#include <boost/noexcept/noexcept_try.hpp>
-#include <boost/noexcept/propagate.hpp>
+#include <boost/noexcept/result_traits_optional.hpp>
+#include <boost/noexcept/try.hpp>
+#include <boost/noexcept/throw.hpp>
 #include <boost/core/lightweight_test.hpp>
 
-using namespace boost;
-using boost::noexcept_config::optional;
+using namespace boost::noexcept_;
+using boost::noexcept_::config::optional;
 
 struct failure: std::exception { };
 
@@ -21,16 +21,16 @@ succeeds()
 optional<int>
 fails()
     {
-    return propagate(failure());
+    return throw_(failure());
     }
 int
 main()
     {
     BOOST_TEST(succeeds().value()==42);
-    BOOST_TEST(noexcept_try(succeeds()).value()==42);
+    BOOST_TEST(try_(succeeds()).value()==42);
     try
         {
-        (void) noexcept_try(fails()).value();
+        (void) try_(fails()).value();
         BOOST_TEST(false);
         }
     catch( failure & )
