@@ -44,11 +44,11 @@
 			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest multiple_active_errors_test" ]
 		},
 		{
-			"displayName": "exception_holder_test",
+			"displayName": "any_movable_test",
 			"description": "Unit test",
 			"isBuildCommand": "true",
 			"command": "sh",
-			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest exception_holder_test" ]
+			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest any_movable_test" ]
 		}
 	],
 	"baseItem": {

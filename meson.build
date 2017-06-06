@@ -63,11 +63,6 @@ test( 'throw_exception_test',
 		'test/throw_exception_test.cpp',
 		include_directories:includes) )
 
-test( 'exception_holder_test',
-	executable( 'exception_holder_test',
-		'test/exception_holder_test.cpp',
-		include_directories:includes) )
-
 test( 'noexcept_result_traits_ptr_test',
 	executable( 'noexcept_result_traits_ptr_test',
 		'test/noexcept_result_traits_ptr_test.cpp',
@@ -102,3 +97,8 @@ test( '_unhandled_error_test5',
 		'test/_unhandled_error_test5.cpp',
 		include_directories:includes),
 	should_fail:true )
+
+test( 'any_movable_test',
+	executable( 'any_movable_test',
+		'test/any_movable_test.cpp',
+		include_directories:includes) )

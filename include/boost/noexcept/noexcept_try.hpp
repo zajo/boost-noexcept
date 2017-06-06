@@ -112,7 +112,7 @@ boost
             else
                 {
                 handled_=true;
-                caught_->throw_exception();
+                caught_->call_observer();
                 abort();
                 }
             }
@@ -124,7 +124,7 @@ boost
             else
                 {
                 handled_=true;
-                caught_->throw_exception();
+                caught_->call_observer();
                 abort();
                 }
             }

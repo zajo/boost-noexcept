@@ -6,8 +6,10 @@
 #ifndef UUID_C95230D44A3311E781E9B0B2AD730A1C
 #define UUID_C95230D44A3311E781E9B0B2AD730A1C
 
-#include <boost/noexcept/noexcept_detail/exception_holder.hpp>
+#include <boost/noexcept/noexcept_detail/any_movable.hpp>
+#include <boost/noexcept/noexcept_config/throw_exception.hpp>
 #include <boost/noexcept/noexcept_config/thread_local.hpp>
+#include <exception>
 
 namespace
 boost
@@ -15,9 +17,19 @@ boost
     namespace
     noexcept_detail
         {
+		typedef any_movable<128,std::exception> exception_holder;
         class
         current_exception_holder
             {
+			template <class T>
+			static
+			void
+			throw_exception_( std::exception * x )
+				{
+				BOOST_NOEXCEPT_ASSERT(x!=0);
+				BOOST_THROW_EXCEPTION(*static_cast<T *>(x));
+				abort();
+				}
             public:
             class
             handler
@@ -43,7 +55,7 @@ boost
                     h_=0;
                     }
                 BOOST_NOEXCEPT_ASSERT(x_.empty() && "Unhandled error is present at the time a new error is passed to propagate()! (Did you forget to use noexcept_try?)");
-                x_.put(std::move(obj));
+                x_.put(std::move(obj),&throw_exception_<T>);
                 }
 			exception_holder const &
 			get_exception() noexcept
