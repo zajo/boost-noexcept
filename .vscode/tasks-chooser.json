@@ -2,46 +2,53 @@
 	"selectDescription": "Select build setting",
 	"items": [
 		{
+			"displayName": "noexcept_result_traits_ptr_test",
+			"description": "Unit test",
+			"isBuildCommand": "true",
+			"command": "sh",
+			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest noexcept_result_traits_ptr_test" ]
+		},
+		{
 			"displayName": "All unit tests",
 			"description": "Unit test",
 			"isBuildCommand": "true",
-			"command": "cmd",
-			"args": [ "/C", "cd ${workspaceRoot}/bld/debug && mesontest.py" ]
+			"command": "sh",
+			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest" ]
 		},
 		{
 			"displayName": "throw_exception_test",
 			"description": "Unit test",
 			"isBuildCommand": "true",
-			"command": "cmd",
-			"args": [ "/C", "cd ${workspaceRoot}/bld/debug && mesontest.py throw_exception_test" ]
+			"command": "sh",
+			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest throw_exception_test" ]
 		},
 		{
 			"displayName": "propagate_error_code_test",
 			"description": "Unit test",
 			"isBuildCommand": "true",
-			"command": "cmd",
-			"args": [ "/C", "cd ${workspaceRoot}/bld/debug && mesontest.py propagate_error_code_test" ]
+			"command": "sh",
+			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest propagate_error_code_test" ]
 		},
 		{
 			"displayName": "propagate_test",
 			"description": "Unit test",
 			"isBuildCommand": "true",
-			"command": "cmd",
-			"args": [ "/C", "cd ${workspaceRoot}/bld/debug && mesontest.py propagate_test" ]
+			"command": "sh",
+			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest propagate_test" ]
 		},
 		{
 			"displayName": "multiple_active_errors_test",
 			"description": "Unit test",
 			"isBuildCommand": "true",
-			"command": "cmd",
-			"args": [ "/C", "cd ${workspaceRoot}/bld/debug && mesontest.py multiple_active_errors_test" ]
+			"command": "sh",
+			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest multiple_active_errors_test" ]
 		},
 		{
 			"displayName": "exception_holder_test",
 			"description": "Unit test",
 			"isBuildCommand": "true",
-			"command": "cmd",
-			"args": [ "/C", "cd ${workspaceRoot}/bld/debug && mesontest.py exception_holder_test" ]
+			"command": "sh",
+			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest exception_holder_test" ]
 		}
 	],
 	"baseItem": {

@@ -5,12 +5,12 @@
 			"name": "C++ Launch",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "${workspaceRoot}/bld/debug/_unhandled_error_test2",
+			"program": "${workspaceRoot}/bld/debug/_unhandled_error_test5",
 			"cwd": "${workspaceRoot}/test",
 			"args": [],
 			"stopAtEntry": false,
 			"environment": [],
-			"externalConsole": true,
+			"externalConsole": false,
 			"linux": {
 				"MIMode": "gdb",
 				"setupCommands": [

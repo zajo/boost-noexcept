@@ -3,9 +3,12 @@
 //Distributed under the Boost Software License, Version 1.0. (See accompanying
 //file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
+#include <boost/noexcept/noexcept_result_traits_optional.hpp>
+#include <boost/noexcept/propagate.hpp>
 #include <boost/noexcept/noexcept_try.hpp>
-#include <boost/core/lightweight_test.hpp>
+
 using namespace boost;
+using boost::noexcept_config::optional;
 
 struct
 error:
@@ -17,16 +20,16 @@ wrong_error:
     std::exception
     {
     };
-fallible<int>
+optional<int>
 fail1()
     {
-    return noexcept_propagate(error());
+    return propagate(error());
     }
 int
 fail2()
     {
     auto tr=noexcept_try(fail1());
-    BOOST_TEST(tr.noexcept_catch<wrong_error>()==0);
+    (void) tr.noexcept_catch<wrong_error>();
     return 42;
     }
 int

@@ -9,6 +9,11 @@ compiler_id = compiler.get_id()
 
 if not meson.is_subproject()
 	if compiler_id=='clang'
+		add_global_arguments(
+			'-Wno-unused-local-typedefs',
+			'-Wno-non-virtual-dtor',
+			'-std=c++14',
+			language:'cpp' )
 	elif compiler_id=='gcc'
 		add_global_arguments(
 			'-Wno-unused-local-typedefs',
@@ -18,7 +23,7 @@ if not meson.is_subproject()
 	elif compiler_id=='msvc'
 	endif
 endif
-add_global_arguments('-DBOOST_NOEXCEPT_USE_STD_OPTIONAL', language:'cpp')
+#add_global_arguments('-DBOOST_NOEXCEPT_USE_STD_OPTIONAL', language:'cpp')
 add_global_arguments('-DBOOST_NOEXCEPT_NO_THREADS', language:'cpp')
 
 includes = include_directories('include','../..')
@@ -26,6 +31,16 @@ includes = include_directories('include','../..')
 test( 'c_function_example',
 	executable( 'c_function_example',
 		'examples/c_function_example.cpp',
+		include_directories:includes ) )
+
+test( 'FILE_ptr_example',
+	executable( 'FILE_ptr_example',
+		'examples/FILE_ptr_example.cpp',
+		include_directories:includes ) )
+
+test( 'FILE_ptr_throw_example',
+	executable( 'FILE_ptr_throw_example',
+		'examples/FILE_ptr_throw_example.cpp',
 		include_directories:includes ) )
 
 test( 'multiple_active_errors_test',
@@ -48,6 +63,16 @@ test( 'throw_exception_test',
 		'test/throw_exception_test.cpp',
 		include_directories:includes) )
 
+test( 'exception_holder_test',
+	executable( 'exception_holder_test',
+		'test/exception_holder_test.cpp',
+		include_directories:includes) )
+
+test( 'noexcept_result_traits_ptr_test',
+	executable( 'noexcept_result_traits_ptr_test',
+		'test/noexcept_result_traits_ptr_test.cpp',
+		include_directories:includes) )
+
 test( '_unhandled_error_test1',
 	executable( '_unhandled_error_test1',
 		'test/_unhandled_error_test1.cpp',
@@ -66,7 +91,14 @@ test( '_unhandled_error_test3',
 		include_directories:includes),
 	should_fail:true )
 
-test( 'exception_holder_test',
-	executable( 'exception_holder_test',
-		'test/exception_holder_test.cpp',
-		include_directories:includes) )
+test( '_unhandled_error_test4',
+	executable( '_unhandled_error_test4',
+		'test/_unhandled_error_test4.cpp',
+		include_directories:includes),
+	should_fail:true )
+
+test( '_unhandled_error_test5',
+	executable( '_unhandled_error_test5',
+		'test/_unhandled_error_test5.cpp',
+		include_directories:includes),
+	should_fail:true )

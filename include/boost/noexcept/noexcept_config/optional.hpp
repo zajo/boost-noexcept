@@ -8,10 +8,10 @@
 
 #ifdef BOOST_NOEXCEPT_USE_STD_OPTIONAL
 #include <optional>
-namespace boost { namespace noexcept_detail { using std::optional; } }
+namespace boost { namespace noexcept_config { using std::optional; } }
 #else
 #include <boost/optional.hpp>
-namespace boost { namespace noexcept_detail { using boost::optional; } }
+namespace boost { namespace noexcept_config { using boost::optional; } }
 #endif
 
 #endif

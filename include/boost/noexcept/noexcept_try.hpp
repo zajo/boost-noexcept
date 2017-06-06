@@ -6,7 +6,8 @@
 #ifndef UUID_5872130C482B11E7B84F4C607F4E887A
 #define UUID_5872130C482B11E7B84F4C607F4E887A
 
-#include <boost/noexcept/fallible.hpp>
+#include <boost/noexcept/noexcept_detail/current_exception.hpp>
+#include <boost/noexcept/noexcept_result_traits.hpp>
 
 namespace
 boost
@@ -18,19 +19,19 @@ boost
         {
         noexcept_handler( noexcept_handler const & )=delete;
         noexcept_handler & operator=( noexcept_handler const & )=delete;
-        noexcept_detail::optional<T> opt_;
+        T val_;
         noexcept_detail::exception_holder internal_;
-        noexcept_detail::exception_holder * caught_;
+        noexcept_detail::exception_holder const * caught_;
         bool handled_;
         void
-        store_internally() noexcept
+        store_internally( noexcept_detail::exception_holder && x ) noexcept
             {
-            BOOST_NOEXCEPT_ASSERT(caught_==&noexcept_detail::current_exception());
+            BOOST_NOEXCEPT_ASSERT(caught_==&noexcept_detail::current_exception().get_exception());
             BOOST_NOEXCEPT_ASSERT(internal_.empty());
-            internal_ = std::move(*caught_);
+            internal_ = std::move(x);
             caught_ = &internal_;
             }
-        noexcept_detail::exception_holder &
+        noexcept_detail::exception_holder const &
         caught() const noexcept
             {
             BOOST_NOEXCEPT_ASSERT(caught_!=0);
@@ -39,16 +40,16 @@ boost
             }
         public:
         explicit
-        noexcept_handler( noexcept_detail::optional<T> && opt ) noexcept:
-            opt_(std::move(opt)),
-            caught_(opt?0:&noexcept_detail::current_exception()),
+        noexcept_handler( T && val ) noexcept:
+            val_(std::move(val)),
+            caught_(noexcept_succeeded(val_)?0:&noexcept_detail::current_exception().get_exception()),
             handled_(false)
             {
             if( caught_ )
-                static_cast<noexcept_detail::current_exception_holder *>(caught_)->set_handler(this);
+				noexcept_detail::current_exception().set_handler(this);
             }
         noexcept_handler( noexcept_handler && x ) noexcept:
-            opt_(std::move(x.opt_)),
+            val_(std::move(x.val_)),
             caught_(x.caught_),
             handled_(x.handled_)
             {
@@ -56,29 +57,28 @@ boost
             x.handled_=0;
             if( caught_ )
                 {
-                BOOST_NOEXCEPT_ASSERT(x.caught_==&noexcept_detail::current_exception());
-                static_cast<noexcept_detail::current_exception_holder *>(caught_)->set_handler(this);
+                BOOST_NOEXCEPT_ASSERT(x.caught_==&noexcept_detail::current_exception().get_exception());
+				noexcept_detail::current_exception().set_handler(this);
                 }
             }
         ~noexcept_handler() noexcept
             {
             if( caught_ )
                 {
-                if( handled_ )
-                    caught_->clear();
                 noexcept_detail::current_exception_holder & cf=noexcept_detail::current_exception();
                 if( caught_==&internal_ )
                     {
                     if( !handled_ )
                         {
-                        BOOST_NOEXCEPT_ASSERT(cf.empty());
                         BOOST_NOEXCEPT_ASSERT(!internal_.empty());
-                        static_cast<noexcept_detail::exception_holder &>(cf) = std::move(internal_);
+						cf.set_exception(std::move(internal_));
                         }
                     }
                 else
                     {
-                    BOOST_NOEXCEPT_ASSERT(caught_==&cf);
+                    BOOST_NOEXCEPT_ASSERT(caught_==&cf.get_exception());
+					if( handled_ )
+						cf.clear_exception();
                     cf.unset_handler(this);
                     }
                 }
@@ -104,11 +104,11 @@ boost
             handled_=true;
             return e;
             }
-        T const &
+        typename noexcept_result_traits<T>::value_type const &
         value() const
             {
-            if( succeeded() )
-                return opt_.value();
+            if( noexcept_succeeded(val_) )
+                return noexcept_success_value(val_);
             else
                 {
                 handled_=true;
@@ -116,11 +116,11 @@ boost
                 abort();
                 }
             }
-        T &
+        typename noexcept_result_traits<T>::value_type const &
         value()
             {
-            if( succeeded() )
-                return opt_.value();
+            if( noexcept_succeeded(val_) )
+                return noexcept_success_value(val_);
             else
                 {
                 handled_=true;
@@ -131,16 +131,16 @@ boost
         bool
         succeeded() const noexcept
             {
-            return bool(opt_);
+            return noexcept_succeeded(val_);
             }
         bool
         failed() const noexcept
             {
-            return !opt_;
+			return !noexcept_succeeded(val_);
             }
         explicit operator bool() const noexcept
             {
-            return bool(opt_);
+            return noexcept_succeeded(val_);
             }
         bool
         has_internal_error_() const noexcept
@@ -152,9 +152,9 @@ boost
         };
     template <class T>
     noexcept_handler<T>
-    noexcept_try( fallible<T> && x ) noexcept
+    noexcept_try( T && x ) noexcept //Takes any type which has noexcept_result_traits defined.
         {
-        return noexcept_handler<T>(std::move(x.opt_));
+        return noexcept_handler<T>(std::move(x));
         }
     namespace
     noexcept_detail
@@ -170,7 +170,7 @@ boost
         current_exception_holder::
         set_handler( handler * h ) noexcept
             {
-            BOOST_NOEXCEPT_ASSERT(!empty());
+            BOOST_NOEXCEPT_ASSERT(!x_.empty());
             h_=h;
             }
         inline

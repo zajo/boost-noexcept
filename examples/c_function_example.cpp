@@ -4,10 +4,12 @@
 //file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 #include <boost/noexcept.hpp>
+#include <boost/noexcept/propagate_error_code.hpp>
 #include <stdlib.h>
 #include <iostream>
 
 using namespace boost;
+using boost::noexcept_config::optional;
 
 #define ERROR_FOO 1
 #define ERROR_BAR 2
@@ -23,7 +25,7 @@ erratic( float * answer ) noexcept
         }
     }
 
-fallible<float>
+optional<float>
 erratic_caller() noexcept
     {
     float answer;

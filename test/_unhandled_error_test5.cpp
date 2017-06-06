@@ -5,6 +5,7 @@
 
 #include <boost/noexcept/noexcept_result_traits_optional.hpp>
 #include <boost/noexcept/propagate.hpp>
+#include <boost/noexcept/noexcept_try.hpp>
 
 using namespace boost;
 using boost::noexcept_config::optional;
@@ -15,13 +16,20 @@ error:
     {
     };
 optional<int>
-fail()
+fail1()
     {
     return propagate(error());
+    }
+optional<int>
+buggy()
+    {
+	auto r1=noexcept_try(fail1());
+	//(void) r1.noexcept_catch_all(); //<--use this to ignore the error in r1
+	return fail1();
     }
 int
 main()
     {
-    (void) fail();
+    (void) buggy();
     return 0;
     }

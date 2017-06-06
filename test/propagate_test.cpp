@@ -4,9 +4,12 @@
 //file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 #include <boost/noexcept/noexcept_try.hpp>
+#include <boost/noexcept/propagate.hpp>
+#include <boost/noexcept/noexcept_result_traits_optional.hpp>
 #include <boost/core/lightweight_test.hpp>
 
 using namespace boost;
+using boost::noexcept_config::optional;
 
 struct
 f1_failed:
@@ -29,37 +32,36 @@ f4_failed:
         {
         }
     };
-fallible<int>
+optional<int>
 f1()
     {
-    return noexcept_propagate(f1_failed(1));
+    return propagate(f1_failed(1));
     }
-fallible<int>
+optional<int>
 f2()
     {
-    BOOST_TEST(!f1());
-    return noexcept_propagate();
+	return f1();
     }
-fallible<int>
+optional<int>
 f3()
     {
-    auto tr=noexcept_try(f1());
+    auto tr=noexcept_try(f2());
     BOOST_TEST(!tr);
-    return noexcept_propagate();
+    return propagate();
     }
-fallible<int>
+optional<int>
 f4()
     {
     auto tr=noexcept_try(f3());
     BOOST_TEST(!tr);
     BOOST_TEST(tr.noexcept_catch<f1_failed>()->val==1);
-    return noexcept_propagate(f4_failed(2));
+    return propagate(f4_failed(2));
     }
-fallible<int>
+optional<int>
 f5()
     {
     BOOST_TEST(!f4());
-    return noexcept_propagate();
+    return propagate();
     }
 int
 f6_a()

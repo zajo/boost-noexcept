@@ -6,6 +6,7 @@
 #ifndef UUID_394C40FA48D611E783AC84CE7E4E887A
 #define UUID_394C40FA48D611E783AC84CE7E4E887A
 
+#include <boost/noexcept/propagate.hpp>
 #include <boost/noexcept/noexcept_try.hpp>
 
 namespace
@@ -13,7 +14,7 @@ boost
     {
     class
     propagate_error_code:
-        public noexcept_propagate
+        public propagate
         {
         propagate_error_code( propagate_error_code const & )=delete;
         propagate_error_code & operator=( propagate_error_code const & )=delete;
@@ -37,7 +38,7 @@ boost
         template <class ErrorCodeType>
         propagate_error_code( ErrorCodeType err )
             {
-            BOOST_NOEXCEPT_ASSERT(noexcept_detail::current_exception().empty());
+            BOOST_NOEXCEPT_ASSERT(noexcept_detail::current_exception().get_exception().empty());
             noexcept_detail::current_exception().put(wrapper<ErrorCodeType>(std::move(err)));
             }
         };
