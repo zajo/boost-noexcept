@@ -1,0 +1,24 @@
+= Noexcept
+
+== Introduction
+
+Noexcept is C+\+11 generic error handling library. It is designed to be used in environments where C++ exception handling is not permitted or unavailable.
+
+Noexcept follows the C++ exception handling semantics as much as possible without throwing exceptions. This enables most of the useful programming techniques supported when exception handling is enabled:
+
+* Errors are identified by static types rather than error codes, allowing classification of failures using a class hierarchy.
+* Error-neutral contexts may communicate any type of error reported by lower level functions, even if that type is not defined in the current compilation unit.
+* Error-handling contexts may selectively handle some errors but remain neutral to others.
+
+== Design rationale
+
+When exception handling is unavailable, functions which may fail must communicate error conditions through their return value without interfering with its usual duties. This creates two competing design goals for Noexcept and other similar libraries:
+
+* On one hand, ideally the library should have zero abstraction penalty and not allocate any dynamic memory.
+* On the other hand, it must allow functions to return any value in case of success or failure, which normally would require a complex, feature-rich type-safe class template.
+
+The idea behind Noexcept is to sidestep the second design goal altogether.
+
+Noexcept does not require programmers to use a special class template in return values of functions that may fail. They can use any type whatsoever, the only requirement is that the return value semantics allow for an invalid state, that is, a special value that can be used to discriminate between success and failure.
+
+When a failure is detected, an error object is created in thread-local storage. The presence of this object does not interfere with error-neutral contexts, except that they're required to communicate that _something_ went wrong. The error object is destroyed when control reaches an error-handling function which recognizes it (by its type).
