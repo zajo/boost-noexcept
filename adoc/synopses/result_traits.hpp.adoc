@@ -1,0 +1,9 @@
+[source,c++]
+----
+namespace boost { namespace noexcept_ {
+
+    template <class>
+    struct result_traits; //main template left undefined
+
+} }
+----
