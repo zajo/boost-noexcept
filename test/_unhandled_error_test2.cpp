@@ -3,25 +3,25 @@
 //Distributed under the Boost Software License, Version 1.0. (See accompanying
 //file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#include <boost/noexcept/result_traits_optional.hpp>
 #include <boost/noexcept/throw.hpp>
 #include <boost/noexcept/try.hpp>
+#include <boost/noexcept/result_traits_optional.hpp>
+#include <boost/optional.hpp>
 
 using namespace boost::noexcept_;
-using boost::noexcept_::config::optional;
 
 struct
 error:
     std::exception
     {
     };
-optional<int>
-fail1()
+boost::optional<int>
+fail1() noexcept
     {
     return throw_(error());
     }
 int
-fail2()
+fail2() noexcept
     {
     (void) try_(fail1());
     return 42;

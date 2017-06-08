@@ -8,97 +8,111 @@ compiler = meson.get_compiler('cpp')
 compiler_id = compiler.get_id()
 
 if not meson.is_subproject()
-	if compiler_id=='clang'
-		add_global_arguments(
-			'-Wno-unused-local-typedefs',
-			'-Wno-non-virtual-dtor',
-			'-std=c++14',
-			language:'cpp' )
-	elif compiler_id=='gcc'
-		add_global_arguments(
-			'-Wno-unused-local-typedefs',
-			'-Wno-non-virtual-dtor',
-			'-std=c++17',
-			language:'cpp' )
-	elif compiler_id=='msvc'
-	endif
+    if compiler_id=='clang'
+        add_global_arguments(
+            '-Wno-unused-local-typedefs',
+            '-Wno-non-virtual-dtor',
+            '-std=c++14',
+            language:'cpp' )
+    elif compiler_id=='gcc'
+        add_global_arguments(
+            '-Wno-unused-local-typedefs',
+            '-Wno-non-virtual-dtor',
+            '-std=c++17',
+            language:'cpp' )
+    elif compiler_id=='msvc'
+    endif
 endif
-#add_global_arguments('-DBOOST_NOEXCEPT_USE_STD_OPTIONAL', language:'cpp')
 add_global_arguments('-DBOOST_NOEXCEPT_NO_THREADS', language:'cpp')
 
-includes = include_directories('include','../..')
+boost_headers=subproject('boost').get_variable('headers')
+includes = include_directories('include')
 
 test( 'c_function_example',
-	executable( 'c_function_example',
-		'examples/c_function_example.cpp',
-		include_directories:includes ) )
+    executable( 'c_function_example',
+        'examples/c_function_example.cpp',
+        dependencies: boost_headers,
+        include_directories:includes ) )
 
 test( 'FILE_ptr_example',
-	executable( 'FILE_ptr_example',
-		'examples/FILE_ptr_example.cpp',
-		include_directories:includes ) )
+    executable( 'FILE_ptr_example',
+        'examples/FILE_ptr_example.cpp',
+        dependencies: boost_headers,
+        include_directories:includes ) )
 
 test( 'FILE_ptr_throw_example',
-	executable( 'FILE_ptr_throw_example',
-		'examples/FILE_ptr_throw_example.cpp',
-		include_directories:includes ) )
+    executable( 'FILE_ptr_throw_example',
+        'examples/FILE_ptr_throw_example.cpp',
+        dependencies: boost_headers,
+        include_directories:includes ) )
 
 test( 'multiple_active_errors_test',
-	executable( 'multiple_active_errors_test',
-		'test/multiple_active_errors_test.cpp',
-		include_directories:includes) )
+    executable( 'multiple_active_errors_test',
+        'test/multiple_active_errors_test.cpp',
+        dependencies: boost_headers,
+        include_directories:includes) )
 
 test( 'throw_test',
-	executable( 'throw_test',
-		'test/throw_test.cpp',
-		include_directories:includes) )
+    executable( 'throw_test',
+        'test/throw_test.cpp',
+        dependencies: boost_headers,
+        include_directories:includes) )
 
-test( 'throw_error_code_test',
-	executable( 'throw_error_code_test',
-		'test/throw_error_code_test.cpp',
-		include_directories:includes) )
+test( 'succeeded_test',
+    executable( 'succeeded_test',
+        'test/succeeded_test.cpp',
+        dependencies: boost_headers,
+        include_directories:includes) )
 
 test( 'throw_exception_test',
-	executable( 'throw_exception_test',
-		'test/throw_exception_test.cpp',
-		include_directories:includes) )
+    executable( 'throw_exception_test',
+        'test/throw_exception_test.cpp',
+        dependencies: boost_headers,
+        include_directories:includes) )
 
 test( 'result_traits_ptr_test',
-	executable( 'result_traits_ptr_test',
-		'test/result_traits_ptr_test.cpp',
-		include_directories:includes) )
+    executable( 'result_traits_ptr_test',
+        'test/result_traits_ptr_test.cpp',
+        dependencies: boost_headers,
+        include_directories:includes) )
 
 test( '_unhandled_error_test1',
-	executable( '_unhandled_error_test1',
-		'test/_unhandled_error_test1.cpp',
-		include_directories:includes),
-	should_fail:true )
+    executable( '_unhandled_error_test1',
+        'test/_unhandled_error_test1.cpp',
+        dependencies: boost_headers,
+        include_directories:includes),
+    should_fail:true )
 
 test( '_unhandled_error_test2',
-	executable( '_unhandled_error_test2',
-		'test/_unhandled_error_test2.cpp',
-		include_directories:includes),
-	should_fail:true )
+    executable( '_unhandled_error_test2',
+        'test/_unhandled_error_test2.cpp',
+        dependencies: boost_headers,
+        include_directories:includes),
+    should_fail:true )
 
 test( '_unhandled_error_test3',
-	executable( '_unhandled_error_test3',
-		'test/_unhandled_error_test3.cpp',
-		include_directories:includes),
-	should_fail:true )
+    executable( '_unhandled_error_test3',
+        'test/_unhandled_error_test3.cpp',
+        dependencies: boost_headers,
+        include_directories:includes),
+    should_fail:true )
 
 test( '_unhandled_error_test4',
-	executable( '_unhandled_error_test4',
-		'test/_unhandled_error_test4.cpp',
-		include_directories:includes),
-	should_fail:true )
+    executable( '_unhandled_error_test4',
+        'test/_unhandled_error_test4.cpp',
+        dependencies: boost_headers,
+        include_directories:includes),
+    should_fail:true )
 
 test( '_unhandled_error_test5',
-	executable( '_unhandled_error_test5',
-		'test/_unhandled_error_test5.cpp',
-		include_directories:includes),
-	should_fail:true )
+    executable( '_unhandled_error_test5',
+        'test/_unhandled_error_test5.cpp',
+        dependencies: boost_headers,
+        include_directories:includes),
+    should_fail:true )
 
 test( 'any_movable_test',
-	executable( 'any_movable_test',
-		'test/any_movable_test.cpp',
-		include_directories:includes) )
+    executable( 'any_movable_test',
+        'test/any_movable_test.cpp',
+        dependencies: boost_headers,
+        include_directories:includes) )

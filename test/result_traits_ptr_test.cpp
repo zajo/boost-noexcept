@@ -14,25 +14,25 @@ using namespace boost::noexcept_;
 struct file_open_error: std::exception { };
 
 FILE *
-open_file( char const * name )
-	{
-	if( FILE * f=fopen(name,"rb") )
-		return f;
-	else
-		return throw_(file_open_error());
-	}
+open_file( char const * name ) noexcept
+    {
+    if( FILE * f=fopen(name,"rb") )
+        return f;
+    else
+        return throw_(file_open_error());
+    }
 
 int
 main()
-	{
-	if( auto tr=try_(open_file("no_such_file")) )
-		{
-		//use file if opened, but it should fail
-		BOOST_TEST(false);
-		}
-	else if( file_open_error * err=tr.catch_<file_open_error>() )
-		{
-		BOOST_TEST(err!=0);
-		}
-	return boost::report_errors();
-	}
+    {
+    if( auto tr=try_(open_file("no_such_file")) )
+        {
+        //use file if opened, but it should fail
+        BOOST_TEST(false);
+        }
+    else if( file_open_error * err=tr.catch_<file_open_error>() )
+        {
+        BOOST_TEST(err!=0);
+        }
+    return boost::report_errors();
+    }

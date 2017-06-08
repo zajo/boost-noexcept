@@ -11,7 +11,7 @@
 #ifdef BOOST_NO_THREADS
 #define BOOST_NOEXCEPT_NO_THREADS
 #else
-#include <boost/sync/thread_specific/thread_specific_ptr.hpp>
+#include <boost/thread/tss.hpp>
 #endif
 #endif
 
@@ -20,33 +20,33 @@ boost
     {
     namespace
     noexcept_
-		{
-		namespace
-		noexcept_detail
-			{
-			template <class T>
-			T &
-			get_tl_object()
-				{
+        {
+        namespace
+        noexcept_detail
+            {
+            template <class T>
+            T &
+            get_tl_object()
+                {
 #if defined(BOOST_NOEXCEPT_NO_THREADS)
-				static T x;
-				return x;
+                static T x;
+                return x;
 #elif defined(BOOST_NOEXCEPT_USE_STD_THREAD_LOCAL)
-				static thread_local T x;
-				return x;
+                static thread_local T x;
+                return x;
 #else
-				static boost::sync::thread_specific_ptr<T> x;
-				if( T * p=x.get() )
-					return *p;
-				else
-					{
-					x.reset(new T());
-					return *x;;
-					}
+                static boost::sync::thread_specific_ptr<T> x;
+                if( T * p=x.get() )
+                    return *p;
+                else
+                    {
+                    x.reset(new T());
+                    return *x;;
+                    }
 #endif
-				}
-			}
-		}
-	}
+                }
+            }
+        }
+    }
 
 #endif

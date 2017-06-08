@@ -12,31 +12,31 @@
 namespace
 boost
     {
-	namespace
-	noexcept_
-		{
-		class
-		throw_
-			{
-			throw_( throw_ const & )=delete;
-			throw_ & operator=( throw_ const & )=delete;
-			public:
-			throw_() noexcept
-				{
-				}
-			template <class T>
-			throw_( T && e ) noexcept
-				{
-				noexcept_detail::current_exception().put(std::move(e));
-				}
-			template <class T>
-			operator T() noexcept
-				{
-				BOOST_NOEXCEPT_ASSERT(!noexcept_detail::current_exception().get_exception().empty());
-				return noexcept_error_result<T>();
-				}
-			};
-		}
-	}
+    namespace
+    noexcept_
+        {
+        class
+        throw_
+            {
+            throw_( throw_ const & )=delete;
+            throw_ & operator=( throw_ const & )=delete;
+            public:
+            throw_() noexcept
+                {
+                }
+            template <class T>
+            throw_( T && e ) noexcept
+                {
+                noexcept_detail::current_exception().put(std::move(e));
+                }
+            template <class T>
+            operator T() noexcept
+                {
+                BOOST_NOEXCEPT_ASSERT(!noexcept_detail::current_exception().get_exception().empty());
+                return result_traits<T>::error_result();
+                }
+            };
+        }
+    }
 
 #endif

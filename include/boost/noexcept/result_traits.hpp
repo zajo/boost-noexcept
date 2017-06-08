@@ -8,40 +8,13 @@
 
 namespace
 boost
-	{
-	namespace
-	noexcept_
-		{
-		template <class T>
-		struct result_traits;
-
-		template <class T>
-		bool
-		noexcept_succeeded( T const & x ) noexcept
-			{
-			return result_traits<T>::succeeded(x);
-			}
-		template <class T>
-		T
-		noexcept_error_result() noexcept
-			{
-			return result_traits<T>::error_result();
-			}
-		template <class T>
-		typename result_traits<T>::value_type const &
-		noexcept_success_value( T const & x ) noexcept
-			{
-			BOOST_NOEXCEPT_ASSERT(noexcept_succeeded(x));
-			return result_traits<T>::success_value(x);
-			}
-		template <class T>
-		typename result_traits<T>::value_type &
-		noexcept_success_value( T & x ) noexcept
-			{
-			BOOST_NOEXCEPT_ASSERT(noexcept_succeeded(x));
-			return result_traits<T>::success_value(x);
-			}
-		}
-	}
+    {
+    namespace
+    noexcept_
+        {
+        template <class T>
+        struct result_traits;
+        }
+    }
 
 #endif

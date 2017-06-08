@@ -3,8 +3,10 @@
 //Distributed under the Boost Software License, Version 1.0. (See accompanying
 //file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef UUID_362A73E84A4211E7935355C4AD730A1C
-#define UUID_362A73E84A4211E7935355C4AD730A1C
+#ifndef UUID_15ABFA184BFC11E7B3CEBE59AD730A1C
+#define UUID_15ABFA184BFC11E7B3CEBE59AD730A1C
+
+#include <optional>
 
 namespace
 boost
@@ -17,13 +19,13 @@ boost
 
         template <class T>
         struct
-        result_traits<T *>
+        result_traits<std::optional<T> >
             {
-            typedef T * result_type;
+            typedef std::optional<T> result_type;
             typedef T value_type;
             static
             bool
-            succeeded( result_type x ) noexcept
+            succeeded( result_type const & x ) noexcept
                 {
                 return bool(x);
                 }
@@ -31,19 +33,19 @@ boost
             result_type
             error_result() noexcept
                 {
-                return 0;
+                return result_type();
                 }
             static
             value_type const &
             success_value( result_type const & x ) noexcept
                 {
-                return *x;
+                return x.value();
                 }
             static
             value_type &
             success_value( result_type & x ) noexcept
                 {
-                return *x;
+                return x.value();
                 }
             };
         }

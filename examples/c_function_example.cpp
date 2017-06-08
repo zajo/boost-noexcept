@@ -4,46 +4,53 @@
 //file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 #include <boost/noexcept.hpp>
-#include <boost/noexcept/throw_error_code.hpp>
+#include <boost/noexcept/result_traits_optional.hpp>
+#include <boost/optional.hpp>
 #include <stdlib.h>
 #include <iostream>
+#include <exception>
 
 using namespace boost::noexcept_;
-using boost::noexcept_::config::optional;
 
-#define ERROR_FOO 1
-#define ERROR_BAR 2
+//A C function which may fail, returning different error codes
+extern "C" {
+    #define ERRATIC_ERROR_FOO 1
+    #define ERRATIC_ERROR_BAR 2
 
-int
-erratic( float * answer ) noexcept
-    {
-    switch( rand() % 3 )
-        {
-        case 0: return ERROR_FOO;
-        case 1: return ERROR_BAR;
-        default: *answer=42; return 0;
+    int
+    erratic( float * answer ) {
+        switch( rand() % 3 ) {
+            default: *answer=42; return 0;
+            case 1: return ERRATIC_ERROR_FOO;
+            case 2: return ERRATIC_ERROR_BAR;
         }
     }
+}
 
-struct erratic_error { typedef int error_code_type; };
+struct erratic_error: std::exception {
+    int error_code;
+    explicit
+    erratic_error( int error_code ) noexcept:
+        error_code(error_code)
+        {
+        }
+    };
 
-optional<float>
-erratic_caller() noexcept
-    {
+boost::optional<float> erratic_caller() noexcept {
     float answer;
     if( int err=erratic(&answer) )
-        return throw_error_code<erratic_error>(err);
+        return throw_(erratic_error(err));
     else
         return answer;
-    }
+}
 
-int
-main()
-    {
+int main() {
     for( int i=0; i!=10; ++i )
         if( auto tr=try_(erratic_caller()) )
             std::cout << "Answer: " << tr.value() << std::endl;
-        else if( int const * err = catch_error_code<erratic_error>(tr) )
-            std::cout << "FAILED! error=" << *err << std::endl;
+        else if( erratic_error const * err = tr.catch_<erratic_error>() )
+            std::cout << "FAILED! error code=" << err->error_code << std::endl;
+        else
+            assert(0);
     return 0;
-    }
+}
