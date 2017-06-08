@@ -40,10 +40,10 @@ include::{sourcedir}/examples/FILE_ptr_example.cpp[]
 [[synopsis]]
 == Synopsis
 [[result_traits.hpp]]
-===== <boost/noexcept/result_traits.hpp>
-NOTE: The main `result_traits` template is left undefined. User-defined specializations are required to define specific publicly accessible members. See <<result_traits,`result_traits`>> for details, <<result_traits_std_optional.hpp,`result_traits_std_optional`>> for an example.
 
-include::synopses/result_traits.hpp.adoc[]
+include::{sourcedir}/adoc/synopses/result_traits.hpp.adoc[]
+
+NOTE: The main `result_traits` template is left undefined. User-defined specializations are required to define specific publicly accessible members. See <<result_traits,`result_traits`>> for details, <<result_traits_std_optional.hpp,`result_traits_std_optional`>> for an example.
 
 [[result_traits_ptr.hpp]]
 ===== <boost/noexcept/result_traits_ptr.hpp>
