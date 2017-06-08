@@ -6,4 +6,5 @@
 *.vcxproj.user
 *.xcuserstate
 bld/*
+subprojects/*
 .vscode/tasks.json
