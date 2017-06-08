@@ -1,3 +1,5 @@
+:sourcedir: ..
+:source-highlighter: pygments
 = Noexcept
 
 == Introduction
@@ -22,3 +24,179 @@ The idea behind Noexcept is to sidestep the second design goal altogether.
 Noexcept does not require programmers to use a special class template in return values of functions that may fail. They can use any type whatsoever, the only requirement is that the return value semantics allow for an invalid state, that is, a special value that can be used to discriminate between success and failure.
 
 When a failure is detected, an error object is created in thread-local storage. The presence of this object does not interfere with error-neutral contexts, except that they're required to communicate that _something_ went wrong. The error object is destroyed when control reaches an error-handling function which recognizes it (by its type).
+
+[[crash_course]]
+== Crash course
+
+=== Example: returning and handling file open errors 
+
+This example takes advantage of the fact that C pointers comply with the 
+
+[source,c++]
+----
+include::{sourcedir}/examples/FILE_ptr_example.cpp[]
+----
+
+[[synopsis]]
+== Synopsis
+[[result_traits.hpp]]
+
+include::{sourcedir}/adoc/synopses/result_traits.hpp.adoc[]
+
+NOTE: The main `result_traits` template is left undefined. User-defined specializations are required to define specific publicly accessible members. See <<result_traits,`result_traits`>> for details, <<result_traits_std_optional.hpp,`result_traits_std_optional`>> for an example.
+
+[[result_traits_ptr.hpp]]
+===== <boost/noexcept/result_traits_ptr.hpp>
+[source,c++]
+----
+namespace boost { namespace noexcept_ {
+
+    template <class T>
+    struct result_traits<T *> {
+        typedef T * result_type;
+        typedef T value_type;
+
+        static bool succeeded( result_type x ) noexcept {
+            return x!=0;
+        }
+
+        static result_type error_result() noexcept {
+            return 0;
+        }
+
+        static value_type const & success_value( result_type x ) noexcept {
+            return *x;
+        }
+
+        static value_type & success_value( result_type & x ) noexcept {
+            return *x;
+        }
+    };
+
+} }
+----
+
+[[result_traits_std_optional.hpp]]
+===== <boost/noexcept/result_traits_std_optional.hpp>
+[source,c++]
+----
+#include <optional>
+
+namespace boost { namespace noexcept_ {
+
+    template <class T>
+    struct result_traits<std::optional<T> > {
+        typedef std::optional<T> result_type;
+        typedef T value_type;
+
+        static bool succeeded( result_type const & x ) noexcept {
+            return bool(x);
+        }
+
+        static result_type error_result() noexcept {
+            return result_type();
+        }
+
+        static value_type const & success_value( result_type const & x ) noexcept {
+            return x.value();
+        }
+
+        static value_type & success_value( result_type & x ) noexcept {
+            return x.value();
+        }
+    };
+
+} }
+----
+
+[[result_traits_boost_optional.hpp]]
+===== <boost/noexcept/result_traits_boost_optional.hpp>
+[source,c++]
+----
+namespace boost { template <class> class optional; }
+
+namespace boost { namespace noexcept_ {
+
+    template <class T>
+    struct result_traits<std::optional<T> > {
+        typedef optional<T> result_type;
+        typedef T value_type;
+
+        static bool succeeded( result_type const & x ) noexcept {
+            return bool(x);
+        }
+
+        static result_type error_result() noexcept {
+            return result_type();
+        }
+
+        static value_type const & success_value( result_type const & x ) noexcept {
+            return x.value();
+        }
+
+        static value_type & success_value( result_type & x ) noexcept {
+            return x.value();
+        }
+    };
+
+} }
+----
+
+[[throw.hpp]]
+===== <boost/noexcept/throw.hpp>
+[source,c++]
+----
+namespace boost { namespace noexcept_ {
+
+    class throw_ {
+        throw_( throw_ const & )=delete;
+        throw_ & operator=( throw_ const & )=delete;
+
+    public:
+ 
+        throw_();
+
+        template <class T>
+        throw_( T && e ) noexcept;
+
+        template <class T>
+        operator T() noexcept;
+    };
+
+} }
+----
+
+[[try.hpp]]
+===== <boost/noexcept/try.hpp>
+[source,c++]
+----
+namespace boost { namespace noexcept_ {
+
+    template <class T>
+    handler<T> try_( T && x );
+
+    template <class T>
+    class handler {
+
+    public:
+
+        handler( handler && ) noexcept;
+
+		explicit operator bool() const noexcept;
+
+        T const & operator()() const noexcept;
+        T & operator()() noexcept;
+
+        template <class E=void>
+        E * catch_() noexcept;
+    };
+} }
+----
+
+== Documentation
+
+[[result_traits]]
+=== `result_traits`
+
+`#include <boost/noexcept/result_traits.hpp>`
+

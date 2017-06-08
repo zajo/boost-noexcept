@@ -3,88 +3,103 @@
 //Distributed under the Boost Software License, Version 1.0. (See accompanying
 //file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#include <boost/noexcept/noexcept_detail/exception_holder.hpp>
+#include <boost/noexcept/noexcept_detail/any_movable.hpp>
 #include <boost/core/lightweight_test.hpp>
 #include <exception>
 #include <string>
 
-int total_count_;
-int small_count_;
-int big_count_;
+static int const max_static_size=256;
+static int total_count_;
+static int small_count_;
+static int big_count_;
 
 class
+common_base:
+	public std::exception
+	{
+	char const *
+	what() const noexcept
+		{
+		return tag.c_str();
+		}
+	public:
+    std::string tag;
+	protected:
+	explicit
+	common_base( std::string const & tag ):
+		tag(tag)
+		{
+        ++total_count_;
+		}
+	common_base( common_base const & x ):
+		tag(x.tag)
+		{
+        ++total_count_;
+		}
+	common_base( common_base && x ):
+		tag(std::move(x.tag))
+		{
+        ++total_count_;
+		}
+	~common_base()
+		{
+		--total_count_;
+		}
+	};
+class
 small:
-    public std::exception
+    public common_base
     {
     small & operator=( small const & )=delete;
-    std::string tag;
     public:
     small() noexcept:
-        tag("small")
+        common_base("small")
         {
         ++small_count_;
-        ++total_count_;
         }
     small( small const & x ) noexcept:
-        tag(x.tag)
+		common_base(x)
         {
         ++small_count_;
-        ++total_count_;
         }
     small( small && x ) noexcept:
-        tag(std::move(x.tag))
+        common_base(std::move(static_cast<common_base &&>(x)))
         {
         ++small_count_;
-        ++total_count_;
         }
     ~small() noexcept
         {
         --small_count_;
-        --total_count_;
-        }
-    char const *
-    what() const noexcept
-        {
-        return tag.c_str();
         }
     };
 class
 big:
-    public std::exception
+    public common_base
     {
     big & operator=( big const & )=delete;
-    unsigned char filler_[boost::noexcept_detail::max_static_size];
-    std::string tag;
+    unsigned char filler_[max_static_size];
     public:
     big() noexcept:
-        tag("big")
+        common_base("big")
         {
         ++big_count_;
-        ++total_count_;
         }
     big( big const & x ) noexcept:
-        tag(x.tag)
+		common_base(x)
         {
         ++big_count_;
-        ++total_count_;
         }
     big( big && x ) noexcept:
-        tag(std::move(x.tag))
+        common_base(std::move(static_cast<common_base &&>(x)))
         {
         ++big_count_;
-        ++total_count_;
         }
     ~big() noexcept
         {
         --big_count_;
-        --total_count_;
-        }
-    char const *
-    what() const noexcept
-        {
-        return tag.c_str();
         }
     };
+typedef boost::noexcept_::noexcept_detail::any_movable<max_static_size,common_base> test_type;
 bool
 check_counts( int sc, int bc )
     {
@@ -96,9 +111,9 @@ check_counts( int sc, int bc )
 void
 test_lifetime()
     {
-    using namespace boost::noexcept_detail;
+    using namespace boost::noexcept_::noexcept_detail;
         {
-        exception_holder ex;
+        test_type ex;
         BOOST_TEST(ex.empty());
         BOOST_TEST(!ex.holds_static());
         BOOST_TEST(!ex.holds_dynamic());
@@ -108,14 +123,14 @@ test_lifetime()
         BOOST_TEST(!ex.empty());
         BOOST_TEST(ex.holds_static());
         BOOST_TEST(!ex.holds_dynamic());
-        BOOST_TEST(strcmp(ex.what(),"small")==0);
+        BOOST_TEST(ex.get()->tag=="small");
         BOOST_TEST(check_counts(1,0));
         ex.put(big());
         BOOST_TEST(dynamic_cast<big *>(ex.get())!=0);
         BOOST_TEST(!ex.empty());
         BOOST_TEST(!ex.holds_static());
         BOOST_TEST(ex.holds_dynamic());
-        BOOST_TEST(strcmp(ex.what(),"big")==0);
+        BOOST_TEST(ex.get()->tag=="big");
         BOOST_TEST(check_counts(0,1));
         ex.clear();
         BOOST_TEST(ex.empty());
@@ -127,30 +142,30 @@ test_lifetime()
         BOOST_TEST(!ex.empty());
         BOOST_TEST(ex.holds_static());
         BOOST_TEST(!ex.holds_dynamic());
-        BOOST_TEST(strcmp(ex.what(),"small")==0);
+        BOOST_TEST(ex.get()->tag=="small");
         BOOST_TEST(check_counts(1,0));
             {
-            exception_holder ex1(std::move(ex));
+            test_type ex1(std::move(ex));
             BOOST_TEST(ex.empty());
-            BOOST_TEST(ex.holds_static());
+            BOOST_TEST(!ex.holds_static());
             BOOST_TEST(!ex.holds_dynamic());
             BOOST_TEST(dynamic_cast<small *>(ex1.get())!=0);
             BOOST_TEST(!ex1.empty());
             BOOST_TEST(ex1.holds_static());
             BOOST_TEST(!ex1.holds_dynamic());
-            BOOST_TEST(strcmp(ex1.what(),"small")==0);
-            BOOST_TEST(check_counts(2,0));
+	        BOOST_TEST(ex1.get()->tag=="small");
+            BOOST_TEST(check_counts(1,0));
             }
-        BOOST_TEST(check_counts(1,0));
+        BOOST_TEST(check_counts(0,0));
         ex.put(big());
         BOOST_TEST(dynamic_cast<big *>(ex.get())!=0);
         BOOST_TEST(!ex.empty());
         BOOST_TEST(!ex.holds_static());
         BOOST_TEST(ex.holds_dynamic());
-        BOOST_TEST(strcmp(ex.what(),"big")==0);
+        BOOST_TEST(ex.get()->tag=="big");
         BOOST_TEST(check_counts(0,1));
             {
-            exception_holder ex1(std::move(ex));
+            test_type ex1(std::move(ex));
             BOOST_TEST(ex.empty());
             BOOST_TEST(!ex.holds_static());
             BOOST_TEST(!ex.holds_dynamic());
@@ -158,40 +173,66 @@ test_lifetime()
             BOOST_TEST(!ex1.empty());
             BOOST_TEST(!ex1.holds_static());
             BOOST_TEST(ex1.holds_dynamic());
-            BOOST_TEST(strcmp(ex1.what(),"big")==0);
+	        BOOST_TEST(ex1.get()->tag=="big");
             BOOST_TEST(check_counts(0,1));
             }
         }
     BOOST_TEST(check_counts(0,0));
     }
+
+template <class T>
+void
+throw_( common_base * obj )
+	{
+	throw *static_cast<T *>(obj);
+	}
+
 void
 test_throw_exception()
     {
-    using namespace boost::noexcept_detail;
+    using namespace boost::noexcept_::noexcept_detail;
         {
-        exception_holder ex;
-        ex.put(big());
+        test_type ex;
+        ex.put(big(),&throw_<big>);
         try
             {
-            ex.throw_exception();
+            ex.call_observer();
             BOOST_TEST(false);
             }
         catch( big & b )
             {
-            BOOST_TEST(strcmp(b.what(),"big")==0);
+            BOOST_TEST(b.tag=="big");
+            }
+        try
+            {
+            ex.call_observer();
+            BOOST_TEST(false);
+            }
+        catch( std::exception & e )
+            {
+            BOOST_TEST(strcmp(e.what(),"big")==0);
             }
         }
         {
-        exception_holder ex;
-        ex.put(small());
+        test_type ex;
+        ex.put(small(),&throw_<small>);
         try
             {
-            ex.throw_exception();
+            ex.call_observer();
             BOOST_TEST(false);
             }
         catch( small & s )
             {
-            BOOST_TEST(strcmp(s.what(),"small")==0);
+            BOOST_TEST(s.tag=="small");
+            }
+        try
+            {
+            ex.call_observer();
+            BOOST_TEST(false);
+            }
+        catch( std::exception & e )
+            {
+            BOOST_TEST(strcmp(e.what(),"small")==0);
             }
         }
     }

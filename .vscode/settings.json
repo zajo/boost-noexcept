@@ -4,6 +4,12 @@
 		"xstring": "cpp",
 		"xutility": "cpp",
 		"type_traits": "cpp",
-		"xmemory": "cpp"
+		"xmemory": "cpp",
+		"__functional_03": "cpp",
+		"__functional_base": "cpp",
+		"algorithm": "cpp",
+		"optional": "cpp",
+		"functional": "cpp",
+		"memory": "cpp"
 	}
 }

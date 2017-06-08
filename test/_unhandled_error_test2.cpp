@@ -3,12 +3,12 @@
 //Distributed under the Boost Software License, Version 1.0. (See accompanying
 //file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#include <boost/noexcept/noexcept_result_traits_optional.hpp>
-#include <boost/noexcept/propagate.hpp>
-#include <boost/noexcept/noexcept_try.hpp>
+#include <boost/noexcept/result_traits_optional.hpp>
+#include <boost/noexcept/throw.hpp>
+#include <boost/noexcept/try.hpp>
 
-using namespace boost;
-using boost::noexcept_config::optional;
+using namespace boost::noexcept_;
+using boost::noexcept_::config::optional;
 
 struct
 error:
@@ -18,12 +18,12 @@ error:
 optional<int>
 fail1()
     {
-    return propagate(error());
+    return throw_(error());
     }
 int
 fail2()
     {
-    (void) noexcept_try(fail1());
+    (void) try_(fail1());
     return 42;
     }
 int

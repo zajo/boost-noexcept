@@ -3,13 +3,13 @@
 //Distributed under the Boost Software License, Version 1.0. (See accompanying
 //file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#include <boost/noexcept/noexcept_try.hpp>
-#include <boost/noexcept/propagate.hpp>
-#include <boost/noexcept/noexcept_result_traits_optional.hpp>
+#include <boost/noexcept/try.hpp>
+#include <boost/noexcept/throw.hpp>
+#include <boost/noexcept/result_traits_optional.hpp>
 #include <boost/core/lightweight_test.hpp>
 
-using namespace boost;
-using boost::noexcept_config::optional;
+using namespace boost::noexcept_;
+using boost::noexcept_::config::optional;
 
 struct
 f1_failed:
@@ -35,7 +35,7 @@ f4_failed:
 optional<int>
 f1()
     {
-    return propagate(f1_failed(1));
+    return throw_(f1_failed(1));
     }
 optional<int>
 f2()
@@ -45,38 +45,38 @@ f2()
 optional<int>
 f3()
     {
-    auto tr=noexcept_try(f2());
+    auto tr=try_(f2());
     BOOST_TEST(!tr);
-    return propagate();
+    return throw_();
     }
 optional<int>
 f4()
     {
-    auto tr=noexcept_try(f3());
+    auto tr=try_(f3());
     BOOST_TEST(!tr);
-    BOOST_TEST(tr.noexcept_catch<f1_failed>()->val==1);
-    return propagate(f4_failed(2));
+    BOOST_TEST(tr.catch_<f1_failed>()->val==1);
+    return throw_(f4_failed(2));
     }
 optional<int>
 f5()
     {
     BOOST_TEST(!f4());
-    return propagate();
+    return throw_();
     }
 int
 f6_a()
     {
-    auto tr=noexcept_try(f5());
+    auto tr=try_(f5());
     BOOST_TEST(!tr);
-    BOOST_TEST(tr.noexcept_catch<f4_failed>()->val==2);
+    BOOST_TEST(tr.catch_<f4_failed>()->val==2);
     return 42;
     }
 int
 f6_b()
     {
-    auto tr=noexcept_try(f5());
+    auto tr=try_(f5());
     BOOST_TEST(!tr);
-    BOOST_TEST(tr.noexcept_catch<f1_failed>()->val==2);
+    BOOST_TEST(tr.catch_<f1_failed>()->val==2);
     return 42;
     }
 int

@@ -5,7 +5,7 @@
 			"name": "C++ Launch",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "${workspaceRoot}/bld/debug/_unhandled_error_test5",
+			"program": "${workspaceRoot}/bld/debug/any_movable_test",
 			"cwd": "${workspaceRoot}/test",
 			"args": [],
 			"stopAtEntry": false,
