@@ -35,7 +35,7 @@ boost
                 static thread_local T x;
                 return x;
 #else
-                static boost::sync::thread_specific_ptr<T> x;
+                static boost::thread_specific_ptr<T> x;
                 if( T * p=x.get() )
                     return *p;
                 else
