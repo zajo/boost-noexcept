@@ -20,19 +20,18 @@ boost
         namespace
         noexcept_detail
             {
+			template <class T>
+			void
+			throw_exception_( std::exception * x )
+				{
+				BOOST_NOEXCEPT_ASSERT(x!=0);
+				BOOST_THROW_EXCEPTION(*static_cast<T *>(x));
+				abort();
+				}
             typedef any_movable<128,std::exception> exception_holder;
             class
             current_exception_holder
                 {
-                template <class T>
-                static
-                void
-                throw_exception_( std::exception * x )
-                    {
-                    BOOST_NOEXCEPT_ASSERT(x!=0);
-                    BOOST_THROW_EXCEPTION(*static_cast<T *>(x));
-                    abort();
-                    }
                 public:
                 class
                 handler_base
