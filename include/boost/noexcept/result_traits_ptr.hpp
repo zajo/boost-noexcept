@@ -31,7 +31,7 @@ boost
             result_type
             error_result() noexcept
                 {
-                return 0;
+                return nullptr;
                 }
             static
             value_type const &

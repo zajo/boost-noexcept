@@ -1,0 +1,31 @@
+[source,c++]
+.<boost/noexcept/try.hpp>
+----
+namespace boost { namespace noexcept_ {
+
+	template <class T>
+	class handler {
+
+		handler( handler const & )=delete;
+		handler & operator=( handler const & )=delete;
+
+		public:
+
+		explicit handler( T && val ) noexcept;
+		handler( handler && x ) noexcept;
+		~handler() noexcept;
+
+		explicit operator bool() const noexcept;
+
+		typename result_traits<T>::value_type const & value() const;
+		typename result_traits<T>::value_type & value();
+
+		template <class E=std::exception>
+		E * catch_() noexcept;
+	};
+
+	template <class T>
+	handler<T> try_( T && x ) noexcept;
+
+} }
+----

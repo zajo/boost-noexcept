@@ -27,9 +27,9 @@ endif
 boost_thread=subproject('boost').get_variable('thread')
 includes = include_directories('include')
 
-test( 'c_function_example',
-    executable( 'c_function_example',
-        'examples/c_function_example.cpp',
+test( 'c_api_example',
+    executable( 'c_api_example',
+        'examples/c_api_example.cpp',
         dependencies: boost_thread,
         include_directories:includes ) )
 
