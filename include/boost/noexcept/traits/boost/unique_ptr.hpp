@@ -7,7 +7,6 @@
 #define UUID_F21B7EBA4CEC11E78CDC864BAD730A1C
 
 #include <boost/noexcept/noexcept_detail/ptr_traits.hpp>
-
 namespace boost { namespace movelib { template <class,class> class unique_ptr; } }
 
 namespace
