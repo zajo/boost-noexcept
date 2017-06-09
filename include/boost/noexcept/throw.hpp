@@ -20,30 +20,30 @@ boost
 		namespace
 		noexcept_detail
 			{
-			template <class T,bool DerivesFromStdException=std::is_base_of<std::exception,T>::value> struct put_dispatch;
-			template <class T>
+			template <class E,bool DerivesFromStdException=std::is_base_of<std::exception,E>::value> struct put_dispatch;
+			template <class E>
 			struct
-			put_dispatch<T,true>
+			put_dispatch<E,true>
 				{
 				static
 				void
-	            put_( T && e ) noexcept
+	            put_( E && e ) noexcept
 					{
                 	noexcept_detail::current_exception().put(std::move(e));
 					}
 				};
-			template <class T>
+			template <class E>
 			struct
-			put_dispatch<T,false>
+			put_dispatch<E,false>
 				{
 				struct
 				injector:
-					T,
+					E,
 					std::exception
 					{
 					explicit
-					injector( T && x ) noexcept:
-						T(std::move(x))
+					injector( E && x ) noexcept:
+						E(std::move(x))
 						{
 						}
 					~injector() noexcept
@@ -52,7 +52,7 @@ boost
 					};
 				static
 				void
-	            put_( T && e ) noexcept
+	            put_( E && e ) noexcept
 					{
                 	noexcept_detail::current_exception().put(injector(std::move(e)));
 					}
@@ -67,16 +67,16 @@ boost
             throw_() noexcept
                 {
                 }
-            template <class T>
-            throw_( T && e ) noexcept
+            template <class E>
+            throw_( E && e ) noexcept
                 {
-				noexcept_detail::put_dispatch<T>::put_(std::move(e));
+				noexcept_detail::put_dispatch<E>::put_(std::move(e));
                 }
-            template <class T>
-            operator T() noexcept
+            template <class R>
+            operator R() noexcept
                 {
                 BOOST_NOEXCEPT_ASSERT(!noexcept_detail::current_exception().get_exception().empty());
-                return result_traits<T>::error_result();
+                return result_traits<R>::error_result();
                 }
             };
         }

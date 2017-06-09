@@ -1,5 +1,5 @@
 [source,c++]
-.<boost/noexcept/result_traits_std_optional.hpp>
+.<boost/noexcept/traits/std/optional.hpp>
 ----
 #include <optional>
 

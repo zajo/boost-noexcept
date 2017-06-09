@@ -15,14 +15,14 @@ boost
     namespace
     noexcept_
         {
-        template <class T>
+        template <class R>
         class
         handler:
             public noexcept_detail::current_exception_holder::handler_base
             {
             handler( handler const & )=delete;
             handler & operator=( handler const & )=delete;
-            T val_;
+            R val_;
             noexcept_detail::exception_holder internal_;
             noexcept_detail::exception_holder const * caught_;
             bool handled_;
@@ -43,9 +43,9 @@ boost
                 }
             public:
             explicit
-            handler( T && val ) noexcept:
+            handler( R && val ) noexcept:
                 val_(std::move(val)),
-                caught_(result_traits<T>::succeeded(val_)?0:&noexcept_detail::current_exception().get_exception()),
+                caught_(result_traits<R>::succeeded(val_)?0:&noexcept_detail::current_exception().get_exception()),
                 handled_(false)
                 {
                 if( caught_ )
@@ -88,13 +88,13 @@ boost
                 }
             explicit operator bool() const noexcept
                 {
-                return result_traits<T>::succeeded(val_);
+                return result_traits<R>::succeeded(val_);
                 }
-            typename result_traits<T>::value_type const &
+            typename result_traits<R>::value_type const &
             value() const
                 {
-                if( result_traits<T>::succeeded(val_) )
-                    return result_traits<T>::success_value(val_);
+                if( result_traits<R>::succeeded(val_) )
+                    return result_traits<R>::success_value(val_);
                 else
                     {
                     handled_=true;
@@ -102,11 +102,11 @@ boost
                     abort();
                     }
                 }
-            typename result_traits<T>::value_type &
+            typename result_traits<R>::value_type &
             value()
                 {
-                if( result_traits<T>::succeeded(val_) )
-                    return result_traits<T>::success_value(val_);
+                if( result_traits<R>::succeeded(val_) )
+                    return result_traits<R>::success_value(val_);
                 else
                     {
                     handled_=true;
@@ -133,11 +133,11 @@ boost
                 return caught_==&internal_;
                 }
             };
-        template <class T>
-        handler<T>
-        try_( T && x ) noexcept //Takes any type for which the result_traits template is specialized
+        template <class R>
+        handler<R>
+        try_( R && x ) noexcept //Takes any type for which the result_traits template is specialized
             {
-            return handler<T>(std::move(x));
+            return handler<R>(std::move(x));
             }
         namespace
         noexcept_detail
@@ -153,7 +153,7 @@ boost
             current_exception_holder::
             set_handler( handler_base * h ) noexcept
                 {
-                BOOST_NOEXCEPT_ASSERT(!x_.empty());
+                BOOST_NOEXCEPT_ASSERT(!e_.empty());
                 h_=h;
                 }
             inline

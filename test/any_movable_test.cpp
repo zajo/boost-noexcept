@@ -180,11 +180,11 @@ test_lifetime() noexcept
     BOOST_TEST(check_counts(0,0));
     }
 
-template <class T>
+template <class E>
 void
 throw_exception_( common_base * obj )
     {
-    throw *static_cast<T *>(obj);
+    throw *static_cast<E *>(obj);
     }
 
 void

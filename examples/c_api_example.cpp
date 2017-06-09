@@ -1,5 +1,5 @@
 #include <boost/noexcept.hpp>
-#include <boost/noexcept/result_traits_optional.hpp>  //<1>
+#include <boost/noexcept/traits/boost/optional.hpp>  //<1>
 #include <boost/optional.hpp>
 #include <stdlib.h>
 #include <iostream>

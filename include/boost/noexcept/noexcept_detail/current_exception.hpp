@@ -20,12 +20,12 @@ boost
         namespace
         noexcept_detail
             {
-			template <class T>
+			template <class E>
 			void
-			throw_exception_( std::exception * x )
+			throw_exception_( std::exception * e )
 				{
-				BOOST_NOEXCEPT_ASSERT(x!=0);
-				BOOST_THROW_EXCEPTION(*static_cast<T *>(x));
+				BOOST_NOEXCEPT_ASSERT(e!=0);
+				BOOST_THROW_EXCEPTION(*static_cast<E *>(e));
 				abort();
 				}
             typedef any_movable<128,std::exception> exception_holder;
@@ -43,42 +43,42 @@ boost
                     };
                 ~current_exception_holder() noexcept
                     {
-                    BOOST_NOEXCEPT_ASSERT(x_.empty() && "The thread terminates with unhandled error! Calling abort()! (Did you forget to use try_?)");
-                    if( !x_.empty() )
+                    BOOST_NOEXCEPT_ASSERT(e_.empty() && "The thread terminates with unhandled error! Calling abort()! (Did you forget to use try_?)");
+                    if( !e_.empty() )
                         abort();
                     }
-                template <class T>
+                template <class E>
                 void
-                put( T && obj ) noexcept
+                put( E && e ) noexcept
                     {
                     if( h_ )
                         {
-                        h_->store_internally(std::move(x_));
+                        h_->store_internally(std::move(e_));
                         h_=0;
                         }
-                    BOOST_NOEXCEPT_ASSERT(x_.empty() && "Unhandled error is present at the time a new error is passed to throw_()! (Did you forget to use try_?)");
-                    x_.put(std::move(obj),&throw_exception_<T>);
+                    BOOST_NOEXCEPT_ASSERT(e_.empty() && "Unhandled error is present at the time a new error is passed to throw_()! (Did you forget to use try_?)");
+                    e_.put(std::move(e),&throw_exception_<E>);
                     }
                 exception_holder const &
                 get_exception() noexcept
                     {
-                    return x_;
+                    return e_;
                     }
                 void
-                set_exception( exception_holder && x ) noexcept
+                set_exception( exception_holder && e ) noexcept
                     {
-                    BOOST_NOEXCEPT_ASSERT(x_.empty() && "Unhandled error is present at the time a new error is passed to throw_()! (Did you forget to use try_?)");
-                    x_=std::move(x);
+                    BOOST_NOEXCEPT_ASSERT(e_.empty() && "Unhandled error is present at the time a new error is passed to throw_()! (Did you forget to use try_?)");
+                    e_=std::move(e);
                     }
                 void
                 clear_exception() noexcept
                     {
-                    x_.clear();
+                    e_.clear();
                     }
                 void set_handler( handler_base * ) noexcept;
                 void unset_handler( handler_base * ) noexcept;
                 private:
-                exception_holder x_;
+                exception_holder e_;
                 handler_base * h_;
                 };
             current_exception_holder &

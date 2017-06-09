@@ -1,5 +1,5 @@
 [source,c++]
-.<boost/noexcept/result_traits_optional.hpp>
+.<boost/noexcept/traits/boost/optional.hpp>
 ----
 namespace boost { template <class> class optional; }
 

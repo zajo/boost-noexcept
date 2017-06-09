@@ -1,5 +1,5 @@
 [source,c++]
-.<boost/noexcept/result_traits_ptr.hpp>
+.<boost/noexcept/traits/ptr.hpp>
 ----
 namespace boost { namespace noexcept_ {
 

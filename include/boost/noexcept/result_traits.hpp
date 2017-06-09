@@ -12,14 +12,14 @@ boost
     namespace
     noexcept_
         {
-        template <class T>
+        template <class R>
         struct result_traits;
 
-		template <class T>
+		template <class R>
 		bool
-		succeeded_( T const & x )
+		succeeded_( R const & x )
 			{
-			return result_traits<T>::succeeded(x);
+			return result_traits<R>::succeeded(x);
 			}
         }
     }
