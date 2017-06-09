@@ -22,7 +22,7 @@ boost
             {
             handler( handler const & )=delete;
             handler & operator=( handler const & )=delete;
-            R val_;
+            R res_;
             noexcept_detail::exception_holder internal_;
             noexcept_detail::exception_holder const * caught_;
             bool handled_;
@@ -43,16 +43,16 @@ boost
                 }
             public:
             explicit
-            handler( R && val ) noexcept:
-                val_(std::move(val)),
-                caught_(result_traits<R>::succeeded(val_)?0:&noexcept_detail::current_exception().get_exception()),
+            handler( R && res ) noexcept:
+                res_(std::move(res)),
+                caught_(result_traits<R>::succeeded(res_)?0:&noexcept_detail::current_exception().get_exception()),
                 handled_(false)
                 {
                 if( caught_ )
                     noexcept_detail::current_exception().set_handler(this);
                 }
             handler( handler && x ) noexcept:
-                val_(std::move(x.val_)),
+                res_(std::move(x.res_)),
                 caught_(x.caught_),
                 handled_(x.handled_)
                 {
@@ -88,13 +88,13 @@ boost
                 }
             explicit operator bool() const noexcept
                 {
-                return result_traits<R>::succeeded(val_);
+                return result_traits<R>::succeeded(res_);
                 }
             typename result_traits<R>::value_type const &
             value() const
                 {
-                if( result_traits<R>::succeeded(val_) )
-                    return result_traits<R>::success_value(val_);
+                if( result_traits<R>::succeeded(res_) )
+                    return result_traits<R>::success_value(res_);
                 else
                     {
                     handled_=true;
@@ -105,8 +105,8 @@ boost
             typename result_traits<R>::value_type &
             value()
                 {
-                if( result_traits<R>::succeeded(val_) )
-                    return result_traits<R>::success_value(val_);
+                if( result_traits<R>::succeeded(res_) )
+                    return result_traits<R>::success_value(res_);
                 else
                     {
                     handled_=true;

@@ -6,6 +6,8 @@
 #ifndef UUID_362A73E84A4211E7935355C4AD730A1C
 #define UUID_362A73E84A4211E7935355C4AD730A1C
 
+#include <boost/noexcept/noexcept_detail/ptr_traits.hpp>
+
 namespace
 boost
     {
@@ -17,34 +19,9 @@ boost
 
         template <class T>
         struct
-        result_traits<T *>
+        result_traits<T *>:
+			public noexcept_detail::ptr_traits<T *,T>
             {
-            typedef T * result_type;
-            typedef T value_type;
-            static
-            bool
-            succeeded( result_type x ) noexcept
-                {
-                return bool(x);
-                }
-            static
-            result_type
-            error_result() noexcept
-                {
-                return nullptr;
-                }
-            static
-            value_type const &
-            success_value( result_type const & x ) noexcept
-                {
-                return *x;
-                }
-            static
-            value_type &
-            success_value( result_type & x ) noexcept
-                {
-                return *x;
-                }
             };
         }
     }
