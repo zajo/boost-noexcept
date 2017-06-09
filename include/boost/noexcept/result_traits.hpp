@@ -14,6 +14,13 @@ boost
         {
         template <class T>
         struct result_traits;
+
+		template <class T>
+		bool
+		succeeded_( T const & x )
+			{
+			return result_traits<T>::succeeded(x);
+			}
         }
     }
 

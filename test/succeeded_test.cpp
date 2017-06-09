@@ -3,7 +3,6 @@
 //Distributed under the Boost Software License, Version 1.0. (See accompanying
 //file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#include <boost/noexcept/succeeded.hpp>
 #include <boost/noexcept/try.hpp>
 #include <boost/noexcept/throw.hpp>
 #include <boost/core/lightweight_test.hpp>
@@ -70,19 +69,18 @@ f1( bool succeed ) noexcept
 my_result_type
 f2( bool succeed ) noexcept
     {
-    if( auto x=succeeded_(f1(succeed)) )
-        return my_result_type { x.value() };
+	auto x=f1(succeed);
+	if( succeeded_(x) )
+        return x;
     else
         return throw_();
     }
 void
 test_success() noexcept
     {
-    if( auto x=succeeded_(f2(true)) )
-        {
-        BOOST_TEST(x);
-        BOOST_TEST(x.value()==42);
-        }
+	auto x = f2(true);
+    if( succeeded_(x) )
+        BOOST_TEST(x.answer==42);
     else
         BOOST_TEST(false);
     }
