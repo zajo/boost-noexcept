@@ -11,7 +11,7 @@
 
 using namespace boost::noexcept_;
 
-struct file_open_error: std::exception { };
+struct file_open_error { };
 
 FILE *
 open_file( char const * name ) noexcept

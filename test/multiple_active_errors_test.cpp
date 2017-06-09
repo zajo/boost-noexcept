@@ -15,12 +15,8 @@ using namespace boost::noexcept_;
 struct tag1;
 struct tag2;
 struct tag3;
-template <class>
-struct
-compute_int_failed:
-    std::exception
-    {
-    };
+template <class> struct compute_int_failed { };
+
 template <class Tag>
 boost::optional<int>
 compute_int( bool should_succeed ) noexcept

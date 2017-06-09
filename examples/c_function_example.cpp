@@ -8,7 +8,6 @@
 #include <boost/optional.hpp>
 #include <stdlib.h>
 #include <iostream>
-#include <exception>
 
 using namespace boost::noexcept_;
 
@@ -27,19 +26,12 @@ extern "C" {
     }
 }
 
-struct erratic_error: std::exception {
-    int error_code;
-    explicit
-    erratic_error( int error_code ) noexcept:
-        error_code(error_code)
-        {
-        }
-    };
+struct erratic_error { int error_code; };
 
 boost::optional<float> erratic_caller() noexcept {
     float answer;
     if( int err=erratic(&answer) )
-        return throw_(erratic_error(err));
+        return throw_(erratic_error{err});
     else
         return answer;
 }

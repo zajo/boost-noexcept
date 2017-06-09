@@ -12,8 +12,7 @@
 using namespace boost::noexcept_;
 
 struct
-f1_failed:
-    std::exception
+f1_failed
     {
     int const val;
     explicit
@@ -63,26 +62,39 @@ f5() noexcept
     BOOST_TEST(!f4());
     return throw_();
     }
-int
+void
 f6_a() noexcept
     {
     auto tr=try_(f5());
     BOOST_TEST(!tr);
     BOOST_TEST(tr.catch_<f4_failed>()->val==2);
-    return 42;
     }
-int
+void
 f6_b() noexcept
     {
     auto tr=try_(f5());
     BOOST_TEST(!tr);
     BOOST_TEST(tr.catch_<f1_failed>()->val==2);
-    return 42;
     }
+struct derives_from_std_exception: std::exception { };
+boost::optional<int>
+throw_std_exception()
+	{
+	return throw_(derives_from_std_exception());
+	}
+void
+std_exception_test()
+	{
+	if( auto tr=try_(throw_std_exception()) )
+		BOOST_TEST(false);
+	else
+		BOOST_TEST(tr.catch_<>()!=0);
+	}
 int
 main()
     {
-    BOOST_TEST(f6_a()==42);
-    BOOST_TEST(f6_b()==42);
+    f6_a();
+    f6_b();
+	std_exception_test();
     return boost::report_errors();
     }

@@ -9,16 +9,9 @@
 
 using namespace boost::noexcept_;
 
-struct
-error:
-    std::exception
-    {
-    };
-struct
-my_result_type
-    {
-    int answer;
-    };
+struct error { };
+struct my_result_type { int answer; };
+
 namespace
 boost
     {
@@ -41,7 +34,7 @@ boost
             result_type
             error_result() noexcept
                 {
-                return my_result_type { -1 };
+                return my_result_type {-1};
                 }
             static
             value_type const &
@@ -62,7 +55,7 @@ my_result_type
 f1( bool succeed ) noexcept
     {
     if( succeed )
-        return my_result_type { 42 };
+        return my_result_type {42};
     else
         return throw_(error());
     }

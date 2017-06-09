@@ -11,7 +11,7 @@
 
 using namespace boost::noexcept_;
 
-struct failure: std::exception { };
+struct failure { };
 
 boost::optional<int>
 succeeds() noexcept

@@ -9,11 +9,8 @@
 
 using namespace boost::noexcept_;
 
-struct
-error:
-    std::exception
-    {
-    };
+struct error { };
+
 boost::optional<int>
 fail() noexcept
     {
