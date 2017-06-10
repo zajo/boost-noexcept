@@ -1274,6 +1274,28 @@ E * catch_() noexcept;</code></pre>
 </dd>
 </dl>
 </div>
+<hr>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">R</span>&gt;
+handler&lt;R&gt; try_( R &amp;&amp; res ) noexcept;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This namespace-scope function is needed to deduce the <code>R</code> argument for the <code>handler</code> class template&#8201;&#8212;&#8201;it simply returns <code>handler&lt;R&gt;(std::move(res))</code>. The following syntax is supported:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">if</span>( <span class="directive">auto</span> tr=try_(f()) ) {
+    <span class="comment">//Success, use tr.result() to obtain the result from f()</span>
+} <span class="keyword">else</span> {
+    <span class="comment">//Handle error, see handler::catch&lt;&gt;</span>
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><br></p>
+</div>
 </div>
 </div>
 </div>
@@ -1332,6 +1354,9 @@ E * catch_() noexcept;</code></pre>
 <p>Noexcept is a header-only library and requires no installation. The unit tests can be built with Boost Build: clone Noexcept under the <code>libs</code> directory in your Boost install, then <code>cd</code> into <code>libs/noexcept/test</code> and execute <code>b2</code> as usual.</p>
 </div>
 <div class="paragraph">
+<p><br></p>
+</div>
+<div class="paragraph">
 <p><span class="small"><em>&#169; 2017 Emil Dotchevski</em></span></p>
 </div>
 </div>
@@ -1339,7 +1364,6 @@ E * catch_() noexcept;</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-06-10 03:06:35 PDT
 </div>
 </div>
 </body>
