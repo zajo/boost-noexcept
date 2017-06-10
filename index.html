@@ -538,6 +538,7 @@ table.CodeRay td.code>pre{padding:0}
 </ul>
 </li>
 <li><a href="#_macros_and_configuration">Macros and configuration</a></li>
+<li><a href="#qanda">Q&amp;A</a></li>
 <li><a href="#_download">Download</a></li>
 <li><a href="#_installation">Installation</a></li>
 </ul>
@@ -608,7 +609,7 @@ Noexcept is not part of Boost.
 <p>Noexcept does not require programmers to use a special class template in return values of functions that may fail. They can use any type whatsoever, the only requirement is that the return value semantics allow for an invalid state&#8201;&#8212;&#8201;a special value that can be used to discriminate between success and failure.</p>
 </div>
 <div class="paragraph">
-<p>When a failure is detected, an error object is created in thread-local storage. The presence of this object does not interfere with error-neutral functions or their return value types, except that they&#8217;re required to communicate that <em>something</em> went wrong. The error object is destroyed when control reaches an error-handling function which recognizes it by its type (yes, multiple active errors are supported, see <a href="#faq">FAQ</a>).</p>
+<p>When a failure is detected, an error object is created in thread-local storage. The presence of this object does not interfere with error-neutral functions or their return value types, except that they&#8217;re required to communicate that <em>something</em> went wrong. The error object is destroyed when control reaches an error-handling function which recognizes it by its type (yes, multiple active errors are supported, see <a href="#qanda">Q&amp;A</a>).</p>
 </div>
 </div>
 </div>
@@ -654,7 +655,7 @@ FILE * open_file( <span class="predefined-type">char</span> <span class="directi
 <p>Partial specialization of <code>result_traits</code> for pointer types.</p>
 </li>
 <li>
-<p>The <code>throw_</code> moves the <code>file_open_error</code> object into static thread-local storage, and converts to <code>nullptr</code> for the return value (as specified in <code>result_traits</code>).</p>
+<p>The <code><a href="#throw_">throw_</a></code> moves the <code>file_open_error</code> object into static thread-local storage, and converts to <code>nullptr</code> for the return value (as specified in <code>result_traits</code>).</p>
 </li>
 <li>
 <p>The <code><a href="#try_">try_</a></code> both checks for succcess and moves the return value of <code>open_file</code> into <code>tr</code>.</p>
@@ -741,13 +742,13 @@ boost::optional&lt;<span class="predefined-type">float</span>&gt; erratic_caller
 <p>A simple error type to report failures from the C API function.</p>
 </li>
 <li>
-<p>The cumbersome <code>float</code> pointer interface of the <code>C</code> function is converted to <code>boost::optional&lt;float&gt;</code>. The <code>throw_</code> returns an empty <code>optional</code> in case of failure (as specified in <code>result_traits</code>).</p>
+<p>The cumbersome <code>float</code> pointer interface of the <code>C</code> function is converted to <code>boost::optional&lt;float&gt;</code>. The <code><a href="#throw_">throw_</a></code> returns an empty <code>optional</code> in case of failure (as specified in <code><a href="#result_traits">result_traits</a></code>).</p>
 </li>
 <li>
-<p>The <code>try_</code> both checks for succcess and moves the return value of <code>erratic_caller</code> into <code>tr</code>.</p>
+<p>The <code><a href="#try_">try_</a></code> both checks for succcess and moves the return value of <code>erratic_caller</code> into <code>tr</code>.</p>
 </li>
 <li>
-<p>The <code>catch_</code> returns a pointer to the error object (or <code>nullptr</code> if it can not be converted to <code>erratic_error</code>) and flags it as handled.</p>
+<p>The <code><a href="#catch_">catch_</a></code> returns a pointer to the error object (or <code>nullptr</code> if it can not be converted to <code>erratic_error</code>) and flags it as handled.</p>
 </li>
 </ol>
 </div>
@@ -1344,6 +1345,77 @@ handler&lt;R&gt; try_( R &amp;&amp; res ) noexcept;</code></pre>
 </div>
 <div class="paragraph">
 <p>All Noexcept functions are declared as <code>noexcept</code>, except for <code><a href="#handler_result">handler::result</a>()</code> which throws exceptions using this macro. If not <code>#defined</code>, Noexcept header files <code>#define</code> it to <a href="www.boost.org/doc/libs/release/libs/exception/doc/BOOST_THROW_EXCEPTION.html"><code>BOOST_THROW_EXCEPTION</code></a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="qanda">Q&amp;A</h2>
+<div class="sectionbody">
+<div class="qlist qanda">
+<ol>
+<li>
+<p><em>When using exception handling, there can be multiple active exception objects in each thread. Does Noexcept support multiple active errors?</em></p>
+<p>Yes, the current error object can be captured using <code><a href="#try_">try_</a></code>, at which point the calling thread is left without a current error.</p>
+<div class="paragraph">
+<p>However, it is up to the user to call <code>try_</code>: the code below is ill-formed, assuming that both function calls may fail&#8201;&#8212;&#8201;that is, return using <code><a href="#throw_">throw_</a>(my_error())</code>, for some user-defined type <code>my_error</code>:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>auto r1=f1();
+auto r2=f2();</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The correct code would ensure that at the time <code>f2()</code> is called there is no current error for the calling thread. This could be done either by checking the return value of <code>f1()</code> (assuming <code>r1</code> converts to bool to indicate success or failure):</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>if( auto r1=f1() ) {
+    auto r2=f2(); //okay for f2 to fail (f1 didn't)
+    ....
+} else {
+    return throw_(); //let the caller deal with failures
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>auto r1=try_(f1()); //capture possible f1 failures
+auto r2=f2(); //okay, even if both f1 and f2 fail</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>(Nothrow asserts on <code>!<a href="#has_current_error">has_current_error</a>()</code> at the time an error object is passed to <code><a href="#thtrow_">throw_</a></code> ).</p>
+</div>
+</li>
+<li>
+<p><em>Does this mean that I should always use <code>try_</code>?</em></p>
+<p>No, only use <code>try_</code> if you want to handle errors (see <code><a href="#catch_">catch_</a></code>). In error-neutral contexts, in case of errors simply return <code><a href="#throw_">throw_</a>()</code> without argument (assuming <code><a href="#result_traits">result_traits</a></code> has been specialized for the the result type of your function):</p>
+<div class="literalblock">
+<div class="content">
+<pre>if( auto r=f() ) {
+    //Success -- use r
+} else {
+    return throw_(); //Something went wrong
+}</pre>
+</div>
+</div>
+</li>
+<li>
+<p><em>What happens if <code><a href="#try_">try_</a>()</code> is called without any error being present?</em></p>
+<p>That is fine, in this case the value passed to <code>try_</code> will simply be moved into the returned <code><a href="#handler">handler</a></code> object, where it can be accessed using the <code><a href="#handler_result">result</a>()</code> member function.</p>
+</li>
+<li>
+<p><em>The design of Noexcept smells like exception handling to me, what about Overhead?</em></p>
+<p>It is true, Noexcept has been designed to mimic C++ exception handling in order to enable the same useful programming techniques it allows, perhaps most importantly freeing function return values from the burden of having to transport error objects.</p>
+<div class="paragraph">
+<p>While performance is an important design goal in Noexcept, consider that except when you use <code><a href="#try_">try_</a></code>, the speed of passing return values up the call stack is independent of Noexcept.</p>
+</div>
+</li>
+</ol>
 </div>
 </div>
 </div>
