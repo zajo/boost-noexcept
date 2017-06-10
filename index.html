@@ -419,27 +419,121 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 .show-for-print{display:inherit!important}}
 </style>
 <style>
-/* Pygments styles disabled. Pygments is not available. */
+/* Stylesheet for CodeRay to match GitHub theme | MIT License | http://foundation.zurb.com */
+/*pre.CodeRay {background-color:#f7f7f8;}*/
+.CodeRay .line-numbers{border-right:1px solid #d8d8d8;padding:0 0.5em 0 .25em}
+.CodeRay span.line-numbers{display:inline-block;margin-right:.5em;color:rgba(0,0,0,.3)}
+.CodeRay .line-numbers strong{color:rgba(0,0,0,.4)}
+table.CodeRay{border-collapse:separate;border-spacing:0;margin-bottom:0;border:0;background:none}
+table.CodeRay td{vertical-align: top;line-height:1.45}
+table.CodeRay td.line-numbers{text-align:right}
+table.CodeRay td.line-numbers>pre{padding:0;color:rgba(0,0,0,.3)}
+table.CodeRay td.code{padding:0 0 0 .5em}
+table.CodeRay td.code>pre{padding:0}
+.CodeRay .debug{color:#fff !important;background:#000080 !important}
+.CodeRay .annotation{color:#007}
+.CodeRay .attribute-name{color:#000080}
+.CodeRay .attribute-value{color:#700}
+.CodeRay .binary{color:#509}
+.CodeRay .comment{color:#998;font-style:italic}
+.CodeRay .char{color:#04d}
+.CodeRay .char .content{color:#04d}
+.CodeRay .char .delimiter{color:#039}
+.CodeRay .class{color:#458;font-weight:bold}
+.CodeRay .complex{color:#a08}
+.CodeRay .constant,.CodeRay .predefined-constant{color:#008080}
+.CodeRay .color{color:#099}
+.CodeRay .class-variable{color:#369}
+.CodeRay .decorator{color:#b0b}
+.CodeRay .definition{color:#099}
+.CodeRay .delimiter{color:#000}
+.CodeRay .doc{color:#970}
+.CodeRay .doctype{color:#34b}
+.CodeRay .doc-string{color:#d42}
+.CodeRay .escape{color:#666}
+.CodeRay .entity{color:#800}
+.CodeRay .error{color:#808}
+.CodeRay .exception{color:inherit}
+.CodeRay .filename{color:#099}
+.CodeRay .function{color:#900;font-weight:bold}
+.CodeRay .global-variable{color:#008080}
+.CodeRay .hex{color:#058}
+.CodeRay .integer,.CodeRay .float{color:#099}
+.CodeRay .include{color:#555}
+.CodeRay .inline{color:#000}
+.CodeRay .inline .inline{background:#ccc}
+.CodeRay .inline .inline .inline{background:#bbb}
+.CodeRay .inline .inline-delimiter{color:#d14}
+.CodeRay .inline-delimiter{color:#d14}
+.CodeRay .important{color:#555;font-weight:bold}
+.CodeRay .interpreted{color:#b2b}
+.CodeRay .instance-variable{color:#008080}
+.CodeRay .label{color:#970}
+.CodeRay .local-variable{color:#963}
+.CodeRay .octal{color:#40e}
+.CodeRay .predefined{color:#369}
+.CodeRay .preprocessor{color:#579}
+.CodeRay .pseudo-class{color:#555}
+.CodeRay .directive{font-weight:bold}
+.CodeRay .type{font-weight:bold}
+.CodeRay .predefined-type{color:inherit}
+.CodeRay .reserved,.CodeRay .keyword {color:#000;font-weight:bold}
+.CodeRay .key{color:#808}
+.CodeRay .key .delimiter{color:#606}
+.CodeRay .key .char{color:#80f}
+.CodeRay .value{color:#088}
+.CodeRay .regexp .delimiter{color:#808}
+.CodeRay .regexp .content{color:#808}
+.CodeRay .regexp .modifier{color:#808}
+.CodeRay .regexp .char{color:#d14}
+.CodeRay .regexp .function{color:#404;font-weight:bold}
+.CodeRay .string{color:#d20}
+.CodeRay .string .string .string{background:#ffd0d0}
+.CodeRay .string .content{color:#d14}
+.CodeRay .string .char{color:#d14}
+.CodeRay .string .delimiter{color:#d14}
+.CodeRay .shell{color:#d14}
+.CodeRay .shell .delimiter{color:#d14}
+.CodeRay .symbol{color:#990073}
+.CodeRay .symbol .content{color:#a60}
+.CodeRay .symbol .delimiter{color:#630}
+.CodeRay .tag{color:#008080}
+.CodeRay .tag-special{color:#d70}
+.CodeRay .variable{color:#036}
+.CodeRay .insert{background:#afa}
+.CodeRay .delete{background:#faa}
+.CodeRay .change{color:#aaf;background:#007}
+.CodeRay .head{color:#f8f;background:#505}
+.CodeRay .insert .insert{color:#080}
+.CodeRay .delete .delete{color:#800}
+.CodeRay .change .change{color:#66f}
+.CodeRay .head .head{color:#f4f}
 </style>
 </head>
-<body class="article">
+<body class="article toc2 toc-right">
 <div id="header">
 <h1>Noexcept</h1>
 <div class="details">
 <span id="author" class="author">A generic error-handling library for C++11</span><br>
 </div>
-<div id="toc" class="toc">
+<div id="toc" class="toc2">
 <div id="toctitle"></div>
 <ul class="sectlevel1">
 <li><a href="#_abstract">Abstract</a></li>
 <li><a href="#_license">License</a></li>
 <li><a href="#_design_rationale">Design rationale</a></li>
-<li><a href="#Introduction">Crash course</a></li>
+<li><a href="#Introduction">Crash course</a>
+<ul class="sectlevel2">
+<li><a href="#_using_noexcept_to_handle_code_file_code_open_errors">Using Noexcept to handle <code>FILE</code> open errors</a></li>
+<li><a href="#_using_noexcept_with_code_optional_code_and_a_c_api">Using Noexcept with <code>optional&lt;&gt;</code> and a C API</a></li>
+</ul>
+</li>
 <li><a href="#synopsis">Synopsis</a></li>
 <li><a href="#_reference">Reference</a>
 <ul class="sectlevel2">
 <li><a href="#__code_result_traits_code"><code>result_traits</code></a></li>
 <li><a href="#__code_throw_code"><code>throw_</code></a></li>
+<li><a href="#__code_has_current_error_code"><code>has_current_error</code></a></li>
 <li><a href="#__code_try_code"><code>try_</code></a></li>
 </ul>
 </li>
@@ -518,35 +612,36 @@ Noexcept is not part of Boost.
 <div class="sect1">
 <h2 id="Introduction">Crash course</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="_using_noexcept_to_handle_code_file_code_open_errors">Using Noexcept to handle <code>FILE</code> open errors</h3>
 <div class="listingblock">
-<div class="title">Using Noexcept to handle <code>FILE</code> open errors</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++">#include &lt;boost/noexcept.hpp&gt;
-#include &lt;boost/noexcept/traits/ptr.hpp&gt;  <b class="conum">(1)</b>
-#include &lt;stdio.h&gt;
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="preprocessor">#include</span> <span class="include">&lt;boost/noexcept.hpp&gt;</span>
+<span class="preprocessor">#include</span> <span class="include">&lt;boost/noexcept/traits/ptr.hpp&gt;</span>  <b class="conum">(1)</b>
+<span class="preprocessor">#include</span> <span class="include">&lt;stdio.h&gt;</span>
 
-using namespace boost::noexcept_;
+<span class="directive">using</span> <span class="keyword">namespace</span> boost::noexcept_;
 
-struct file_open_error { };
+<span class="keyword">struct</span> file_open_error { };
 
-//Returns the FILE pointer on success or throw_s file_open_error.
-FILE * open_file( char const * name ) noexcept {
-    if( FILE * f=fopen(name,"rb") )
-        return f;
-    else
-        return throw_(file_open_error());  <b class="conum">(2)</b>
+<span class="comment">//Returns the FILE pointer on success or throw_s file_open_error.</span>
+FILE * open_file( <span class="predefined-type">char</span> <span class="directive">const</span> * name ) noexcept {
+    <span class="keyword">if</span>( FILE * f=fopen(name,<span class="string"><span class="delimiter">&quot;</span><span class="content">rb</span><span class="delimiter">&quot;</span></span>) )
+        <span class="keyword">return</span> f;
+    <span class="keyword">else</span>
+        <span class="keyword">return</span> throw_(file_open_error());  <b class="conum">(2)</b>
 }
 
-int main() {
-    if( auto tr=try_(open_file("file_name")) ) {  <b class="conum">(3)</b>
-        //Success! Get the FILE by reference.:
-        FILE &amp; f=tr.value();
-        //Use the file, then close it
-        fclose(&amp;f);
-    } else if( file_open_error * err=tr.catch_&lt;file_open_error&gt;() ) {  <b class="conum">(4)</b>
-        //The file failed to open! Handle error.
+<span class="predefined-type">int</span> main() {
+    <span class="keyword">if</span>( <span class="directive">auto</span> tr=try_(open_file(<span class="string"><span class="delimiter">&quot;</span><span class="content">file_name</span><span class="delimiter">&quot;</span></span>)) ) {  <b class="conum">(3)</b>
+        <span class="comment">//Success! Get the FILE pointer:</span>
+        FILE * f=tr.result();
+        <span class="comment">//Use the file, then close it</span>
+        fclose(f);
+    } <span class="keyword">else</span> <span class="keyword">if</span>( file_open_error * err=tr.catch_&lt;file_open_error&gt;() ) {  <b class="conum">(4)</b>
+        <span class="comment">//The file failed to open! Handle error.</span>
     }  <b class="conum">(5)</b>
-    return 0;
+    <span class="keyword">return</span> <span class="integer">0</span>;
 }</code></pre>
 </div>
 </div>
@@ -582,50 +677,52 @@ If unhandled errors remain at the time the current thread terminates, Noexcept c
 </table>
 </div>
 <hr>
+</div>
+<div class="sect2">
+<h3 id="_using_noexcept_with_code_optional_code_and_a_c_api">Using Noexcept with <code>optional&lt;&gt;</code> and a C API</h3>
 <div class="listingblock">
-<div class="title">Using Noexcept with <code>optional&lt;&gt;</code> and a C API</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++">#include &lt;boost/noexcept.hpp&gt;
-#include &lt;boost/noexcept/traits/boost/optional.hpp&gt;  <b class="conum">(1)</b>
-#include &lt;boost/optional.hpp&gt;
-#include &lt;stdlib.h&gt;
-#include &lt;iostream&gt;
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="preprocessor">#include</span> <span class="include">&lt;boost/noexcept.hpp&gt;</span>
+<span class="preprocessor">#include</span> <span class="include">&lt;boost/noexcept/traits/boost/optional.hpp&gt;</span>  <b class="conum">(1)</b>
+<span class="preprocessor">#include</span> <span class="include">&lt;boost/optional.hpp&gt;</span>
+<span class="preprocessor">#include</span> <span class="include">&lt;stdlib.h&gt;</span>
+<span class="preprocessor">#include</span> <span class="include">&lt;iostream&gt;</span>
 
-using namespace boost::noexcept_;
+<span class="directive">using</span> <span class="keyword">namespace</span> boost::noexcept_;
 
-//A C function which may fail, returning different error codes
-extern "C" {
-    #define ERRATIC_ERROR_FOO 1
-    #define ERRATIC_ERROR_BAR 2
+<span class="comment">//A C function which may fail, returning different error codes</span>
+<span class="directive">extern</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">C</span><span class="delimiter">&quot;</span></span> {
+    <span class="preprocessor">#define</span> ERRATIC_ERROR_FOO <span class="integer">1</span>
+    <span class="preprocessor">#define</span> ERRATIC_ERROR_BAR <span class="integer">2</span>
 
-    int erratic( float * answer ) {  <b class="conum">(2)</b>
-        switch( rand() % 3 ) {
-            default: *answer=42; return 0;
-            case 1: return ERRATIC_ERROR_FOO;
-            case 2: return ERRATIC_ERROR_BAR;
+    <span class="predefined-type">int</span> erratic( <span class="predefined-type">float</span> * answer ) {  <b class="conum">(2)</b>
+        <span class="keyword">switch</span>( rand() % <span class="integer">3</span> ) {
+            <span class="keyword">default</span>: *answer=<span class="integer">42</span>; <span class="keyword">return</span> <span class="integer">0</span>;
+            <span class="keyword">case</span> <span class="integer">1</span>: <span class="keyword">return</span> ERRATIC_ERROR_FOO;
+            <span class="keyword">case</span> <span class="integer">2</span>: <span class="keyword">return</span> ERRATIC_ERROR_BAR;
         }
     }
 }
 
-struct erratic_error { int error_code; };  <b class="conum">(3)</b>
+<span class="keyword">struct</span> erratic_error { <span class="predefined-type">int</span> error_code; };  <b class="conum">(3)</b>
 
-boost::optional&lt;float&gt; erratic_caller() noexcept {  <b class="conum">(4)</b>
-    float answer;
-    if( int err=erratic(&amp;answer) )
-        return throw_(erratic_error{err});
-    else
-        return answer;
+boost::optional&lt;<span class="predefined-type">float</span>&gt; erratic_caller() noexcept {  <b class="conum">(4)</b>
+    <span class="predefined-type">float</span> answer;
+    <span class="keyword">if</span>( <span class="predefined-type">int</span> err=erratic(&amp;answer) )
+        <span class="keyword">return</span> throw_(erratic_error{err});
+    <span class="keyword">else</span>
+        <span class="keyword">return</span> answer;
 }
 
-int main() {
-    for( int i=0; i!=10; ++i )
-        if( auto tr=try_(erratic_caller()) )  <b class="conum">(5)</b>
-            std::cout &lt;&lt; "Answer: " &lt;&lt; tr.value() &lt;&lt; std::endl;
-        else if( erratic_error const * err = tr.catch_&lt;erratic_error&gt;() )  <b class="conum">(6)</b>
-            std::cout &lt;&lt; "FAILED! error code=" &lt;&lt; err-&gt;error_code &lt;&lt; std::endl;
-        else
-            assert(0);
-    return 0;
+<span class="predefined-type">int</span> main() {
+    <span class="keyword">for</span>( <span class="predefined-type">int</span> i=<span class="integer">0</span>; i!=<span class="integer">10</span>; ++i )
+        <span class="keyword">if</span>( <span class="directive">auto</span> tr=try_(erratic_caller()) )  <b class="conum">(5)</b>
+            std::cout &lt;&lt; <span class="string"><span class="delimiter">&quot;</span><span class="content">Answer: </span><span class="delimiter">&quot;</span></span> &lt;&lt; tr.result().value() &lt;&lt; std::endl;
+        <span class="keyword">else</span> <span class="keyword">if</span>( erratic_error <span class="directive">const</span> * err = tr.catch_&lt;erratic_error&gt;() )  <b class="conum">(6)</b>
+            std::cout &lt;&lt; <span class="string"><span class="delimiter">&quot;</span><span class="content">FAILED! error code=</span><span class="delimiter">&quot;</span></span> &lt;&lt; err-&gt;error_code &lt;&lt; std::endl;
+        <span class="keyword">else</span>
+            assert(<span class="integer">0</span>);
+    <span class="keyword">return</span> <span class="integer">0</span>;
 }</code></pre>
 </div>
 </div>
@@ -653,27 +750,29 @@ int main() {
 </div>
 </div>
 </div>
+</div>
 <div class="sect1">
 <h2 id="synopsis">Synopsis</h2>
 <div class="sectionbody">
 <div class="listingblock">
 <div class="title">&lt;boost/noexcept.hpp&gt;</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++">#include &lt;boost/noexcept/result_traits.hpp&gt;
-#include &lt;boost/noexcept/throw.hpp&gt;
-#include &lt;boost/noexcept/try.hpp&gt;</code></pre>
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="preprocessor">#include</span> <span class="include">&lt;boost/noexcept/result_traits.hpp&gt;</span>
+<span class="preprocessor">#include</span> <span class="include">&lt;boost/noexcept/throw.hpp&gt;</span>
+<span class="preprocessor">#include</span> <span class="include">&lt;boost/noexcept/try.hpp&gt;</span>
+<span class="preprocessor">#include</span> <span class="include">&lt;boost/noexcept/has_current_error.hpp&gt;</span></code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">&lt;boost/noexcept/result_traits.hpp&gt;</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++">namespace boost { namespace noexcept_ {
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> noexcept_ {
 
-	template &lt;class&gt;
-	struct result_traits; //main template left undefined
+    <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">&gt;</span>
+    <span class="keyword">struct</span> result_traits; <span class="comment">//main template left undefined</span>
 
-	template &lt;class T&gt;
-	bool succeeded_( T const &amp; x )
+    <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">R</span>&gt;
+    <span class="predefined-type">bool</span> succeeded_( R <span class="directive">const</span> &amp; x )
 
 } }</code></pre>
 </div>
@@ -681,23 +780,23 @@ int main() {
 <div class="listingblock">
 <div class="title">&lt;boost/noexcept/throw.hpp&gt;</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++">namespace boost { namespace noexcept_ {
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> noexcept_ {
 
-	class throw_ {
+    <span class="keyword">class</span> <span class="class">throw_</span> {
 
-		throw_( throw_ const &amp; )=delete;
-		throw_ &amp; operator=( throw_ const &amp; )=delete;
+        throw_( throw_ <span class="directive">const</span> &amp; )=<span class="keyword">delete</span>;
+        throw_ &amp; <span class="directive">operator</span>=( throw_ <span class="directive">const</span> &amp; )=<span class="keyword">delete</span>;
 
-		public:
+        <span class="directive">public</span>:
 
-		throw_() noexcept { }
+        throw_() noexcept { }
 
-		template &lt;class T&gt;
-		throw_( T &amp;&amp; e ) noexcept;
+        <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">E</span>&gt;
+        throw_( E &amp;&amp; e ) noexcept;
 
-		template &lt;class T&gt;
-		operator T() noexcept;
-	};
+        <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">R</span>&gt;
+        <span class="directive">operator</span> R() noexcept;
+    };
 
 } }</code></pre>
 </div>
@@ -705,31 +804,41 @@ int main() {
 <div class="listingblock">
 <div class="title">&lt;boost/noexcept/try.hpp&gt;</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++">namespace boost { namespace noexcept_ {
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> noexcept_ {
 
-	template &lt;class T&gt;
-	class handler {
+    <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">R</span>&gt;
+    <span class="keyword">class</span> <span class="class">handler</span> {
 
-		handler( handler const &amp; )=delete;
-		handler &amp; operator=( handler const &amp; )=delete;
+        handler( handler <span class="directive">const</span> &amp; )=<span class="keyword">delete</span>;
+        handler &amp; <span class="directive">operator</span>=( handler <span class="directive">const</span> &amp; )=<span class="keyword">delete</span>;
 
-		public:
+        <span class="directive">public</span>:
 
-		explicit handler( T &amp;&amp; val ) noexcept;
-		handler( handler &amp;&amp; x ) noexcept;
-		~handler() noexcept;
+        <span class="directive">explicit</span> handler( R &amp;&amp; res ) noexcept;
+        handler( handler &amp;&amp; x ) noexcept;
+        ~handler() noexcept;
 
-		explicit operator bool() const noexcept;
+        <span class="directive">explicit</span> <span class="directive">operator</span> <span class="predefined-type">bool</span>() <span class="directive">const</span> noexcept;
 
-		typename result_traits&lt;T&gt;::value_type const &amp; value() const;
-		typename result_traits&lt;T&gt;::value_type &amp; value();
+        R <span class="directive">const</span> &amp; result() <span class="directive">const</span>;
+        R &amp; result();
 
-		template &lt;class E=std::exception&gt;
-		E * catch_() noexcept;
-	};
+        <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">E</span>=std::exception&gt;
+        E * catch_() noexcept;
+    };
 
-	template &lt;class T&gt;
-	handler&lt;T&gt; try_( T &amp;&amp; x ) noexcept;
+    <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">R</span>&gt;
+    handler&lt;R&gt; try_( R &amp;&amp; res ) noexcept;
+
+} }</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">&lt;boost/noexcept/has_current_error.hpp&gt;</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> noexcept_ {
+
+    <span class="predefined-type">bool</span> has_current_error() noexcept;
 
 } }</code></pre>
 </div>
@@ -737,32 +846,21 @@ int main() {
 <div class="listingblock">
 <div class="title">&lt;boost/noexcept/traits/ptr.hpp&gt;</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++">namespace boost { namespace noexcept_ {
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> noexcept_ {
 
-	template &lt;class&gt; struct result_traits;
+    <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">&gt;</span> <span class="keyword">struct</span> result_traits;
 
-	template &lt;class T&gt;
-	struct result_traits&lt;T *&gt; {
+    <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">T</span>&gt;
+    <span class="keyword">struct</span> result_traits&lt;T *&gt; {
 
-		typedef T * result_type;
-		typedef T value_type;
+        <span class="directive">static</span> <span class="predefined-type">bool</span> succeeded( T * x ) noexcept {
+            <span class="keyword">return</span> <span class="predefined-type">bool</span>(x);
+        }
 
-		static bool succeeded( result_type x ) noexcept {
-			return bool(x);
-		}
-
-		static result_type error_result() noexcept {
-			return nullptr;
-		}
-
-		static value_type const &amp; success_value( result_type const &amp; x ) noexcept {
-			return *x;
-		}
-
-		static value_type &amp; success_value( result_type &amp; x ) noexcept {
-			return *x;
-		}
-	};
+        <span class="directive">static</span> T * error_result() noexcept {
+            <span class="keyword">return</span> nullptr;
+        }
+    };
 
 } }</code></pre>
 </div>
@@ -770,34 +868,23 @@ int main() {
 <div class="listingblock">
 <div class="title">&lt;boost/noexcept/traits/boost/optional.hpp&gt;</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++">namespace boost { template &lt;class&gt; class optional; }
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">&gt;</span> <span class="keyword">class</span> <span class="class">optional</span>; }
 
-namespace boost { namespace noexcept_ {
+<span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> noexcept_ {
 
-	template &lt;class&gt; struct result_traits;
+    <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">&gt;</span> <span class="keyword">struct</span> result_traits;
 
-	template &lt;class T&gt;
-	struct result_traits&lt;optional&lt;T&gt; &gt; {
+    <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">T</span>&gt;
+    <span class="keyword">struct</span> result_traits&lt;optional&lt;T&gt; &gt; {
 
-		typedef optional&lt;T&gt; result_type;
-		typedef T value_type;
+        <span class="directive">static</span> <span class="predefined-type">bool</span> succeeded( optional&lt;T&gt;  <span class="directive">const</span> &amp; x ) noexcept {
+            <span class="keyword">return</span> <span class="predefined-type">bool</span>(x);
+        }
 
-		static bool succeeded( result_type const &amp; x ) noexcept {
-			return bool(x);
-		}
-
-		static result_type error_result() noexcept {
-			return result_type();
-		}
-
-		static value_type const &amp; success_value( result_type const &amp; x ) noexcept {
-			return x.value();
-		}
-
-		static value_type &amp; success_value( result_type &amp; x ) noexcept {
-			return x.value();
-		}
-	};
+        <span class="directive">static</span> optional&lt;T&gt; error_result() noexcept {
+            <span class="keyword">return</span> optional&lt;T&gt;();
+        }
+    };
 
 } }</code></pre>
 </div>
@@ -805,34 +892,23 @@ namespace boost { namespace noexcept_ {
 <div class="listingblock">
 <div class="title">&lt;boost/noexcept/traits/std/optional.hpp&gt;</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++">#include &lt;optional&gt;
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="preprocessor">#include</span> <span class="include">&lt;optional&gt;</span>
 
-namespace boost { namespace noexcept_ {
+<span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> noexcept_ {
 
-	template &lt;class&gt; struct result_traits;
+    <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">&gt;</span> <span class="keyword">struct</span> result_traits;
 
-	template &lt;class T&gt;
-	struct result_traits&lt;std::optional&lt;T&gt; &gt; {
+    <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">T</span>&gt;
+    <span class="keyword">struct</span> result_traits&lt;std::optional&lt;T&gt; &gt; {
 
-		typedef std::optional&lt;T&gt; result_type;
-		typedef T value_type;
+        <span class="directive">static</span> <span class="predefined-type">bool</span> succeeded( std::optional&lt;T&gt; <span class="directive">const</span> &amp; x ) noexcept {
+            <span class="keyword">return</span> <span class="predefined-type">bool</span>(x);
+        }
 
-		static bool succeeded( result_type const &amp; x ) noexcept {
-			return bool(x);
-		}
-
-		static result_type error_result() noexcept {
-			return result_type();
-		}
-
-		static value_type const &amp; success_value( result_type const &amp; x ) noexcept {
-			return x.value();
-		}
-
-		static value_type &amp; success_value( result_type &amp; x ) noexcept {
-			return x.value();
-		}
-	};
+        <span class="directive">static</span> std::optional&lt;T&gt; error_result() noexcept {
+            <span class="keyword">return</span> std::optional&lt;T&gt;();
+        }
+    };
 
 } }</code></pre>
 </div>
@@ -847,13 +923,13 @@ namespace boost { namespace noexcept_ {
 <div class="listingblock">
 <div class="title">&lt;boost/noexcept/result_traits.hpp&gt;</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++">namespace boost { namespace noexcept_ {
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> noexcept_ {
 
-	template &lt;class&gt;
-	struct result_traits; //main template left undefined
+    <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">&gt;</span>
+    <span class="keyword">struct</span> result_traits; <span class="comment">//main template left undefined</span>
 
-	template &lt;class T&gt;
-	bool succeeded_( T const &amp; x )
+    <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">R</span>&gt;
+    <span class="predefined-type">bool</span> succeeded_( R <span class="directive">const</span> &amp; x )
 
 } }</code></pre>
 </div>
@@ -876,19 +952,9 @@ namespace boost { namespace noexcept_ {
 <div class="paragraph">
 <p>User-defined (partial) specializations for a result type <code>R</code> should define the following members:</p>
 </div>
-<hr>
 <div class="listingblock">
 <div class="content">
-<pre>typedef &lt;user-defined&gt; value_type;</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The type returned by <code>success_value()</code> (see below). For example, for <code>std::optional&lt;T&gt;</code> the <code>value_type</code> would be <code>T</code>.</p>
-</div>
-<hr>
-<div class="listingblock">
-<div class="content">
-<pre>static bool succeeded( R const &amp; x ) noexcept;</pre>
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="directive">static</span> <span class="predefined-type">bool</span> succeeded( R <span class="directive">const</span> &amp; x ) noexcept;</code></pre>
 </div>
 </div>
 <div class="dlist">
@@ -902,7 +968,7 @@ namespace boost { namespace noexcept_ {
 <hr>
 <div class="listingblock">
 <div class="content">
-<pre>static R error_result() noexcept;</pre>
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="directive">static</span> R error_result() noexcept;</code></pre>
 </div>
 </div>
 <div class="dlist">
@@ -916,31 +982,12 @@ namespace boost { namespace noexcept_ {
 <hr>
 <div class="listingblock">
 <div class="content">
-<pre>static value_type &amp; success_value( result_type &amp; x ) noexcept;
-static value_type const &amp; success_value( result_type const &amp; x ) noexcept;</pre>
-</div>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1"><em>Preconditions:</em></dt>
-<dd>
-<p><code>succeeded(x)</code>.</p>
-</dd>
-<dt class="hdlist1"><em>Returns:</em></dt>
-<dd>
-<p>The value of <code>x</code>.</p>
-</dd>
-</dl>
-</div>
-<hr>
-<div class="listingblock">
-<div class="content">
-<pre>template &lt;class T&gt;
-bool succeeded_( T const &amp; x )</pre>
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">R</span>&gt;
+<span class="predefined-type">bool</span> succeeded_( R <span class="directive">const</span> &amp; x )</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>This namespace-scope function template is provided for convenience. It is equivalent to <code>result_traits&lt;T&gt;::suceeded(x)</code>.</p>
+<p>This namespace-scope function template is provided for convenience. It is equivalent to <code>result_traits&lt;R&gt;::suceeded(x)</code>.</p>
 </div>
 <div class="paragraph">
 <p><br></p>
@@ -951,23 +998,23 @@ bool succeeded_( T const &amp; x )</pre>
 <div class="listingblock">
 <div class="title">&lt;boost/noexcept/throw.hpp&gt;</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++">namespace boost { namespace noexcept_ {
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> noexcept_ {
 
-	class throw_ {
+    <span class="keyword">class</span> <span class="class">throw_</span> {
 
-		throw_( throw_ const &amp; )=delete;
-		throw_ &amp; operator=( throw_ const &amp; )=delete;
+        throw_( throw_ <span class="directive">const</span> &amp; )=<span class="keyword">delete</span>;
+        throw_ &amp; <span class="directive">operator</span>=( throw_ <span class="directive">const</span> &amp; )=<span class="keyword">delete</span>;
 
-		public:
+        <span class="directive">public</span>:
 
-		throw_() noexcept { }
+        throw_() noexcept { }
 
-		template &lt;class T&gt;
-		throw_( T &amp;&amp; e ) noexcept;
+        <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">E</span>&gt;
+        throw_( E &amp;&amp; e ) noexcept;
 
-		template &lt;class T&gt;
-		operator T() noexcept;
-	};
+        <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">R</span>&gt;
+        <span class="directive">operator</span> R() noexcept;
+    };
 
 } }</code></pre>
 </div>
@@ -977,66 +1024,89 @@ bool succeeded_( T const &amp; x )</pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>return throw_(error());</pre>
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">return</span> throw_(error());</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The <code>error</code> object (of user-defined type) is moved to a special static thread-local storage, becoming the <mark>current</mark> error for its thread, where it remains until captured by a <code>try_</code>.</p>
+<p>The passed <code>error</code> object (of user-defined type) becomes the current error for the calling thread. The error remains current until captured by a <code>try_</code>. For threads that have a current error, <code>has_current_error()</code> returns true.</p>
 </div>
 <div class="paragraph">
-<p>The <code>throw_</code> object itself implicitly converts to any type for which <code>result_traits</code> has been specialized; the <code>return</code> expression <strong>always</strong> effectively evaluates to <code>result_traits&lt;R&gt;::error_result()</code>, where <code>R</code> is the result type of the function.</p>
+<p>The <code>throw_</code> object itself implicitly converts to any type for which <code>result_traits</code> has been specialized; the <code>return</code> expression <strong>always</strong> effectively evaluates to <code>result_traits&lt;R&gt;::error_result()</code>, where <code>R</code> is the result type of the returning function.</p>
 </div>
 <hr>
 <div class="listingblock">
 <div class="content">
-<pre>throw_() noexcept;</pre>
+<pre class="CodeRay highlight"><code data-lang="c++">throw_() noexcept;</code></pre>
 </div>
 </div>
 <div class="dlist">
 <dl>
 <dt class="hdlist1"><em>Effects:</em></dt>
 <dd>
-<p>None: the default constructor is used to continue propagating the <mark>current</mark> error.</p>
+<p>None: the default constructor is used to continue propagating the current error for the calling thread.</p>
 </dd>
 </dl>
 </div>
 <hr>
 <div class="listingblock">
 <div class="content">
-<pre>template &lt;class T&gt;
-throw_( T &amp;&amp; e ) noexcept</pre>
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">E</span>&gt;
+throw_( E &amp;&amp; e ) noexcept</code></pre>
 </div>
 </div>
 <div class="dlist">
 <dl>
 <dt class="hdlist1"><em>Preconditions:</em></dt>
 <dd>
-<p>For the calling thread there must be no <mark>current</mark> error not captured by a <code>try_</code>.</p>
+<p><code>!has_current_error()</code></p>
 </dd>
 <dt class="hdlist1"><em>Effects:</em></dt>
 <dd>
-<p><code>e</code> becomes the <mark>current</mark> error for the calling thread.</p>
+<p><code>e</code> becomes the current error for the calling thread.</p>
+</dd>
+<dt class="hdlist1"><em>Postconditions:</em></dt>
+<dd>
+<p><code>has_current_error()</code></p>
 </dd>
 </dl>
 </div>
 <hr>
 <div class="listingblock">
 <div class="content">
-<pre>template &lt;class T&gt;
-operator T() noexcept;</pre>
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">R</span>&gt;
+<span class="directive">operator</span> R() noexcept;</code></pre>
 </div>
 </div>
 <div class="dlist">
 <dl>
 <dt class="hdlist1"><em>Preconditions:</em></dt>
 <dd>
-<p>For the calling thread there must be a <mark>current</mark> error, not captured by a <code>try_</code>.</p>
+<p><code>has_current_error()</code></p>
 </dd>
 <dt class="hdlist1"><em>Returns:</em></dt>
 <dd>
-<p><code>result_traits&lt;T&gt;::error_result()</code>.</p>
+<p><code>result_traits&lt;R&gt;::error_result()</code>.</p>
 </dd>
 </dl>
+</div>
+<div class="paragraph">
+<p><br></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="__code_has_current_error_code"><code>has_current_error</code></h3>
+<div class="listingblock">
+<div class="title">&lt;boost/noexcept/has_current_error.hpp&gt;</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> noexcept_ {
+
+    <span class="predefined-type">bool</span> has_current_error() noexcept;
+
+} }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If <code>throw_</code> was used to set the current error for the calling thread, and if that error has not been captured by a <code>try_</code>, <code>has_current_error</code> returns <code>true</code>. Otherwise it returns <code>false</code>.</p>
 </div>
 <div class="paragraph">
 <p><br></p>
@@ -1047,34 +1117,159 @@ operator T() noexcept;</pre>
 <div class="listingblock">
 <div class="title">&lt;boost/noexcept/try.hpp&gt;</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="c++">namespace boost { namespace noexcept_ {
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> noexcept_ {
 
-	template &lt;class T&gt;
-	class handler {
+    <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">R</span>&gt;
+    <span class="keyword">class</span> <span class="class">handler</span> {
 
-		handler( handler const &amp; )=delete;
-		handler &amp; operator=( handler const &amp; )=delete;
+        handler( handler <span class="directive">const</span> &amp; )=<span class="keyword">delete</span>;
+        handler &amp; <span class="directive">operator</span>=( handler <span class="directive">const</span> &amp; )=<span class="keyword">delete</span>;
 
-		public:
+        <span class="directive">public</span>:
 
-		explicit handler( T &amp;&amp; val ) noexcept;
-		handler( handler &amp;&amp; x ) noexcept;
-		~handler() noexcept;
+        <span class="directive">explicit</span> handler( R &amp;&amp; res ) noexcept;
+        handler( handler &amp;&amp; x ) noexcept;
+        ~handler() noexcept;
 
-		explicit operator bool() const noexcept;
+        <span class="directive">explicit</span> <span class="directive">operator</span> <span class="predefined-type">bool</span>() <span class="directive">const</span> noexcept;
 
-		typename result_traits&lt;T&gt;::value_type const &amp; value() const;
-		typename result_traits&lt;T&gt;::value_type &amp; value();
+        R <span class="directive">const</span> &amp; result() <span class="directive">const</span>;
+        R &amp; result();
 
-		template &lt;class E=std::exception&gt;
-		E * catch_() noexcept;
-	};
+        <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">E</span>=std::exception&gt;
+        E * catch_() noexcept;
+    };
 
-	template &lt;class T&gt;
-	handler&lt;T&gt; try_( T &amp;&amp; x ) noexcept;
+    <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">R</span>&gt;
+    handler&lt;R&gt; try_( R &amp;&amp; res ) noexcept;
 
 } }</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>The <code>try_</code>  function template is used in contexts that handle errors reported (using <code>throw_</code>) by a lower level function: if the return value of the function is of type <code>R</code>, it is moved into the <code>handler&lt;R&gt;</code> object returned by <code>try_</code>.</p>
+</div>
+<div class="paragraph">
+<p>The <code>handler</code> object then uses <code>result_traits&lt;R&gt;::succeeded(res)</code> to check for success. If it returns <code>true</code>, no further action is taken; otherwise the current error for the calling thread is moved into <code>*this</code>, leaving it with <code>!has_current_error()</code>. The <code>catch_</code> member function can then be used to check for specific error types to handle.</p>
+</div>
+<div class="paragraph">
+<p>The <code>handler</code> class template has the following members:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="directive">explicit</span> handler( R &amp;&amp; res ) noexcept;</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><em>Requirements:</em></dt>
+<dd>
+<p>The <code>result_traits</code> template must be specialized for <code>R</code>.</p>
+</dd>
+<dt class="hdlist1"><em>Preconditions:</em></dt>
+<dd>
+<p><code>result_traits&lt;R&gt;::succeeded(res) == !has_current_error()</code>.</p>
+</dd>
+<dt class="hdlist1"><em>Effects:</em></dt>
+<dd>
+<p><code>res</code> is moved into <code>*this</code> . If <code>result_traits&lt;R&gt;::succeeded(res)</code> returns <code>false</code>, the current error for the calling thread is moved into <code>*this</code> as well.</p>
+</dd>
+<dt class="hdlist1"><em>Postconditions:</em></dt>
+<dd>
+<p><code>!has_current_error()</code>.</p>
+</dd>
+</dl>
+</div>
+<hr>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="directive">explicit</span> handler( handler &amp;&amp; ) noexcept;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Public move constructor.</p>
+</div>
+<hr>
+<div id="_handler" class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="c++">~handler() noexcept;</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><em>Preconditions:</em></dt>
+<dd>
+<p><code>!has_current_error() || bool(*this)</code>, or else the program is ill-formed.</p>
+</dd>
+<dt class="hdlist1"><em>Effects:</em></dt>
+<dd>
+<p>At the time <code>*this</code> is destroyed, if <code>bool(*this)</code> is <code>false</code>, the error contained in <code>*this</code> becomes the current error of the calling thread..</p>
+</dd>
+</dl>
+</div>
+<hr>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="directive">explicit</span> <span class="directive">operator</span> <span class="predefined-type">bool</span>() <span class="directive">const</span> noexcept;</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><em>Returns:</em></dt>
+<dd>
+<p><code>true</code> if <code>*this</code> contains an unhandled error, <code>false</code> otherwise.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Errors captured by <code>handler</code> objects are marked as handled when <code>catch_&lt;E&gt;</code> is called, but only if it can be converted to <code>E *</code>.
+</td>
+</tr>
+</table>
+</div>
+</dd>
+</dl>
+</div>
+<hr>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="c++">R <span class="directive">const</span> &amp; result() <span class="directive">const</span>;
+R &amp; result();</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><em>Effects:</em></dt>
+<dd>
+<p>If <code>bool(*this)</code> is <code>true</code>, <code>result()</code> returns a reference to the result object passed to <code>try_</code> and moved into <code>*this</code>. Otherwise calling <code>result()</code> throws the error as a C++ exception.</p>
+</dd>
+</dl>
+</div>
+<hr>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">E</span>=std::exception&gt;
+E * catch_() noexcept;</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><em>Preconditions:</em></dt>
+<dd>
+<p><code>!(*this)</code></p>
+</dd>
+<dt class="hdlist1"><em>Returns:</em></dt>
+<dd>
+<p><code>dynamic_cast&lt;E *&gt;(e)</code>, where <code>e</code> is a pointer to the error object captured into <code>*this</code>.</p>
+</dd>
+<dt class="hdlist1"><em>Effects:</em></dt>
+<dd>
+<p>If the cast is successful, the error object captured into <code>*this</code> is marked as <code>handled</code>. See <a href="#_handler"><code>~handler()</code></a>.</p>
+</dd>
+</dl>
 </div>
 </div>
 </div>
@@ -1082,7 +1277,7 @@ operator T() noexcept;</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-06-09 11:29:22 PDT
+Last updated 2017-06-10 00:19:35 PDT
 </div>
 </div>
 </body>
