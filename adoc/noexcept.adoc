@@ -132,7 +132,7 @@ include::{sourcedir}/adoc/synopses/throw.hpp.adoc[]
 return throw_(error());
 ----
 
-The `error` object (of user-defined type) is moved to a special static thread-local storage, becoming the #current# error for its thread, where it remains until captured by a `try_`.
+The passed `error` object (of user-defined type) becomes the current error for the calling thread. The error remains current until captured by a `try_`. For threads that have a current error, `has_current_error()` returns true.
 
 The `throw_` object itself implicitly converts to any type for which `result_traits` has been specialized; the `return` expression *always* effectively evaluates to `result_traits<R>::error_result()`, where `R` is the result type of the returning function.
 
@@ -142,7 +142,7 @@ The `throw_` object itself implicitly converts to any type for which `result_tra
 ----
 throw_() noexcept;
 ----
-_Effects:_:: None: the default constructor is used to continue propagating the #current# error.
+_Effects:_:: None: the default constructor is used to continue propagating the current error for the calling thread.
 
 ***
 
@@ -152,8 +152,9 @@ template <class E>
 throw_( E && e ) noexcept
 ----
 
-_Preconditions:_:: For the calling thread there must be no #current# error not captured by a `try_`.
-_Effects:_:: `e` becomes the #current# error for the calling thread.
+_Preconditions:_:: `!has_current_error()`
+_Effects:_:: `e` becomes the current error for the calling thread.
+_Postconditions:_:: `has_current_error()`
 
 ***
 
@@ -162,8 +163,16 @@ _Effects:_:: `e` becomes the #current# error for the calling thread.
 template <class R>
 operator R() noexcept;
 ----
-_Preconditions:_:: For the calling thread there must be a #current# error, not captured by a `try_`.
+_Preconditions:_:: `has_current_error()`
 _Returns:_:: `result_traits<R>::error_result()`.
+
+{blank} +
+
+=== `has_current_error`
+
+include::{sourcedir}/adoc/synopses/has_current_error.hpp.adoc[]
+
+If `throw_` was used to set the current error for the calling thread, and if that error has not been captured by a `try_`, `has_current_error` returns `true`. Otherwise it returns `false`.
 
 {blank} +
 
@@ -171,17 +180,20 @@ _Returns:_:: `result_traits<R>::error_result()`.
 
 include::{sourcedir}/adoc/synopses/try.hpp.adoc[]
 
-The `try_`  function template is used in contexts that handle errors reported (using `throw_`) by a lower level function: the return value (of type `R`) of the function is moved into the `handler<R>` object returned by `try_`.
+The `try_`  function template is used in contexts that handle errors reported (using `throw_`) by a lower level function: if the return value of the function is of type `R`, it is moved into the `handler<R>` object returned by `try_`.
 
-The `handler` object then uses `result_traits<R>::succeeded(res)` to check for success. If it returns `true`, `*this` remains devoid of an error object. Otherwise the #current# error for the calling thread is moved into `*this`. The `catch_` member function can then be used to check for specific error types to handle.
+The `handler` object then uses `result_traits<R>::succeeded(res)` to check for success. If it returns `true`, no further action is taken; otherwise the current error for the calling thread is moved into `*this`, leaving it with `!has_current_error()`. The `catch_` member function can then be used to check for specific error types to handle.
+
+The `handler` class template has the following members:
 
 [source,c++]
 ----
 explicit handler( R && res ) noexcept;
 ----
 _Requirements:_:: The `result_traits` template must be specialized for `R`.
-_Effects:_:: `res` is moved into `*this` . If `result_traits<R>::succeeded(res)` returns `false`, the #current# error for the calling thread is moved into `*this` as well.
-_Postconditions:_:: The calling thread is left without a #current# error.
+_Preconditions:_:: `result_traits<R>::succeeded(res) == !has_current_error()`.
+_Effects:_:: `res` is moved into `*this` . If `result_traits<R>::succeeded(res)` returns `false`, the current error for the calling thread is moved into `*this` as well.
+_Postconditions:_:: `!has_current_error()`.
 
 ***
 
@@ -192,16 +204,39 @@ explicit handler( handler && ) noexcept;
 Public move constructor.
 
 ***
-
+[[_handler]]
 [source,c++]
 ----
 ~handler() noexcept;
 ----
-_Preconditions:_:: If `bool(*this)` is `false`, there must be no #current# error in the calling thread or the program is ill-formed.
-_Effects:_:: At the time `*this` is destroyed, if `bool(*this)` is `false`, the unhandled error object logically contained in `*this` again becomes the #current# error for the calling thread.
+_Preconditions:_:: `!has_current_error() || bool(*this)`, or else the program is ill-formed.
+_Effects:_:: At the time `*this` is destroyed, if `bool(*this)` is `false`, the error contained in `*this` becomes the current error of the calling thread..
+
+***
 
 [source,c++]
 ----
 explicit operator bool() const noexcept;
 ----
-_Returns:_:: `true` if `*this` is error-free, false otherwise.
+_Returns:_:: `true` if `*this` contains an unhandled error, `false` otherwise.
+NOTE: Errors captured by `handler` objects are marked as handled when `catch_<E>` is called, but only if it can be converted to `E *`.
+
+***
+
+[source,c++]
+----
+R const & result() const;
+R & result();
+----
+_Effects:_:: If `bool(*this)` is `true`, `result()` returns a reference to the result object passed to `try_` and moved into `*this`. Otherwise calling `result()` throws the error as a C++ exception.
+
+***
+
+[source,c++]
+----
+template <class E=std::exception>
+E * catch_() noexcept;
+----
+_Preconditions:_:: `!(*this)`
+_Returns:_:: `dynamic_cast<E *>(e)`, where `e` is a pointer to the error object captured into `*this`.
+_Effects:_:: If the cast is successful, the error object captured into `*this` is marked as `handled`. See <<_handler,`~handler()`>>.
