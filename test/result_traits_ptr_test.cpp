@@ -21,17 +21,17 @@ struct error { };
 obj *
 f1( bool succeed ) noexcept
     {
-	static obj o={42};
-	if( succeed )
-		return &o;
+    static obj o={42};
+    if( succeed )
+        return &o;
     else
         return throw_(error());
     }
 boost::shared_ptr<obj>
 f2( bool succeed ) noexcept
     {
-	if( succeed )
-		return boost::shared_ptr<obj>(new obj{42});
+    if( succeed )
+        return boost::shared_ptr<obj>(new obj{42});
     else
         return throw_(error());
     }
@@ -39,42 +39,42 @@ boost::movelib::unique_ptr<obj>
 f3( bool succeed ) noexcept
     {
     if( succeed )
-		return boost::movelib::unique_ptr<obj>(new obj{42});
+        return boost::movelib::unique_ptr<obj>(new obj{42});
     else
         return throw_(error());
     }
 int
 main()
     {
-		{
-    	auto tr=try_(f1(true));
-		BOOST_TEST(tr);
-		BOOST_TEST(tr.value().answer==42);
+        {
+        auto tr=try_(f1(true));
+        BOOST_TEST(tr);
+        BOOST_TEST(tr.value().answer==42);
         }
-		{
-    	auto tr=try_(f1(false));
-		BOOST_TEST(!tr);
-		BOOST_TEST(tr.catch_<error>()!=0);
+        {
+        auto tr=try_(f1(false));
+        BOOST_TEST(!tr);
+        BOOST_TEST(tr.catch_<error>()!=0);
         }
-		{
-    	auto tr=try_(f2(true));
-		BOOST_TEST(tr);
-		BOOST_TEST(tr.value().answer==42);
+        {
+        auto tr=try_(f2(true));
+        BOOST_TEST(tr);
+        BOOST_TEST(tr.value().answer==42);
         }
-		{
-    	auto tr=try_(f2(false));
-		BOOST_TEST(!tr);
-		BOOST_TEST(tr.catch_<error>()!=0);
+        {
+        auto tr=try_(f2(false));
+        BOOST_TEST(!tr);
+        BOOST_TEST(tr.catch_<error>()!=0);
         }
-		{
-    	auto tr=try_(f3(true));
-		BOOST_TEST(tr);
-		BOOST_TEST(tr.value().answer==42);
+        {
+        auto tr=try_(f3(true));
+        BOOST_TEST(tr);
+        BOOST_TEST(tr.value().answer==42);
         }
-		{
-    	auto tr=try_(f3(false));
-		BOOST_TEST(!tr);
-		BOOST_TEST(tr.catch_<error>()!=0);
+        {
+        auto tr=try_(f3(false));
+        BOOST_TEST(!tr);
+        BOOST_TEST(tr.catch_<error>()!=0);
         }
     return boost::report_errors();
     }

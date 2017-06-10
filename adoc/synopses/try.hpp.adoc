@@ -3,29 +3,29 @@
 ----
 namespace boost { namespace noexcept_ {
 
-	template <class T>
-	class handler {
+    template <class R>
+    class handler {
 
-		handler( handler const & )=delete;
-		handler & operator=( handler const & )=delete;
+        handler( handler const & )=delete;
+        handler & operator=( handler const & )=delete;
 
-		public:
+        public:
 
-		explicit handler( T && val ) noexcept;
-		handler( handler && x ) noexcept;
-		~handler() noexcept;
+        explicit handler( R && res ) noexcept;
+        handler( handler && x ) noexcept;
+        ~handler() noexcept;
 
-		explicit operator bool() const noexcept;
+        explicit operator bool() const noexcept;
 
-		typename result_traits<T>::value_type const & value() const;
-		typename result_traits<T>::value_type & value();
+        typename result_traits<R>::value_type const & value() const;
+        typename result_traits<R>::value_type & value();
 
-		template <class E=std::exception>
-		E * catch_() noexcept;
-	};
+        template <class E=std::exception>
+        E * catch_() noexcept;
+    };
 
-	template <class T>
-	handler<T> try_( T && x ) noexcept;
+    template <class R>
+    handler<R> try_( R && res ) noexcept;
 
 } }
 ----

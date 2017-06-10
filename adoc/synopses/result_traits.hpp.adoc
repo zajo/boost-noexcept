@@ -3,11 +3,11 @@
 ----
 namespace boost { namespace noexcept_ {
 
-	template <class>
-	struct result_traits; //main template left undefined
+    template <class>
+    struct result_traits; //main template left undefined
 
-	template <class T>
-	bool succeeded_( T const & x )
+    template <class R>
+    bool succeeded_( R const & x )
 
 } }
 ----

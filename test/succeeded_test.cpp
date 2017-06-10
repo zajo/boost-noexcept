@@ -62,8 +62,8 @@ f1( bool succeed ) noexcept
 my_result_type
 f2( bool succeed ) noexcept
     {
-	auto x=f1(succeed);
-	if( succeeded_(x) )
+    auto x=f1(succeed);
+    if( succeeded_(x) )
         return x;
     else
         return throw_();
@@ -71,7 +71,7 @@ f2( bool succeed ) noexcept
 void
 test_success() noexcept
     {
-	auto x = f2(true);
+    auto x = f2(true);
     if( succeeded_(x) )
         BOOST_TEST(x.answer==42);
     else

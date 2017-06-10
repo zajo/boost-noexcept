@@ -3,21 +3,21 @@
 ----
 namespace boost { namespace noexcept_ {
 
-	class throw_ {
+    class throw_ {
 
-		throw_( throw_ const & )=delete;
-		throw_ & operator=( throw_ const & )=delete;
+        throw_( throw_ const & )=delete;
+        throw_ & operator=( throw_ const & )=delete;
 
-		public:
+        public:
 
-		throw_() noexcept { }
+        throw_() noexcept { }
 
-		template <class T>
-		throw_( T && e ) noexcept;
+        template <class E>
+        throw_( E && e ) noexcept;
 
-		template <class T>
-		operator T() noexcept;
-	};
+        template <class R>
+        operator R() noexcept;
+    };
 
 } }
 ----

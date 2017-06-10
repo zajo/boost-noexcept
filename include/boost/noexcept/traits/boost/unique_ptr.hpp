@@ -21,7 +21,7 @@ boost
         template <class T,class D>
         struct
         result_traits<movelib::unique_ptr<T,D> >:
-			noexcept_detail::ptr_traits<movelib::unique_ptr<T,D>,T>
+            noexcept_detail::ptr_traits<movelib::unique_ptr<T,D>,T>
             {
             };
         }

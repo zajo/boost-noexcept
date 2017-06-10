@@ -22,7 +22,7 @@ boost
         template <class T>
         struct
         result_traits<shared_ptr<T> >:
-			noexcept_detail::ptr_traits<shared_ptr<T>,T>
+            noexcept_detail::ptr_traits<shared_ptr<T>,T>
             {
             };
         }

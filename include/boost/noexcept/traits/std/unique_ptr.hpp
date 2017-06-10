@@ -21,7 +21,7 @@ boost
         template <class T,class D>
         struct
         result_traits<std::unique_ptr<T,D> >:
-			noexcept_detail::ptr_traits<std::unique_ptr<T,D>,T>
+            noexcept_detail::ptr_traits<std::unique_ptr<T,D>,T>
             {
             };
         }

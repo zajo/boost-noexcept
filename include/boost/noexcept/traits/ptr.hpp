@@ -20,7 +20,7 @@ boost
         template <class T>
         struct
         result_traits<T *>:
-			public noexcept_detail::ptr_traits<T *,T>
+            public noexcept_detail::ptr_traits<T *,T>
             {
             };
         }

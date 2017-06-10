@@ -17,47 +17,47 @@ boost
     namespace
     noexcept_
         {
-		namespace
-		noexcept_detail
-			{
-			template <class E,bool DerivesFromStdException=std::is_base_of<std::exception,E>::value> struct put_dispatch;
-			template <class E>
-			struct
-			put_dispatch<E,true>
-				{
-				static
-				void
-	            put_( E && e ) noexcept
-					{
-                	noexcept_detail::current_exception().put(std::move(e));
-					}
-				};
-			template <class E>
-			struct
-			put_dispatch<E,false>
-				{
-				struct
-				injector:
-					E,
-					std::exception
-					{
-					explicit
-					injector( E && x ) noexcept:
-						E(std::move(x))
-						{
-						}
-					~injector() noexcept
-						{
-						}
-					};
-				static
-				void
-	            put_( E && e ) noexcept
-					{
-                	noexcept_detail::current_exception().put(injector(std::move(e)));
-					}
-				};
-			}
+        namespace
+        noexcept_detail
+            {
+            template <class E,bool DerivesFromStdException=std::is_base_of<std::exception,E>::value> struct put_dispatch;
+            template <class E>
+            struct
+            put_dispatch<E,true>
+                {
+                static
+                void
+                put_( E && e ) noexcept
+                    {
+                    noexcept_detail::current_exception().put(std::move(e));
+                    }
+                };
+            template <class E>
+            struct
+            put_dispatch<E,false>
+                {
+                struct
+                injector:
+                    E,
+                    std::exception
+                    {
+                    explicit
+                    injector( E && x ) noexcept:
+                        E(std::move(x))
+                        {
+                        }
+                    ~injector() noexcept
+                        {
+                        }
+                    };
+                static
+                void
+                put_( E && e ) noexcept
+                    {
+                    noexcept_detail::current_exception().put(injector(std::move(e)));
+                    }
+                };
+            }
         class
         throw_
             {
@@ -70,7 +70,7 @@ boost
             template <class E>
             throw_( E && e ) noexcept
                 {
-				noexcept_detail::put_dispatch<E>::put_(std::move(e));
+                noexcept_detail::put_dispatch<E>::put_(std::move(e));
                 }
             template <class R>
             operator R() noexcept

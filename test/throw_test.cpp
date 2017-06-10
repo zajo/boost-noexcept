@@ -79,22 +79,22 @@ f6_b() noexcept
 struct derives_from_std_exception: std::exception { };
 boost::optional<int>
 throw_std_exception()
-	{
-	return throw_(derives_from_std_exception());
-	}
+    {
+    return throw_(derives_from_std_exception());
+    }
 void
 std_exception_test()
-	{
-	if( auto tr=try_(throw_std_exception()) )
-		BOOST_TEST(false);
-	else
-		BOOST_TEST(tr.catch_<>()!=0);
-	}
+    {
+    if( auto tr=try_(throw_std_exception()) )
+        BOOST_TEST(false);
+    else
+        BOOST_TEST(tr.catch_<>()!=0);
+    }
 int
 main()
     {
     f6_a();
     f6_b();
-	std_exception_test();
+    std_exception_test();
     return boost::report_errors();
     }

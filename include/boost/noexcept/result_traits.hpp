@@ -15,12 +15,12 @@ boost
         template <class R>
         struct result_traits;
 
-		template <class R>
-		bool
-		succeeded_( R const & x )
-			{
-			return result_traits<R>::succeeded(x);
-			}
+        template <class R>
+        bool
+        succeeded_( R const & x )
+            {
+            return result_traits<R>::succeeded(x);
+            }
         }
     }
 

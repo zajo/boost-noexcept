@@ -15,41 +15,41 @@ boost
         template <class>
         struct result_traits;
 
-		namespace
-		noexcept_detail
-			{
-			template <class P,class T>
-			struct
-			ptr_traits
-				{
-				typedef P result_type;
-				typedef T value_type;
-				static
-				bool
-				succeeded( result_type const & x ) noexcept
-					{
-					return bool(x);
-					}
-				static
-				result_type
-				error_result() noexcept
-					{
-					return result_type();
-					}
-				static
-				value_type const &
-				success_value( result_type const & x ) noexcept
-					{
-					return *x;
-					}
-				static
-				value_type &
-				success_value( result_type & x ) noexcept
-					{
-					return *x;
-					}
-				};
-			}
+        namespace
+        noexcept_detail
+            {
+            template <class P,class T>
+            struct
+            ptr_traits
+                {
+                typedef P result_type;
+                typedef T value_type;
+                static
+                bool
+                succeeded( result_type const & x ) noexcept
+                    {
+                    return bool(x);
+                    }
+                static
+                result_type
+                error_result() noexcept
+                    {
+                    return result_type();
+                    }
+                static
+                value_type const &
+                success_value( result_type const & x ) noexcept
+                    {
+                    return *x;
+                    }
+                static
+                value_type &
+                success_value( result_type & x ) noexcept
+                    {
+                    return *x;
+                    }
+                };
+            }
         }
     }
 
