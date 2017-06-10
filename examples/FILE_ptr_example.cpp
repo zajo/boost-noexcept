@@ -16,10 +16,10 @@ FILE * open_file( char const * name ) noexcept {
 
 int main() {
     if( auto tr=try_(open_file("file_name")) ) {  //<3>
-        //Success! Get the FILE by reference.:
-        FILE & f=tr.value();
+        //Success! Get the FILE pointer:
+        FILE * f=tr.result();
         //Use the file, then close it
-        fclose(&f);
+        fclose(f);
     } else if( file_open_error * err=tr.catch_<file_open_error>() ) {  //<4>
         //The file failed to open! Handle error.
     }  //<5>

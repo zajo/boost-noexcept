@@ -2,6 +2,13 @@
 	"selectDescription": "Select build setting",
 	"items": [
 		{
+			"displayName": "has_current_error_test",
+			"description": "Unit test",
+			"isBuildCommand": "true",
+			"command": "sh",
+			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest has_current_error_test" ]
+		},
+		{
 			"displayName": "result_traits_ptr_test",
 			"description": "Unit test",
 			"isBuildCommand": "true",

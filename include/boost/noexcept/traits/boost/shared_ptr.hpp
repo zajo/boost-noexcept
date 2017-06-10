@@ -6,8 +6,6 @@
 #ifndef UUID_8F4F67004CE811E795FDE142AD730A1C
 #define UUID_8F4F67004CE811E795FDE142AD730A1C
 
-#include <boost/noexcept/noexcept_detail/ptr_traits.hpp>
-
 namespace boost { template <class> class shared_ptr; }
 
 namespace
@@ -21,10 +19,21 @@ boost
 
         template <class T>
         struct
-        result_traits<shared_ptr<T> >:
-            noexcept_detail::ptr_traits<shared_ptr<T>,T>
+        result_traits<shared_ptr<T> >
             {
-            };
+            static
+            bool
+            succeeded( shared_ptr<T> const & x ) noexcept
+                {
+                return bool(x);
+                }
+            static
+            shared_ptr<T>
+            error_result() noexcept
+                {
+                return shared_ptr<T>();
+                }
+           };
         }
     }
 

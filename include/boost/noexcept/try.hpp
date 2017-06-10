@@ -6,7 +6,7 @@
 #ifndef UUID_5872130C482B11E7B84F4C607F4E887A
 #define UUID_5872130C482B11E7B84F4C607F4E887A
 
-#include <boost/noexcept/noexcept_detail/current_exception.hpp>
+#include <boost/noexcept/noexcept_detail/current_error.hpp>
 #include <boost/noexcept/result_traits.hpp>
 
 namespace
@@ -18,7 +18,7 @@ boost
         template <class R>
         class
         handler:
-            public noexcept_detail::current_exception_holder::handler_base
+            public noexcept_detail::current_error_holder::handler_base
             {
             handler( handler const & )=delete;
             handler & operator=( handler const & )=delete;
@@ -29,7 +29,7 @@ boost
             void
             store_internally( noexcept_detail::exception_holder && x ) noexcept
                 {
-                BOOST_NOEXCEPT_ASSERT(caught_==&noexcept_detail::current_exception().get_exception());
+                BOOST_NOEXCEPT_ASSERT(caught_==&noexcept_detail::current_error().get_exception());
                 BOOST_NOEXCEPT_ASSERT(internal_.empty());
                 internal_ = std::move(x);
                 caught_ = &internal_;
@@ -45,11 +45,11 @@ boost
             explicit
             handler( R && res ) noexcept:
                 res_(std::move(res)),
-                caught_(result_traits<R>::succeeded(res_)?0:&noexcept_detail::current_exception().get_exception()),
+                caught_(result_traits<R>::succeeded(res_)?0:&noexcept_detail::current_error().get_exception()),
                 handled_(false)
                 {
                 if( caught_ )
-                    noexcept_detail::current_exception().set_handler(this);
+                    noexcept_detail::current_error().set_handler(this);
                 }
             handler( handler && x ) noexcept:
                 res_(std::move(x.res_)),
@@ -60,15 +60,15 @@ boost
                 x.handled_=0;
                 if( caught_ )
                     {
-                    BOOST_NOEXCEPT_ASSERT(x.caught_==&noexcept_detail::current_exception().get_exception());
-                    noexcept_detail::current_exception().set_handler(this);
+                    BOOST_NOEXCEPT_ASSERT(x.caught_==&noexcept_detail::current_error().get_exception());
+                    noexcept_detail::current_error().set_handler(this);
                     }
                 }
             ~handler() noexcept
                 {
                 if( caught_ )
                     {
-                    noexcept_detail::current_exception_holder & cf=noexcept_detail::current_exception();
+                    noexcept_detail::current_error_holder & cf=noexcept_detail::current_error();
                     if( caught_==&internal_ )
                         {
                         if( !handled_ )
@@ -90,11 +90,11 @@ boost
                 {
                 return result_traits<R>::succeeded(res_);
                 }
-            typename result_traits<R>::value_type const &
-            value() const
+            R const &
+            result() const
                 {
                 if( result_traits<R>::succeeded(res_) )
-                    return result_traits<R>::success_value(res_);
+                    return res_;
                 else
                     {
                     handled_=true;
@@ -102,11 +102,11 @@ boost
                     abort();
                     }
                 }
-            typename result_traits<R>::value_type &
-            value()
+            R &
+            result()
                 {
                 if( result_traits<R>::succeeded(res_) )
-                    return result_traits<R>::success_value(res_);
+                    return res_;
                 else
                     {
                     handled_=true;
@@ -143,14 +143,14 @@ boost
         noexcept_detail
             {
             inline
-            current_exception_holder::
+            current_error_holder::
             handler_base::
             ~handler_base() noexcept
                 {
                 }
             inline
             void
-            current_exception_holder::
+            current_error_holder::
             set_handler( handler_base * h ) noexcept
                 {
                 BOOST_NOEXCEPT_ASSERT(!e_.empty());
@@ -158,7 +158,7 @@ boost
                 }
             inline
             void
-            current_exception_holder::
+            current_error_holder::
             unset_handler( handler_base * h ) noexcept
                 {
                 BOOST_NOEXCEPT_ASSERT(h_==0 || h_==h);

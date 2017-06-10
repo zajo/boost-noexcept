@@ -6,7 +6,7 @@
 #ifndef UUID_75B956744A2D11E7AAD921AAAD730A1C
 #define UUID_75B956744A2D11E7AAD921AAAD730A1C
 
-#include <boost/noexcept/noexcept_detail/current_exception.hpp>
+#include <boost/noexcept/noexcept_detail/current_error.hpp>
 #include <boost/noexcept/result_traits.hpp>
 #include <type_traits>
 #include <exception>
@@ -29,7 +29,7 @@ boost
                 void
                 put_( E && e ) noexcept
                     {
-                    noexcept_detail::current_exception().put(std::move(e));
+                    noexcept_detail::current_error().put(std::move(e));
                     }
                 };
             template <class E>
@@ -54,7 +54,7 @@ boost
                 void
                 put_( E && e ) noexcept
                     {
-                    noexcept_detail::current_exception().put(injector(std::move(e)));
+                    noexcept_detail::current_error().put(injector(std::move(e)));
                     }
                 };
             }
@@ -75,7 +75,7 @@ boost
             template <class R>
             operator R() noexcept
                 {
-                BOOST_NOEXCEPT_ASSERT(!noexcept_detail::current_exception().get_exception().empty());
+                BOOST_NOEXCEPT_ASSERT(!noexcept_detail::current_error().get_exception().empty());
                 return result_traits<R>::error_result();
                 }
             };

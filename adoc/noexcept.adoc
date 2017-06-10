@@ -75,6 +75,8 @@ include::{sourcedir}/adoc/synopses/throw.hpp.adoc[]
 
 include::{sourcedir}/adoc/synopses/try.hpp.adoc[]
 
+include::{sourcedir}/adoc/synopses/has_current_error.hpp.adoc[]
+
 include::{sourcedir}/adoc/synopses/traits_ptr.hpp.adoc[]
 
 include::{sourcedir}/adoc/synopses/traits_boost_optional.hpp.adoc[]
@@ -93,16 +95,6 @@ NOTE:  `result_traits` may be specialized for any value type, as long as its sem
 
 User-defined (partial) specializations for a result type `R` should define the following members:
 
-***
-
-[source,c++]
-----
-typedef <user-defined> value_type;
-----
-The type returned by `success_value()` (see below). For example, for `std::optional<T>` the `value_type` would be `T`.
-
-***
-
 [source,c++]
 ----
 static bool succeeded( R const & x ) noexcept;
@@ -117,16 +109,6 @@ _Returns:_::: `true` if `x` indicates success, `false` otherwise.
 static R error_result() noexcept;
 ----
 _Returns:_::: The special value of `R` which indicates failure (if this value is passed to `succeeded()` it must return `false`). For example, for `std::optional<T>`  `error_result` should return `std::optional<T>()`.
-
-***
-
-[source,c++]
-----
-static value_type & success_value( result_type & x ) noexcept;
-static value_type const & success_value( result_type const & x ) noexcept;
-----
-_Preconditions:_::: `succeeded(x)`.
-_Returns:_::: The value of `x`.
 
 ***
 

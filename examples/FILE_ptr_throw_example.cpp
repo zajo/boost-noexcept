@@ -14,15 +14,15 @@ FILE * open_file( char const * name ) noexcept {
         return throw_(file_open_error());
 }
 
-FILE & open_file_throw_on_error( char const * name ) {
-    return try_(open_file(name)).value();
+FILE * open_file_throw_on_error( char const * name ) {
+    return try_(open_file(name)).result();
 }
 
 int main() {
     try {
-        FILE & f=open_file_throw_on_error("file_name");
+        FILE * f=open_file_throw_on_error("file_name");
         //Use the file, then close it
-        fclose(&f);
+        fclose(f);
     } catch( file_open_error & ) {
         //Handle error
     }

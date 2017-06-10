@@ -6,7 +6,6 @@
 #ifndef UUID_F21B7EBA4CEC11E78CDC864BAD730A1C
 #define UUID_F21B7EBA4CEC11E78CDC864BAD730A1C
 
-#include <boost/noexcept/noexcept_detail/ptr_traits.hpp>
 namespace boost { namespace movelib { template <class,class> class unique_ptr; } }
 
 namespace
@@ -20,10 +19,21 @@ boost
 
         template <class T,class D>
         struct
-        result_traits<movelib::unique_ptr<T,D> >:
-            noexcept_detail::ptr_traits<movelib::unique_ptr<T,D>,T>
+        result_traits<movelib::unique_ptr<T,D> >
             {
-            };
+            static
+            bool
+            succeeded( movelib::unique_ptr<T,D> const & x ) noexcept
+                {
+                return x!=nullptr;
+                }
+            static
+            movelib::unique_ptr<T,D>
+            error_result() noexcept
+                {
+                return movelib::unique_ptr<T,D>();
+                }
+           };
         }
     }
 

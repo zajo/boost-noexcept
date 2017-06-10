@@ -49,7 +49,7 @@ main()
         {
         auto tr=try_(f1(true));
         BOOST_TEST(tr);
-        BOOST_TEST(tr.value().answer==42);
+        BOOST_TEST(tr.result()->answer==42);
         }
         {
         auto tr=try_(f1(false));
@@ -59,7 +59,7 @@ main()
         {
         auto tr=try_(f2(true));
         BOOST_TEST(tr);
-        BOOST_TEST(tr.value().answer==42);
+        BOOST_TEST(tr.result()->answer==42);
         }
         {
         auto tr=try_(f2(false));
@@ -69,7 +69,7 @@ main()
         {
         auto tr=try_(f3(true));
         BOOST_TEST(tr);
-        BOOST_TEST(tr.value().answer==42);
+        BOOST_TEST(tr.result()->answer==42);
         }
         {
         auto tr=try_(f3(false));

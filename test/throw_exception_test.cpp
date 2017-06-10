@@ -27,10 +27,10 @@ int
 main()
     {
     BOOST_TEST(succeeds().value()==42);
-    BOOST_TEST(try_(succeeds()).value()==42);
+    BOOST_TEST(try_(succeeds()).result().value()==42);
     try
         {
-        (void) try_(fails()).value();
+        (void) try_(fails()).result();
         BOOST_TEST(false);
         }
     catch( failure & )

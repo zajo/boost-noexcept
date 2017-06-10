@@ -27,23 +27,11 @@ endif
 boost_thread=subproject('boost').get_variable('thread')
 includes = include_directories('include')
 
-test( 'c_api_example',
-    executable( 'c_api_example',
-        'examples/c_api_example.cpp',
+test( 'any_movable_test',
+    executable( 'any_movable_test',
+        'test/any_movable_test.cpp',
         dependencies: boost_thread,
-        include_directories:includes ) )
-
-test( 'FILE_ptr_example',
-    executable( 'FILE_ptr_example',
-        'examples/FILE_ptr_example.cpp',
-        dependencies: boost_thread,
-        include_directories:includes ) )
-
-test( 'FILE_ptr_throw_example',
-    executable( 'FILE_ptr_throw_example',
-        'examples/FILE_ptr_throw_example.cpp',
-        dependencies: boost_thread,
-        include_directories:includes ) )
+        include_directories:includes) )
 
 test( 'multiple_active_errors_test',
     executable( 'multiple_active_errors_test',
@@ -72,6 +60,12 @@ test( 'throw_exception_test',
 test( 'result_traits_ptr_test',
     executable( 'result_traits_ptr_test',
         'test/result_traits_ptr_test.cpp',
+        dependencies: boost_thread,
+        include_directories:includes) )
+
+test( 'has_current_error_test',
+    executable( 'has_current_error_test',
+        'test/has_current_error_test.cpp',
         dependencies: boost_thread,
         include_directories:includes) )
 
@@ -110,8 +104,20 @@ test( '_unhandled_error_test5',
         include_directories:includes),
     should_fail:true )
 
-test( 'any_movable_test',
-    executable( 'any_movable_test',
-        'test/any_movable_test.cpp',
+test( 'c_api_example',
+    executable( 'c_api_example',
+        'examples/c_api_example.cpp',
         dependencies: boost_thread,
-        include_directories:includes) )
+        include_directories:includes ) )
+
+test( 'FILE_ptr_example',
+    executable( 'FILE_ptr_example',
+        'examples/FILE_ptr_example.cpp',
+        dependencies: boost_thread,
+        include_directories:includes ) )
+
+test( 'FILE_ptr_throw_example',
+    executable( 'FILE_ptr_throw_example',
+        'examples/FILE_ptr_throw_example.cpp',
+        dependencies: boost_thread,
+        include_directories:includes ) )

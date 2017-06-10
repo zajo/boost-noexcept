@@ -7,24 +7,13 @@ namespace boost { namespace noexcept_ {
 
     template <class T>
     struct result_traits<T *> {
-    
-        typedef T * result_type;
-        typedef T value_type;
 
-        static bool succeeded( result_type x ) noexcept {
+        static bool succeeded( T * x ) noexcept {
             return bool(x);
         }
 
-        static result_type error_result() noexcept {
+        static T * error_result() noexcept {
             return nullptr;
-        }
-
-        static value_type const & success_value( result_type const & x ) noexcept {
-            return *x;
-        }
-
-        static value_type & success_value( result_type & x ) noexcept {
-            return *x;
         }
     };
 

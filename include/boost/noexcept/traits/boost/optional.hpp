@@ -21,31 +21,17 @@ boost
         struct
         result_traits<optional<T> >
             {
-            typedef optional<T> result_type;
-            typedef T value_type;
             static
             bool
-            succeeded( result_type const & x ) noexcept
+            succeeded( optional<T> const & x ) noexcept
                 {
                 return bool(x);
                 }
             static
-            result_type
+            optional<T>
             error_result() noexcept
                 {
-                return result_type();
-                }
-            static
-            value_type const &
-            success_value( result_type const & x ) noexcept
-                {
-                return x.value();
-                }
-            static
-            value_type &
-            success_value( result_type & x ) noexcept
-                {
-                return x.value();
+                return optional<T>();
                 }
             };
         }

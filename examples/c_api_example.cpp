@@ -33,7 +33,7 @@ boost::optional<float> erratic_caller() noexcept {  //<4>
 int main() {
     for( int i=0; i!=10; ++i )
         if( auto tr=try_(erratic_caller()) )  //<5>
-            std::cout << "Answer: " << tr.value() << std::endl;
+            std::cout << "Answer: " << tr.result().value() << std::endl;
         else if( erratic_error const * err = tr.catch_<erratic_error>() )  //<6>
             std::cout << "FAILED! error code=" << err->error_code << std::endl;
         else

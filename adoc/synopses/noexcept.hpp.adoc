@@ -4,4 +4,5 @@
 #include <boost/noexcept/result_traits.hpp>
 #include <boost/noexcept/throw.hpp>
 #include <boost/noexcept/try.hpp>
+#include <boost/noexcept/has_current_error.hpp>
 ----

@@ -30,7 +30,7 @@ boost
                 }
             typedef any_movable<128,std::exception> exception_holder;
             class
-            current_exception_holder
+            current_error_holder
                 {
                 public:
                 class
@@ -41,7 +41,7 @@ boost
                     protected:
                     ~handler_base() noexcept;
                     };
-                ~current_exception_holder() noexcept
+                ~current_error_holder() noexcept
                     {
                     BOOST_NOEXCEPT_ASSERT(e_.empty() && "The thread terminates with unhandled error! Calling abort()! (Did you forget to use try_?)");
                     if( !e_.empty() )
@@ -77,14 +77,15 @@ boost
                     }
                 void set_handler( handler_base * ) noexcept;
                 void unset_handler( handler_base * ) noexcept;
+                bool has_current_error() noexcept;
                 private:
                 exception_holder e_;
                 handler_base * h_;
                 };
-            current_exception_holder &
-            current_exception() noexcept
+            current_error_holder &
+            current_error() noexcept
                 {
-                return get_tl_object<current_exception_holder>();
+                return get_tl_object<current_error_holder>();
                 }
             }
         }
