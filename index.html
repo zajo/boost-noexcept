@@ -531,13 +531,15 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#synopsis">Synopsis</a></li>
 <li><a href="#_reference">Reference</a>
 <ul class="sectlevel2">
-<li><a href="#__code_result_traits_code"><code>result_traits</code></a></li>
-<li><a href="#__code_throw_code"><code>throw_</code></a></li>
-<li><a href="#__code_has_current_error_code"><code>has_current_error</code></a></li>
-<li><a href="#__code_try_code"><code>try_</code></a></li>
+<li><a href="#result_traits"><code>result_traits</code></a></li>
+<li><a href="#throw_"><code>throw_</code></a></li>
+<li><a href="#has_current_error"><code>has_current_error</code></a></li>
+<li><a href="#try_"><code>try_</code></a></li>
 </ul>
 </li>
+<li><a href="#_macros_and_configuration">Macros and configuration</a></li>
 <li><a href="#_download">Download</a></li>
+<li><a href="#_installation">Installation</a></li>
 </ul>
 </div>
 </div>
@@ -920,7 +922,7 @@ boost::optional&lt;<span class="predefined-type">float</span>&gt; erratic_caller
 <h2 id="_reference">Reference</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="__code_result_traits_code"><code>result_traits</code></h3>
+<h3 id="result_traits"><code>result_traits</code></h3>
 <div class="listingblock">
 <div class="title">&lt;boost/noexcept/result_traits.hpp&gt;</div>
 <div class="content">
@@ -953,7 +955,7 @@ boost::optional&lt;<span class="predefined-type">float</span>&gt; erratic_caller
 <div class="paragraph">
 <p>User-defined (partial) specializations for a result type <code>R</code> should define the following members:</p>
 </div>
-<div class="listingblock">
+<div id="result_traits_succeeded" class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="c++"><span class="directive">static</span> <span class="predefined-type">bool</span> succeeded( R <span class="directive">const</span> &amp; x ) noexcept;</code></pre>
 </div>
@@ -967,7 +969,7 @@ boost::optional&lt;<span class="predefined-type">float</span>&gt; erratic_caller
 </dl>
 </div>
 <hr>
-<div class="listingblock">
+<div id="result_traits_error_result" class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="c++"><span class="directive">static</span> R error_result() noexcept;</code></pre>
 </div>
@@ -981,7 +983,7 @@ boost::optional&lt;<span class="predefined-type">float</span>&gt; erratic_caller
 </dl>
 </div>
 <hr>
-<div class="listingblock">
+<div id="succeeded_" class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">R</span>&gt;
 <span class="predefined-type">bool</span> succeeded_( R <span class="directive">const</span> &amp; x )</code></pre>
@@ -995,7 +997,7 @@ boost::optional&lt;<span class="predefined-type">float</span>&gt; erratic_caller
 </div>
 </div>
 <div class="sect2">
-<h3 id="__code_throw_code"><code>throw_</code></h3>
+<h3 id="throw_"><code>throw_</code></h3>
 <div class="listingblock">
 <div class="title">&lt;boost/noexcept/throw.hpp&gt;</div>
 <div class="content">
@@ -1035,7 +1037,7 @@ boost::optional&lt;<span class="predefined-type">float</span>&gt; erratic_caller
 <p>The <code>throw_</code> object itself implicitly converts to any type for which <code>result_traits</code> has been specialized; the <code>return</code> expression <strong>always</strong> effectively evaluates to <code>result_traits&lt;R&gt;::error_result()</code>, where <code>R</code> is the result type of the returning function.</p>
 </div>
 <hr>
-<div class="listingblock">
+<div id="throw_ctor" class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="c++">throw_() noexcept;</code></pre>
 </div>
@@ -1072,7 +1074,7 @@ throw_( E &amp;&amp; e ) noexcept</code></pre>
 </dl>
 </div>
 <hr>
-<div class="listingblock">
+<div id="throw_operator_R" class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">R</span>&gt;
 <span class="directive">operator</span> R() noexcept;</code></pre>
@@ -1095,7 +1097,7 @@ throw_( E &amp;&amp; e ) noexcept</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="__code_has_current_error_code"><code>has_current_error</code></h3>
+<h3 id="has_current_error"><code>has_current_error</code></h3>
 <div class="listingblock">
 <div class="title">&lt;boost/noexcept/has_current_error.hpp&gt;</div>
 <div class="content">
@@ -1114,7 +1116,7 @@ throw_( E &amp;&amp; e ) noexcept</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="__code_try_code"><code>try_</code></h3>
+<h3 id="try_"><code>try_</code></h3>
 <div class="listingblock">
 <div class="title">&lt;boost/noexcept/try.hpp&gt;</div>
 <div class="content">
@@ -1156,7 +1158,7 @@ throw_( E &amp;&amp; e ) noexcept</code></pre>
 <div class="paragraph">
 <p>The <code>handler</code> class template has the following members:</p>
 </div>
-<div class="listingblock">
+<div id="handler_ctor" class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="c++"><span class="directive">explicit</span> handler( R &amp;&amp; res ) noexcept;</code></pre>
 </div>
@@ -1191,7 +1193,7 @@ throw_( E &amp;&amp; e ) noexcept</code></pre>
 <p>Public move constructor.</p>
 </div>
 <hr>
-<div id="_handler" class="listingblock">
+<div id="handler_dtor" class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="c++">~handler() noexcept;</code></pre>
 </div>
@@ -1209,7 +1211,7 @@ throw_( E &amp;&amp; e ) noexcept</code></pre>
 </dl>
 </div>
 <hr>
-<div class="listingblock">
+<div id="handler_operator_bool" class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="c++"><span class="directive">explicit</span> <span class="directive">operator</span> <span class="predefined-type">bool</span>() <span class="directive">const</span> noexcept;</code></pre>
 </div>
@@ -1235,7 +1237,7 @@ Errors captured by <code>handler</code> objects are marked as handled when <code
 </dl>
 </div>
 <hr>
-<div class="listingblock">
+<div id="handler_result" class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="c++">R <span class="directive">const</span> &amp; result() <span class="directive">const</span>;
 R &amp; result();</code></pre>
@@ -1250,7 +1252,7 @@ R &amp; result();</code></pre>
 </dl>
 </div>
 <hr>
-<div class="listingblock">
+<div id="handler_catch_" class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">E</span>=std::exception&gt;
 E * catch_() noexcept;</code></pre>
@@ -1268,10 +1270,47 @@ E * catch_() noexcept;</code></pre>
 </dd>
 <dt class="hdlist1"><em>Effects:</em></dt>
 <dd>
-<p>If the cast is successful, the error object captured into <code>*this</code> is marked as <code>handled</code>. See <a href="#_handler"><code>~handler()</code></a>.</p>
+<p>If the cast is successful, the error object captured into <code>*this</code> is marked as <code>handled</code>. See <a href="#handler_dtor"><code>~handler()</code></a>.</p>
 </dd>
 </dl>
 </div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_macros_and_configuration">Macros and configuration</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre>BOOST_NOEXCEPT_ASSERT</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>All assertions in Noexcept use this macro; if not <code>#defined</code>, Noexcept header files <code>#define</code> it to <code>BOOST_ASSERT</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>BOOST_NOEXCEPT_USE_STD_THREAD_LOCAL</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If <code>#defined</code>, Noexcept uses the C++ standard <code>thread_local</code> keyword for static thread-local storage, otherwise it uses <code>boost::thread_specific_ptr</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>BOOST_NOEXCEPT_NO_THREADS</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If <code>#defined</code>, Noexcept assumes that static storage is equivalent to thread-local storage.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>BOOST_NOEXCEPT_THROW_EXCEPTION</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>All Noexcept functions are declared as <code>noexcept</code>, except for <a href="#handler_result"><code>handler::result()</code></a> which throws exceptions using this macro. If not <code>#defined</code>, Noexcept header files <code>#define</code> it to <code>BOOST_THROW_EXCEPTION</code>.</p>
 </div>
 </div>
 </div>
@@ -1281,6 +1320,14 @@ E * catch_() noexcept;</code></pre>
 <div class="paragraph">
 <p><a href="https://github.com/zajo/boost-noexcept" class="bare">https://github.com/zajo/boost-noexcept</a></p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_installation">Installation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Noexcept is a header-only library and requires no installation. The unit tests can be built with Boost Build: clone Noexcept under the <code>libs</code> directory in your Boost install, then <code>cd</code> into <code>libs/noexcept/test</code> and execute <code>b2</code> as usual.</p>
+</div>
 <div class="paragraph">
 <p><span class="small"><em>&#169; 2017 Emil Dotchevski</em></span></p>
 </div>
@@ -1289,7 +1336,7 @@ E * catch_() noexcept;</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-06-10 00:44:07 PDT
+Last updated 2017-06-10 01:11:13 PDT
 </div>
 </div>
 </body>
