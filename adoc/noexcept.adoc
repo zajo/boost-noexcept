@@ -1,3 +1,4 @@
+:last-update-label!:
 :sourcedir: ..
 :source-highlighter: coderay
 = Noexcept
@@ -7,7 +8,7 @@ A generic error-handling library for C++11
 
 == Abstract
 
-Noexcept is designed to be used in environments where C++ exception handling is not permitted or unavailable. It follows the C++ exception handling semantics as much as possible without throwing exceptions. This preserves most of the useful programming techniques supported when exception handling is available:
+Noexcept is designed to be used in environments where {CPP} exception handling is not permitted or unavailable. It follows the {CPP} exception handling semantics as much as possible without throwing exceptions. This preserves most of the useful programmiйалng techniques supported when exception handling is available:
 
 * Errors are identified by static types rather than error codes, allowing classification of failures using a class hierarchy.
 * Error-neutral contexts may communicate any type of error reported by lower level functions, even if that type is not defined in the current compilation unit.
@@ -30,9 +31,8 @@ The idea behind Noexcept is to sidestep the second design goal altogether.
 
 Noexcept does not require programmers to use a special class template in return values of functions that may fail. They can use any type whatsoever, the only requirement is that the return value semantics allow for an invalid state -- a special value that can be used to discriminate between success and failure.
 
-When a failure is detected, an error object is created in thread-local storage. The presence of this object does not interfere with error-neutral functions or their return value types, except that they're required to communicate that _something_ went wrong. The error object is destroyed when control reaches an error-handling function which recognizes it by its type (yes, multiple active errors are supported, see <<faq,FAQ>>).
+When a failure is detected, an error object is created in thread-local storage. The presence of this object does not interfere with error-neutral functions or their return value types, except that they're required to communicate that _something_ went wrong. The error object is destroyed when control reaches an error-handling function which recognizes it by its type (yes, multiple active errors are supported, see <<qanda,Q&A>>).
 
-[[Introduction]]
 == Crash course
 
 === Using Noexcept to handle `FILE` open errors
@@ -42,16 +42,16 @@ When a failure is detected, an error object is created in thread-local storage. 
 include::{sourcedir}/examples/FILE_ptr_example.cpp[tabsize=1]
 ----
 <1> Partial specialization of `result_traits` for pointer types.
-<2> The `throw_` moves the `file_open_error` object into static thread-local storage, and converts to `nullptr` for the return value (as specified in `result_traits`).
-<3> The `try_` both checks for succcess and moves the return value of `open_file` into `tr`.
-<4> The `catch_` returns a pointer to the error object (or `nullptr` if it can not be converted to `file_open_error`) and flags it as handled.
+<2> The `<<throw_,throw_>>` moves the `file_open_error` object into static thread-local storage, and converts to `nullptr` for the return value (as specified in `result_traits`).
+<3> The `<<try_,try_>>` both checks for succcess and moves the return value of `open_file` into `tr`.
+<4> The `<<catch_,catch_>>` returns a pointer to the error object (or `nullptr` if it can not be converted to `file_open_error`) and flags it as handled.
 <5> When `tr` is destroyed the error object is destroyed if handled, otherwise left intact for another `try_`/`catch_` up the call stack to handle.
 
 WARNING: If unhandled errors remain at the time the current thread terminates, Noexcept calls `abort()`. Use `catch_<>` to handle any error regardless of its type.
 
 '''
 
-=== Using Noexcept with `optional<>` and a C API
+=== Using Noexcept with link:www.boost.org/doc/libs/release/libs/optional/doc/html/index.html[`optional<>`] and a C API
 
 [source,c++]
 ----
@@ -60,11 +60,10 @@ include::{sourcedir}/examples/c_api_example.cpp[]
 <1> Partial specialization of `result_traits` for `boost::optional`.
 <2> A simple C function which uses `int` status codes to indicate success or failure, and a `float` pointer to store the result.
 <3> A simple error type to report failures from the C API function.
-<4> The cumbersome `float` pointer interface of the `C` function is converted to `boost::optional<float>`. The `throw_` returns an empty `optional` in case of failure (as specified in `result_traits`).
-<5> The `try_` both checks for succcess and moves the return value of `erratic_caller` into `tr`.
-<6> The `catch_` returns a pointer to the error object (or `nullptr` if it can not be converted to `erratic_error`) and flags it as handled.
+<4> The cumbersome `float` pointer interface of the `C` function is converted to `boost::optional<float>`. The `<<throw_,throw_>>` returns an empty `optional` in case of failure (as specified in `<<result_traits,result_traits>>`).
+<5> The `<<try_,try_>>` both checks for succcess and moves the return value of `erratic_caller` into `tr`.
+<6> The `<<catch_,catch_>>` returns a pointer to the error object (or `nullptr` if it can not be converted to `erratic_error`) and flags it as handled.
 
-[[synopsis]]
 == Synopsis
 
 include::{sourcedir}/adoc/synopses/noexcept.hpp.adoc[]
@@ -85,6 +84,7 @@ include::{sourcedir}/adoc/synopses/traits_std_optional.hpp.adoc[]
 
 == Reference
 
+[[result_traits]]
 === `result_traits`
 
 include::{sourcedir}/adoc/synopses/result_traits.hpp.adoc[]
@@ -95,6 +95,7 @@ NOTE:  `result_traits` may be specialized for any value type, as long as its sem
 
 User-defined (partial) specializations for a result type `R` should define the following members:
 
+[[result_traits_succeeded]]
 [source,c++]
 ----
 static bool succeeded( R const & x ) noexcept;
@@ -104,6 +105,7 @@ _Returns:_::: `true` if `x` indicates success, `false` otherwise.
 
 ***
 
+[[result_traits_error_result]]
 [source,c++]
 ----
 static R error_result() noexcept;
@@ -112,6 +114,7 @@ _Returns:_::: The special value of `R` which indicates failure (if this value is
 
 ***
 
+[[succeeded_]]
 [source,c++]
 ----
 template <class R>
@@ -121,6 +124,7 @@ This namespace-scope function template is provided for convenience. It is equiva
 
 {blank} +
 
+[[throw_]]
 === `throw_`
 
 include::{sourcedir}/adoc/synopses/throw.hpp.adoc[]
@@ -132,12 +136,13 @@ include::{sourcedir}/adoc/synopses/throw.hpp.adoc[]
 return throw_(error());
 ----
 
-The passed `error` object (of user-defined type) becomes the current error for the calling thread. The error remains current until captured by a `try_`. For threads that have a current error, `has_current_error()` returns true.
+The passed `error` object (of user-defined type) becomes the current error for the calling thread. The error remains current until captured by a `<<try_,try_>>`. For threads that have a current error, `<<has_current_error,has_current_error>>()` returns true.
 
-The `throw_` object itself implicitly converts to any type for which `result_traits` has been specialized; the `return` expression *always* effectively evaluates to `result_traits<R>::error_result()`, where `R` is the result type of the returning function.
+The `throw_` object itself implicitly converts to any type for which `<<result_traits,result_traits>>` has been specialized; the `return` expression *always* effectively evaluates to `result_traits<R>::error_result()`, where `R` is the result type of the returning function.
 
 ***
 
+[[throw_ctor]]
 [source,c++]
 ----
 throw_() noexcept;
@@ -152,46 +157,51 @@ template <class E>
 throw_( E && e ) noexcept
 ----
 
-_Preconditions:_:: `!has_current_error()`
+_Preconditions:_:: `!<<has_current_error,has_current_error>>()`
 _Effects:_:: `e` becomes the current error for the calling thread.
 _Postconditions:_:: `has_current_error()`
 
 ***
 
+[[throw_operator_R]]
 [source,c++]
 ----
 template <class R>
 operator R() noexcept;
 ----
-_Preconditions:_:: `has_current_error()`
+_Preconditions:_:: `<<has_current_error,has_current_error>>()`
 _Returns:_:: `result_traits<R>::error_result()`.
 
 {blank} +
 
+[[has_current_error]]
 === `has_current_error`
 
 include::{sourcedir}/adoc/synopses/has_current_error.hpp.adoc[]
 
-If `throw_` was used to set the current error for the calling thread, and if that error has not been captured by a `try_`, `has_current_error` returns `true`. Otherwise it returns `false`.
+If `<<throw_,throw_>>` was used to set the current error for the calling thread, and if that error has not been captured by a `<<try_,try_>>`, `has_current_error` returns `true`. Otherwise it returns `false`.
 
 {blank} +
 
+[[try_]]
+[[handler]]
 === `try_`
 
 include::{sourcedir}/adoc/synopses/try.hpp.adoc[]
 
-The `try_`  function template is used in contexts that handle errors reported (using `throw_`) by a lower level function: if the return value of the function is of type `R`, it is moved into the `handler<R>` object returned by `try_`.
+The `try_`  function template is used in contexts that handle errors reported (using `<<throw_,throw_>>`) by a lower level function: if the return value of the function is of type `R`, it is moved into the `handler<R>` object returned by `try_`.
 
-The `handler` object then uses `result_traits<R>::succeeded(res)` to check for success. If it returns `true`, no further action is taken; otherwise the current error for the calling thread is moved into `*this`, leaving it with `!has_current_error()`. The `catch_` member function can then be used to check for specific error types to handle.
+The `handler` object then uses `<<result_traits,result_traits>><R>::<<result_traits_succeeded,succeeded>>(res)` to check for success. If it returns `true`, no further action is taken; otherwise the current error for the calling thread is moved into `*this`, leaving it with `!<<has_current_error,has_current_error>>()`. The `catch_` member function can then be used to check for specific error types to handle.
 
 The `handler` class template has the following members:
 
+[[handler_ctor]]
 [source,c++]
 ----
 explicit handler( R && res ) noexcept;
 ----
-_Requirements:_:: The `result_traits` template must be specialized for `R`.
-_Preconditions:_:: `result_traits<R>::succeeded(res) == !has_current_error()`.
+_Requirements:_:: The `<<result_traits,result_traits>>` template must be specialized for `R`.
+_Preconditions:_:: `<<result_traits,result_traits>><R>::<<result_traits_succeeded,succeeded>>(res) == !<<has_current_error,has_current_error>>()`.
 _Effects:_:: `res` is moved into `*this` . If `result_traits<R>::succeeded(res)` returns `false`, the current error for the calling thread is moved into `*this` as well.
 _Postconditions:_:: `!has_current_error()`.
 
@@ -204,39 +214,147 @@ explicit handler( handler && ) noexcept;
 Public move constructor.
 
 ***
-[[_handler]]
+[[handler_dtor]]
 [source,c++]
 ----
 ~handler() noexcept;
 ----
-_Preconditions:_:: `!has_current_error() || bool(*this)`, or else the program is ill-formed.
+_Preconditions:_:: `!<<has_current_error,has_current_error>>() || bool(*this)`, or else the program is ill-formed.
 _Effects:_:: At the time `*this` is destroyed, if `bool(*this)` is `false`, the error contained in `*this` becomes the current error of the calling thread..
 
 ***
 
+[[handler_operator_bool]]
 [source,c++]
 ----
 explicit operator bool() const noexcept;
 ----
 _Returns:_:: `true` if `*this` contains an unhandled error, `false` otherwise.
-NOTE: Errors captured by `handler` objects are marked as handled when `catch_<E>` is called, but only if it can be converted to `E *`.
+NOTE: Errors captured by `handler` objects are marked as handled when `<<catch_,catch_>><E>` is called, but only if it can be converted to `E *`.
 
 ***
 
+[[handler_result]]
 [source,c++]
 ----
 R const & result() const;
 R & result();
 ----
-_Effects:_:: If `bool(*this)` is `true`, `result()` returns a reference to the result object passed to `try_` and moved into `*this`. Otherwise calling `result()` throws the error as a C++ exception.
+_Effects:_:: If `bool(*this)` is `true`, `result()` returns a reference to the result object passed to `<<try_,try_>>` and moved into `*this`. Otherwise calling `result()` throws the error as a {CPP} exception.
 
 ***
 
+[[catch_]]
+[[handler_catch_]]
 [source,c++]
 ----
 template <class E=std::exception>
 E * catch_() noexcept;
 ----
-_Preconditions:_:: `!(*this)`
-_Returns:_:: `dynamic_cast<E *>(e)`, where `e` is a pointer to the error object captured into `*this`.
-_Effects:_:: If the cast is successful, the error object captured into `*this` is marked as `handled`. See <<_handler,`~handler()`>>.
+_Returns:_:: If `bool(*this)` is `true`, returns `dynamic_cast<E *>(e)`, where `e` is an internal pointer to the error object captured into `*this`; otherwise returns `0`. The returned pointer becomes invalid if the `handler` object is moved or destroyed.
+_Effects:_:: If the cast is successful, the error object captured into `*this` is marked as `handled`. See `<<handler_dtor,~handler>>()`.
+
+NOTE: `catch_<>` serves similar function to `catch(pass:[...])` when handling exceptions, however `catch_<>` is able to return a `std::exception` pointer because `throw_(my_error())` will inject `std::exception` as a base type if `my_error` doesn't derive from it.
+
+
+***
+
+[source,c++]
+----
+template <class R>
+handler<R> try_( R && res ) noexcept;
+----
+
+This namespace-scope function is needed to deduce the `R` argument for the `handler` class template -- it simply returns `handler<R>(std::move(res))`. The following syntax is supported:
+
+[source,c++]
+----
+if( auto tr=try_(f()) ) {
+    //Success, use tr.result() to obtain the result from f()
+} else {
+    //Handle error, see handler::catch<>
+}
+----
+
+{empty} +
+
+== Macros and configuration
+
+----
+BOOST_NOEXCEPT_ASSERT
+----
+All assertions in Noexcept use this macro; if not `#defined`, Noexcept header files `#define` it to link:www.boost.org/doc/libs/release/libs/utility/assert.html[`BOOST_ASSERT`].
+
+***
+
+----
+BOOST_NOEXCEPT_USE_STD_THREAD_LOCAL
+----
+If `#defined`, Noexcept uses the {CPP} standard `thread_local` keyword for static thread-local storage, otherwise it uses link:www.boost.org/doc/libs/release/doc/html/thread/thread_local_storage.html[`boost::thread_specific_ptr`].
+
+***
+
+----
+BOOST_NOEXCEPT_NO_THREADS
+----
+If `#defined`, Noexcept assumes that static storage is equivalent to thread-local storage.
+
+***
+
+----
+BOOST_NOEXCEPT_THROW_EXCEPTION
+----
+All Noexcept functions are declared as `noexcept`, except for `<<handler_result,handler::result>>()` which throws exceptions using this macro. If not `#defined`, Noexcept header files `#define` it to link:www.boost.org/doc/libs/release/libs/exception/doc/BOOST_THROW_EXCEPTION.html[`BOOST_THROW_EXCEPTION`].
+
+[[qanda]]
+== Q&A
+
+[qanda]
+When using exception handling, there can be multiple active exception objects in each thread. Does Noexcept support multiple active errors?:: Yes, the current error object can be captured using `<<try_,try_>>`, at which point the calling thread is left without a current error.
++
+However, it is up to the user to call `try_`: the code below is ill-formed, assuming that both function calls may fail -- that is, return using `<<throw_,throw_>>(my_error())`, for some user-defined type `my_error`:
++
+ auto r1=f1();
+ auto r2=f2();
++
+The correct code would ensure that at the time `f2()` is called there is no current error for the calling thread. This could be done either by checking the return value of `f1()` (assuming `r1` converts to bool to indicate success or failure):
++
+ if( auto r1=f1() ) {
+     auto r2=f2(); //okay for f2 to fail (f1 didn't)
+     ....
+ } else {
+     return throw_(); //let the caller deal with failures
+ }
++
+or
++
+ auto r1=try_(f1()); //capture possible f1 failures
+ auto r2=f2(); //okay, even if both f1 and f2 fail
++
+(Nothrow asserts on `!<<has_current_error,has_current_error>>()` at the time an error object is passed to `<<thtrow_,throw_>>` ).
+
+Does this mean that I should always use `try_`?:: No, only use `try_` if you want to handle errors (see `<<catch_,catch_>>`). In error-neutral contexts, in case of errors simply return `<<throw_,throw_>>()` without argument (assuming `<<result_traits,result_traits>>` has been specialized for the the result type of your function):
++
+ if( auto r=f() ) {
+     //Success -- use r
+ } else {
+     return throw_(); //Something went wrong
+ }
+
+What happens if `<<try_,try_>>()` is called without any error being present?:: That is fine, in this case the value passed to `try_` will simply be moved into the returned `<<handler,handler>>` object, where it can be accessed using the `<<handler_result,result>>()` member function.
+
+The design of Noexcept smells like exception handling to me, what about Overhead?:: It is true, Noexcept has been designed to mimic {CPP} exception handling in order to enable the same useful programming techniques it allows, perhaps most importantly freeing function return values from the burden of having to transport error objects.
++
+While performance is an important design goal in Noexcept, consider that except when you use `<<try_,try_>>`, the speed of passing return values up the call stack is independent of Noexcept.
+
+== Download
+
+https://github.com/zajo/boost-noexcept
+
+== Installation
+
+Noexcept is a header-only library and requires no installation. The unit tests can be built with Boost Build: clone Noexcept under the `libs` directory in your Boost install, then `cd` into `libs/noexcept/test` and execute `b2` as usual.
+
+{empty} +
+
+[.small]#_(C) 2017 Emil Dotchevski_#
