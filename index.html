@@ -522,19 +522,19 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_abstract">Abstract</a></li>
 <li><a href="#_license">License</a></li>
 <li><a href="#_design_rationale">Design rationale</a></li>
-<li><a href="#Introduction">Crash course</a>
+<li><a href="#_crash_course">Crash course</a>
 <ul class="sectlevel2">
 <li><a href="#_using_noexcept_to_handle_code_file_code_open_errors">Using Noexcept to handle <code>FILE</code> open errors</a></li>
-<li><a href="#_using_noexcept_with_code_optional_code_and_a_c_api">Using Noexcept with <code>optional&lt;&gt;</code> and a C API</a></li>
+<li><a href="#_using_noexcept_with_a_href_www_boost_org_doc_libs_release_libs_optional_doc_html_index_html_code_optional_code_a_and_a_c_api">Using Noexcept with <a href="www.boost.org/doc/libs/release/libs/optional/doc/html/index.html"><code>optional&lt;&gt;</code></a> and a C API</a></li>
 </ul>
 </li>
-<li><a href="#synopsis">Synopsis</a></li>
+<li><a href="#_synopsis">Synopsis</a></li>
 <li><a href="#_reference">Reference</a>
 <ul class="sectlevel2">
 <li><a href="#result_traits"><code>result_traits</code></a></li>
 <li><a href="#throw_"><code>throw_</code></a></li>
 <li><a href="#has_current_error"><code>has_current_error</code></a></li>
-<li><a href="#try_"><code>try_</code></a></li>
+<li><a href="#handler"><code>try_</code></a></li>
 </ul>
 </li>
 <li><a href="#_macros_and_configuration">Macros and configuration</a></li>
@@ -548,7 +548,7 @@ table.CodeRay td.code>pre{padding:0}
 <h2 id="_abstract">Abstract</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Noexcept is designed to be used in environments where C++ exception handling is not permitted or unavailable. It follows the C++ exception handling semantics as much as possible without throwing exceptions. This preserves most of the useful programming techniques supported when exception handling is available:</p>
+<p>Noexcept is designed to be used in environments where C++ exception handling is not permitted or unavailable. It follows the C++ exception handling semantics as much as possible without throwing exceptions. This preserves most of the useful programmiйалng techniques supported when exception handling is available:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -613,7 +613,7 @@ Noexcept is not part of Boost.
 </div>
 </div>
 <div class="sect1">
-<h2 id="Introduction">Crash course</h2>
+<h2 id="_crash_course">Crash course</h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_using_noexcept_to_handle_code_file_code_open_errors">Using Noexcept to handle <code>FILE</code> open errors</h3>
@@ -657,10 +657,10 @@ FILE * open_file( <span class="predefined-type">char</span> <span class="directi
 <p>The <code>throw_</code> moves the <code>file_open_error</code> object into static thread-local storage, and converts to <code>nullptr</code> for the return value (as specified in <code>result_traits</code>).</p>
 </li>
 <li>
-<p>The <code>try_</code> both checks for succcess and moves the return value of <code>open_file</code> into <code>tr</code>.</p>
+<p>The <code><a href="#try_">try_</a></code> both checks for succcess and moves the return value of <code>open_file</code> into <code>tr</code>.</p>
 </li>
 <li>
-<p>The <code>catch_</code> returns a pointer to the error object (or <code>nullptr</code> if it can not be converted to <code>file_open_error</code>) and flags it as handled.</p>
+<p>The <code><a href="#catch_">catch_</a></code> returns a pointer to the error object (or <code>nullptr</code> if it can not be converted to <code>file_open_error</code>) and flags it as handled.</p>
 </li>
 <li>
 <p>When <code>tr</code> is destroyed the error object is destroyed if handled, otherwise left intact for another <code>try_</code>/<code>catch_</code> up the call stack to handle.</p>
@@ -682,7 +682,7 @@ If unhandled errors remain at the time the current thread terminates, Noexcept c
 <hr>
 </div>
 <div class="sect2">
-<h3 id="_using_noexcept_with_code_optional_code_and_a_c_api">Using Noexcept with <code>optional&lt;&gt;</code> and a C API</h3>
+<h3 id="_using_noexcept_with_a_href_www_boost_org_doc_libs_release_libs_optional_doc_html_index_html_code_optional_code_a_and_a_c_api">Using Noexcept with <a href="www.boost.org/doc/libs/release/libs/optional/doc/html/index.html"><code>optional&lt;&gt;</code></a> and a C API</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="c++"><span class="preprocessor">#include</span> <span class="include">&lt;boost/noexcept.hpp&gt;</span>
@@ -755,7 +755,7 @@ boost::optional&lt;<span class="predefined-type">float</span>&gt; erratic_caller
 </div>
 </div>
 <div class="sect1">
-<h2 id="synopsis">Synopsis</h2>
+<h2 id="_synopsis">Synopsis</h2>
 <div class="sectionbody">
 <div class="listingblock">
 <div class="title">&lt;boost/noexcept.hpp&gt;</div>
@@ -1031,10 +1031,10 @@ boost::optional&lt;<span class="predefined-type">float</span>&gt; erratic_caller
 </div>
 </div>
 <div class="paragraph">
-<p>The passed <code>error</code> object (of user-defined type) becomes the current error for the calling thread. The error remains current until captured by a <code>try_</code>. For threads that have a current error, <code>has_current_error()</code> returns true.</p>
+<p>The passed <code>error</code> object (of user-defined type) becomes the current error for the calling thread. The error remains current until captured by a <code><a href="#try_">try_</a></code>. For threads that have a current error, <code><a href="#has_current_error">has_current_error</a>()</code> returns true.</p>
 </div>
 <div class="paragraph">
-<p>The <code>throw_</code> object itself implicitly converts to any type for which <code>result_traits</code> has been specialized; the <code>return</code> expression <strong>always</strong> effectively evaluates to <code>result_traits&lt;R&gt;::error_result()</code>, where <code>R</code> is the result type of the returning function.</p>
+<p>The <code>throw_</code> object itself implicitly converts to any type for which <code><a href="#result_traits">result_traits</a></code> has been specialized; the <code>return</code> expression <strong>always</strong> effectively evaluates to <code>result_traits&lt;R&gt;::error_result()</code>, where <code>R</code> is the result type of the returning function.</p>
 </div>
 <hr>
 <div id="throw_ctor" class="listingblock">
@@ -1061,7 +1061,7 @@ throw_( E &amp;&amp; e ) noexcept</code></pre>
 <dl>
 <dt class="hdlist1"><em>Preconditions:</em></dt>
 <dd>
-<p><code>!has_current_error()</code></p>
+<p><code>!<a href="#has_current_error">has_current_error</a>()</code></p>
 </dd>
 <dt class="hdlist1"><em>Effects:</em></dt>
 <dd>
@@ -1084,7 +1084,7 @@ throw_( E &amp;&amp; e ) noexcept</code></pre>
 <dl>
 <dt class="hdlist1"><em>Preconditions:</em></dt>
 <dd>
-<p><code>has_current_error()</code></p>
+<p><code><a href="#has_current_error">has_current_error</a>()</code></p>
 </dd>
 <dt class="hdlist1"><em>Returns:</em></dt>
 <dd>
@@ -1109,14 +1109,14 @@ throw_( E &amp;&amp; e ) noexcept</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>If <code>throw_</code> was used to set the current error for the calling thread, and if that error has not been captured by a <code>try_</code>, <code>has_current_error</code> returns <code>true</code>. Otherwise it returns <code>false</code>.</p>
+<p>If <code><a href="#throw_">throw_</a></code> was used to set the current error for the calling thread, and if that error has not been captured by a <code><a href="#try_">try_</a></code>, <code>has_current_error</code> returns <code>true</code>. Otherwise it returns <code>false</code>.</p>
 </div>
 <div class="paragraph">
 <p><br></p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="try_"><code>try_</code></h3>
+<h3 id="handler"><code>try_</code></h3>
 <div class="listingblock">
 <div class="title">&lt;boost/noexcept/try.hpp&gt;</div>
 <div class="content">
@@ -1150,10 +1150,10 @@ throw_( E &amp;&amp; e ) noexcept</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The <code>try_</code>  function template is used in contexts that handle errors reported (using <code>throw_</code>) by a lower level function: if the return value of the function is of type <code>R</code>, it is moved into the <code>handler&lt;R&gt;</code> object returned by <code>try_</code>.</p>
+<p>The <code>try_</code>  function template is used in contexts that handle errors reported (using <code><a href="#throw_">throw_</a></code>) by a lower level function: if the return value of the function is of type <code>R</code>, it is moved into the <code>handler&lt;R&gt;</code> object returned by <code>try_</code>.</p>
 </div>
 <div class="paragraph">
-<p>The <code>handler</code> object then uses <code>result_traits&lt;R&gt;::succeeded(res)</code> to check for success. If it returns <code>true</code>, no further action is taken; otherwise the current error for the calling thread is moved into <code>*this</code>, leaving it with <code>!has_current_error()</code>. The <code>catch_</code> member function can then be used to check for specific error types to handle.</p>
+<p>The <code>handler</code> object then uses <code><a href="#result_traits">result_traits</a>&lt;R&gt;::<a href="#result_traits_succeeded">succeeded</a>(res)</code> to check for success. If it returns <code>true</code>, no further action is taken; otherwise the current error for the calling thread is moved into <code>*this</code>, leaving it with <code>!<a href="#has_current_error">has_current_error</a>()</code>. The <code>catch_</code> member function can then be used to check for specific error types to handle.</p>
 </div>
 <div class="paragraph">
 <p>The <code>handler</code> class template has the following members:</p>
@@ -1167,11 +1167,11 @@ throw_( E &amp;&amp; e ) noexcept</code></pre>
 <dl>
 <dt class="hdlist1"><em>Requirements:</em></dt>
 <dd>
-<p>The <code>result_traits</code> template must be specialized for <code>R</code>.</p>
+<p>The <code><a href="#result_traits">result_traits</a></code> template must be specialized for <code>R</code>.</p>
 </dd>
 <dt class="hdlist1"><em>Preconditions:</em></dt>
 <dd>
-<p><code>result_traits&lt;R&gt;::succeeded(res) == !has_current_error()</code>.</p>
+<p><code><a href="#result_traits">result_traits</a>&lt;R&gt;::<a href="#result_traits_succeeded">succeeded</a>(res) == !<a href="#has_current_error">has_current_error</a>()</code>.</p>
 </dd>
 <dt class="hdlist1"><em>Effects:</em></dt>
 <dd>
@@ -1202,7 +1202,7 @@ throw_( E &amp;&amp; e ) noexcept</code></pre>
 <dl>
 <dt class="hdlist1"><em>Preconditions:</em></dt>
 <dd>
-<p><code>!has_current_error() || bool(*this)</code>, or else the program is ill-formed.</p>
+<p><code>!<a href="#has_current_error">has_current_error</a>() || bool(*this)</code>, or else the program is ill-formed.</p>
 </dd>
 <dt class="hdlist1"><em>Effects:</em></dt>
 <dd>
@@ -1228,7 +1228,7 @@ throw_( E &amp;&amp; e ) noexcept</code></pre>
 <div class="title">Note</div>
 </td>
 <td class="content">
-Errors captured by <code>handler</code> objects are marked as handled when <code>catch_&lt;E&gt;</code> is called, but only if it can be converted to <code>E *</code>.
+Errors captured by <code>handler</code> objects are marked as handled when <code><a href="#catch_">catch_</a>&lt;E&gt;</code> is called, but only if it can be converted to <code>E *</code>.
 </td>
 </tr>
 </table>
@@ -1247,7 +1247,7 @@ R &amp; result();</code></pre>
 <dl>
 <dt class="hdlist1"><em>Effects:</em></dt>
 <dd>
-<p>If <code>bool(*this)</code> is <code>true</code>, <code>result()</code> returns a reference to the result object passed to <code>try_</code> and moved into <code>*this</code>. Otherwise calling <code>result()</code> throws the error as a C++ exception.</p>
+<p>If <code>bool(*this)</code> is <code>true</code>, <code>result()</code> returns a reference to the result object passed to <code><a href="#try_">try_</a></code> and moved into <code>*this</code>. Otherwise calling <code>result()</code> throws the error as a C++ exception.</p>
 </dd>
 </dl>
 </div>
@@ -1260,19 +1260,27 @@ E * catch_() noexcept;</code></pre>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><em>Preconditions:</em></dt>
-<dd>
-<p><code>!(*this)</code></p>
-</dd>
 <dt class="hdlist1"><em>Returns:</em></dt>
 <dd>
-<p><code>dynamic_cast&lt;E *&gt;(e)</code>, where <code>e</code> is a pointer to the error object captured into <code>*this</code>.</p>
+<p>If <code>bool(*this)</code> is <code>true</code>, returns <code>dynamic_cast&lt;E *&gt;(e)</code>, where <code>e</code> is an internal pointer to the error object captured into <code>*this</code>; otherwise returns <code>0</code>. The returned pointer becomes invalid if the <code>handler</code> object is moved or destroyed.</p>
 </dd>
 <dt class="hdlist1"><em>Effects:</em></dt>
 <dd>
-<p>If the cast is successful, the error object captured into <code>*this</code> is marked as <code>handled</code>. See <a href="#handler_dtor"><code>~handler()</code></a>.</p>
+<p>If the cast is successful, the error object captured into <code>*this</code> is marked as <code>handled</code>. See <code><a href="#handler_dtor">~handler</a>()</code>.</p>
 </dd>
 </dl>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<code>catch_&lt;&gt;</code> serves similar function to <code>catch(...)</code> when handling exceptions, however <code>catch_&lt;&gt;</code> is able to return a <code>std::exception</code> pointer because <code>throw_(my_error())</code> will inject <code>std::exception</code> as a base type if <code>my_error</code> doesn&#8217;t derive from it.
+</td>
+</tr>
+</table>
 </div>
 <hr>
 <div class="listingblock">
@@ -1308,7 +1316,7 @@ handler&lt;R&gt; try_( R &amp;&amp; res ) noexcept;</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>All assertions in Noexcept use this macro; if not <code>#defined</code>, Noexcept header files <code>#define</code> it to <code>BOOST_ASSERT</code>.</p>
+<p>All assertions in Noexcept use this macro; if not <code>#defined</code>, Noexcept header files <code>#define</code> it to <a href="www.boost.org/doc/libs/release/libs/utility/assert.html"><code>BOOST_ASSERT</code></a>.</p>
 </div>
 <hr>
 <div class="listingblock">
@@ -1317,7 +1325,7 @@ handler&lt;R&gt; try_( R &amp;&amp; res ) noexcept;</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>If <code>#defined</code>, Noexcept uses the C++ standard <code>thread_local</code> keyword for static thread-local storage, otherwise it uses <code>boost::thread_specific_ptr</code>.</p>
+<p>If <code>#defined</code>, Noexcept uses the C++ standard <code>thread_local</code> keyword for static thread-local storage, otherwise it uses <a href="www.boost.org/doc/libs/release/doc/html/thread/thread_local_storage.html"><code>boost::thread_specific_ptr</code></a>.</p>
 </div>
 <hr>
 <div class="listingblock">
@@ -1335,7 +1343,7 @@ handler&lt;R&gt; try_( R &amp;&amp; res ) noexcept;</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>All Noexcept functions are declared as <code>noexcept</code>, except for <a href="#handler_result"><code>handler::result()</code></a> which throws exceptions using this macro. If not <code>#defined</code>, Noexcept header files <code>#define</code> it to <code>BOOST_THROW_EXCEPTION</code>.</p>
+<p>All Noexcept functions are declared as <code>noexcept</code>, except for <code><a href="#handler_result">handler::result</a>()</code> which throws exceptions using this macro. If not <code>#defined</code>, Noexcept header files <code>#define</code> it to <a href="www.boost.org/doc/libs/release/libs/exception/doc/BOOST_THROW_EXCEPTION.html"><code>BOOST_THROW_EXCEPTION</code></a>.</p>
 </div>
 </div>
 </div>
