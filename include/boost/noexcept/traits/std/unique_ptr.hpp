@@ -6,6 +6,7 @@
 #ifndef UUID_3A89AA724CEE11E7AEE1324DAD730A1C
 #define UUID_3A89AA724CEE11E7AEE1324DAD730A1C
 
+#include <boost/noexcept/result_traits_defaults.hpp>
 #include <memory>
 
 namespace
@@ -14,26 +15,8 @@ boost
     namespace
     noexcept_
         {
-        template <class>
-        struct result_traits;
-
-        template <class T,class D>
-        struct
-        result_traits<std::unique_ptr<T,D> >
-            {
-            static
-            bool
-            succeeded( std::unique_ptr<T,D> const & x ) noexcept
-                {
-                return x!=nullptr;
-                }
-            static
-            std::unique_ptr<T,D>
-            error_result() noexcept
-                {
-                return std::unique_ptr<T,D>();
-                }
-            };
+        template <class T> struct result_traits;
+        template <class T,class D> struct result_traits<std::unique_ptr<T,D> >: result_traits_defaults<std::unique_ptr<T,D> > { };
         }
     }
 

@@ -201,7 +201,6 @@ The `handler` class template has the following members:
 explicit handler( R && res ) noexcept;
 ----
 _Requirements:_:: The `<<result_traits,result_traits>>` template must be specialized for `R`.
-_Preconditions:_:: `<<result_traits,result_traits>><R>::<<result_traits_succeeded,succeeded>>(res) == !<<has_current_error,has_current_error>>()`.
 _Effects:_:: `res` is moved into `*this` . If `result_traits<R>::succeeded(res)` returns `false`, the current error for the calling thread is moved into `*this` as well.
 _Postconditions:_:: `!has_current_error()`.
 
