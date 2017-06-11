@@ -46,6 +46,6 @@ run-fail _unhandled_error_test3.cpp ;
 run-fail _unhandled_error_test4.cpp ;
 run-fail _unhandled_error_test5.cpp ;
 
-run ../example/c_api_example.cpp ;
-run ../example/FILE_ptr_example.cpp ;
-run ../example/FILE_ptr_throw_example.cpp ;
+run ../examples/c_api_example.cpp ;
+run ../examples/FILE_ptr_example.cpp ;
+run ../examples/FILE_ptr_throw_example.cpp ;
