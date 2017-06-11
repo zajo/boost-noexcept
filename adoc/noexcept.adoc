@@ -317,7 +317,7 @@ However, it is up to the user to call `try_`: the code below is ill-formed, assu
  auto r1=f1();
  auto r2=f2();
 +
-The correct code would ensure that at the time `f2()` is called there is no current error for the calling thread. This could be done either by checking the return value of `f1()` (assuming `r1` converts to bool to indicate success or failure):
+The correct code would ensure that at the time `f2()` is called there is no current error for the calling thread. This could be done either by checking the return value of `f1()` (assuming `r1` converts to `bool` to indicate success or failure):
 +
  if( auto r1=f1() ) {
      auto r2=f2(); //okay for f2 to fail (f1 didn't)
@@ -326,7 +326,7 @@ The correct code would ensure that at the time `f2()` is called there is no curr
      return throw_(); //let the caller deal with failures
  }
 +
-or
+or by capturing `f1` failures using `try_`:
 +
  auto r1=try_(f1()); //capture possible f1 failures
  auto r2=f2(); //okay, even if both f1 and f2 fail
@@ -341,7 +341,7 @@ Does this mean that I should always use `try_`?:: No, only use `try_` if you wan
      return throw_(); //Something went wrong
  }
 
-What happens if `<<try_,try_>>()` is called without any error being present?:: That is fine, in this case the value passed to `try_` will simply be moved into the returned `<<handler,handler>>` object, where it can be accessed using the `<<handler_result,result>>()` member function.
+What happens if `<<try_,try_>>` is called without any error being present?:: That is fine, in this case the value passed to `try_` will simply be moved into the returned `<<handler,handler>>` object, where it can be accessed using the `<<handler_result,result>>()` member function.
 
 The design of Noexcept smells like exception handling to me, what about Overhead?:: It is true, Noexcept has been designed to mimic {CPP} exception handling in order to enable the same useful programming techniques it allows, perhaps most importantly freeing function return values from the burden of having to transport error objects.
 +
