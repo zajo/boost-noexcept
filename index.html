@@ -1366,7 +1366,7 @@ auto r2=f2();</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The correct code would ensure that at the time <code>f2()</code> is called there is no current error for the calling thread. This could be done either by checking the return value of <code>f1()</code> (assuming <code>r1</code> converts to bool to indicate success or failure):</p>
+<p>The correct code would ensure that at the time <code>f2()</code> is called there is no current error for the calling thread. This could be done either by checking the return value of <code>f1()</code> (assuming <code>r1</code> converts to <code>bool</code> to indicate success or failure):</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -1379,7 +1379,7 @@ auto r2=f2();</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>or</p>
+<p>or by capturing <code>f1</code> failures using <code>try_</code>:</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -1405,7 +1405,7 @@ auto r2=f2(); //okay, even if both f1 and f2 fail</pre>
 </div>
 </li>
 <li>
-<p><em>What happens if <code><a href="#try_">try_</a>()</code> is called without any error being present?</em></p>
+<p><em>What happens if <code><a href="#try_">try_</a></code> is called without any error being present?</em></p>
 <p>That is fine, in this case the value passed to <code>try_</code> will simply be moved into the returned <code><a href="#handler">handler</a></code> object, where it can be accessed using the <code><a href="#handler_result">result</a>()</code> member function.</p>
 </li>
 <li>
