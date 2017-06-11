@@ -10,7 +10,6 @@ project
     : requirements
         <link>static
         <source>/boost/thread
-        <source>/boost/sync
         <cxxflags>-std=c++14
     ;
 
@@ -33,12 +32,20 @@ headers-compile-test [ glob ../include/boost/noexcept/*.hpp ]
         noexcept
     ;
 
-run exception_holder_test.cpp ;
+run any_movable_test.cpp ;
 run multiple_active_errors_test.cpp ;
 run throw_test.cpp ;
-run throw_error_code_test.cpp ;
+run succeeded_test.cpp ;
 run throw_exception_test.cpp ;
+run result_traits_ptr_test.cpp ;
+run has_current_error_test.cpp ;
 
 run-fail _unhandled_error_test1.cpp ;
 run-fail _unhandled_error_test2.cpp ;
 run-fail _unhandled_error_test3.cpp ;
+run-fail _unhandled_error_test4.cpp ;
+run-fail _unhandled_error_test5.cpp ;
+
+run ../example/c_api_example.cpp ;
+run ../example/FILE_ptr_example.cpp ;
+run ../example/FILE_ptr_throw_example.cpp ;
