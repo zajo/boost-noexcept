@@ -534,7 +534,6 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#throw_"><code>throw_</code></a></li>
 <li><a href="#error_handler"><code>error_handler</code>/<code>catch_</code></a></li>
 <li><a href="#try_"><code>try_handler</code>/<code>try_</code></a></li>
-<li><a href="#has_current_error"><code>has_current_error</code></a></li>
 </ul>
 </li>
 <li><a href="#_macros_and_configuration">Macros and configuration</a></li>
@@ -790,6 +789,8 @@ boost::optional&lt;<span class="predefined-type">float</span>&gt; erratic_caller
 
     };
 
+    <span class="predefined-type">bool</span> has_current_error() noexcept;
+
 } }</code></pre>
 </div>
 </div>
@@ -852,16 +853,6 @@ boost::optional&lt;<span class="predefined-type">float</span>&gt; erratic_caller
 } }</code></pre>
 </div>
 </div>
-<div class="listingblock">
-<div class="title">&lt;boost/noexcept/has_current_error.hpp&gt;</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> noexcept_ {
-
-    <span class="predefined-type">bool</span> has_current_error() noexcept;
-
-} }</code></pre>
-</div>
-</div>
 </div>
 </div>
 <div class="sect1">
@@ -897,6 +888,8 @@ boost::optional&lt;<span class="predefined-type">float</span>&gt; erratic_caller
         <span class="directive">operator</span> R() noexcept;
 
     };
+
+    <span class="predefined-type">bool</span> has_current_error() noexcept;
 
 } }</code></pre>
 </div>
@@ -983,6 +976,20 @@ throw_( E &amp;&amp; e ) noexcept</code></pre>
 <dt class="hdlist1"><em>Returns:</em></dt>
 <dd>
 <p><code>throw_return&lt;R&gt;::value()</code>.</p>
+</dd>
+</dl>
+</div>
+<hr>
+<div id="has_current_error" class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">bool</span> has_current_error() noexcept;</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><em>Returns:</em></dt>
+<dd>
+<p>If <code><a href="#throw_">throw_</a></code> was used to set the current error for the calling thread, and if that error has not been captured by an <code><a href="#error_handler">error_handler</a></code> (or a <code>try_handler</code>, see <code><a href="#try_">try_</a></code>), <code>has_current_error</code> returns <code>true</code>. Otherwise it returns <code>false</code>.</p>
 </dd>
 </dl>
 </div>
@@ -1276,25 +1283,6 @@ try_handler&lt;R&gt; try_( R &amp;&amp; res ) noexcept;</code></pre>
     <span class="comment">//Handle error, see try_handler::catch_&lt;&gt;</span>
 }</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p><br></p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="has_current_error"><code>has_current_error</code></h3>
-<div class="listingblock">
-<div class="title">&lt;boost/noexcept/has_current_error.hpp&gt;</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> noexcept_ {
-
-    <span class="predefined-type">bool</span> has_current_error() noexcept;
-
-} }</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>If <code><a href="#throw_">throw_</a></code> was used to set the current error for the calling thread, and if that error has not been captured by an <code><a href="#error_handler">error_handler</a></code> (or a <code>try_handler</code>, see <code><a href="#try_">try_</a></code>), <code>has_current_error</code> returns <code>true</code>. Otherwise it returns <code>false</code>.</p>
 </div>
 <div class="paragraph">
 <p><br></p>
