@@ -96,6 +96,12 @@ boost
                 return throw_return<R>::value();
                 }
             };
+        inline
+        bool
+        has_current_error() noexcept
+            {
+            return noexcept_detail::current_error().has_current_error();
+            }
         }
     }
 

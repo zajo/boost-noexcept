@@ -27,5 +27,7 @@ namespace boost { namespace noexcept_ {
         
     };
 
+    bool has_current_error() noexcept;
+
 } }
 ----

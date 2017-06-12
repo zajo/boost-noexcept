@@ -73,8 +73,6 @@ include::{sourcedir}/adoc/synopses/error_handler.hpp.adoc[]
 
 include::{sourcedir}/adoc/synopses/try.hpp.adoc[]
 
-include::{sourcedir}/adoc/synopses/has_current_error.hpp.adoc[]
-
 == Reference
 
 [[throw_]]
@@ -129,6 +127,15 @@ operator R() noexcept;
 ----
 _Preconditions:_:: `<<has_current_error,has_current_error>>()`
 _Returns:_:: `throw_return<R>::value()`.
+
+***
+
+[[has_current_error]]
+[source,c++]
+----
+bool has_current_error() noexcept;
+----
+_Returns:_:: If `<<throw_,throw_>>` was used to set the current error for the calling thread, and if that error has not been captured by an `<<error_handler,error_handler>>` (or a `try_handler`, see `<<try_,try_>>`), `has_current_error` returns `true`. Otherwise it returns `false`.
 
 {blank} +
 
@@ -273,15 +280,6 @@ if( auto tr=try_(f()) ) {
     //Handle error, see try_handler::catch_<>
 }
 ----
-
-{blank} +
-
-[[has_current_error]]
-=== `has_current_error`
-
-include::{sourcedir}/adoc/synopses/has_current_error.hpp.adoc[]
-
-If `<<throw_,throw_>>` was used to set the current error for the calling thread, and if that error has not been captured by an `<<error_handler,error_handler>>` (or a `try_handler`, see `<<try_,try_>>`), `has_current_error` returns `true`. Otherwise it returns `false`.
 
 {empty} +
 

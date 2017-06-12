@@ -1,9 +1,0 @@
-[source,c++]
-.<boost/noexcept/has_current_error.hpp>
-----
-namespace boost { namespace noexcept_ {
-
-    bool has_current_error() noexcept;
-
-} }
-----
