@@ -75,6 +75,12 @@ boost
         throw_return: noexcept_detail::default_throw_return<R>
             {
             };
+        template <>
+        struct
+        throw_return<bool>
+            {
+            static bool value() noexcept { return false; }
+            };
         class
         throw_
             {

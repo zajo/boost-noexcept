@@ -43,6 +43,23 @@ f3( bool succeed ) noexcept
 int
 main()
     {
+    BOOST_TEST(throw_return<bool>::value()==false);
+    BOOST_TEST(throw_return<char>::value()==static_cast<char>(-1));
+    BOOST_TEST(throw_return<signed char>::value()==static_cast<signed char>(-1));
+    BOOST_TEST(throw_return<unsigned char>::value()==static_cast<unsigned char>(-1));
+    BOOST_TEST(throw_return<wchar_t>::value()==static_cast<wchar_t>(-1));
+    BOOST_TEST(throw_return<char16_t>::value()==static_cast<char16_t>(-1));
+    BOOST_TEST(throw_return<char32_t>::value()==static_cast<char32_t>(-1));
+    BOOST_TEST(throw_return<short>::value()==static_cast<short>(-1));
+    BOOST_TEST(throw_return<unsigned short>::value()==static_cast<unsigned short>(-1));
+    BOOST_TEST(throw_return<int>::value()==static_cast<int>(-1));
+    BOOST_TEST(throw_return<unsigned int>::value()==static_cast<unsigned int>(-1));
+    BOOST_TEST(throw_return<long>::value()==static_cast<long>(-1));
+    BOOST_TEST(throw_return<unsigned long>::value()==static_cast<unsigned long>(-1));
+    BOOST_TEST(throw_return<long long>::value()==static_cast<long long>(-1));
+    BOOST_TEST(throw_return<unsigned long long>::value()==static_cast<unsigned long long>(-1));
+    BOOST_TEST(throw_return<int *>::value()==0);
+    BOOST_TEST(throw_return<boost::shared_ptr<int> >::value()==boost::shared_ptr<int>());    
         {
         auto tr=try_(f1(true));
         BOOST_TEST(tr);
