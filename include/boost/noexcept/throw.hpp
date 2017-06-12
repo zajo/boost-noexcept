@@ -7,7 +7,6 @@
 #define UUID_75B956744A2D11E7AAD921AAAD730A1C
 
 #include <boost/noexcept/noexcept_detail/current_error.hpp>
-#include <boost/noexcept/result_traits.hpp>
 #include <type_traits>
 #include <exception>
 
@@ -20,6 +19,19 @@ boost
         namespace
         noexcept_detail
             {
+            template <class R,bool IsIntegral=std::is_integral<R>::value> struct default_throw_return;
+            template <class R>
+            struct
+            default_throw_return<R,true>
+                {
+                static R value() noexcept { return static_cast<R>(-1); }
+                };
+            template <class R>
+            struct
+            default_throw_return<R,false>
+                {
+                static R value() noexcept { return R(); }
+                };
             template <class E,bool DerivesFromStdException=std::is_base_of<std::exception,E>::value> struct put_dispatch;
             template <class E>
             struct
@@ -58,6 +70,11 @@ boost
                     }
                 };
             }
+        template <class R>
+        struct
+        throw_return: noexcept_detail::default_throw_return<R>
+            {
+            };
         class
         throw_
             {
@@ -76,7 +93,7 @@ boost
             operator R() noexcept
                 {
                 BOOST_NOEXCEPT_ASSERT(!noexcept_detail::current_error().get_exception().empty());
-                return result_traits<R>::error_result();
+                return throw_return<R>::value();
                 }
             };
         }

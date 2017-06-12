@@ -75,9 +75,13 @@ boost
                     {
                     e_.clear();
                     }
+                bool
+                has_current_error() noexcept
+                    {
+                    return  !e_.empty() && !h_;
+                    }
                 void set_handler( handler_base * ) noexcept;
                 void unset_handler( handler_base * ) noexcept;
-                bool has_current_error() noexcept;
                 private:
                 exception_holder e_;
                 handler_base * h_;

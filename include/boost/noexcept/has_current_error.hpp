@@ -14,17 +14,6 @@ boost
     namespace
     noexcept_
         {
-        namespace
-        noexcept_detail
-            {
-            inline
-            bool
-            current_error_holder::
-            has_current_error() noexcept
-                {
-                return !e_.empty() && !h_;
-                }
-            }
         inline
         bool
         has_current_error() noexcept

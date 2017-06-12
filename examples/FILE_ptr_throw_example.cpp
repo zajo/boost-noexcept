@@ -1,5 +1,4 @@
 #include <boost/noexcept.hpp>
-#include <boost/noexcept/traits/ptr.hpp>
 #include <stdio.h>
 
 using namespace boost::noexcept_;

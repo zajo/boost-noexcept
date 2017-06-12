@@ -6,7 +6,6 @@
 #include <boost/noexcept/try.hpp>
 #include <boost/noexcept/throw.hpp>
 #include <boost/noexcept/has_current_error.hpp>
-#include <boost/noexcept/traits/ptr.hpp>
 #include <boost/core/lightweight_test.hpp>
 
 using namespace boost::noexcept_;

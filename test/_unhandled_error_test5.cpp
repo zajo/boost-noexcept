@@ -5,7 +5,6 @@
 
 #include <boost/noexcept/throw.hpp>
 #include <boost/noexcept/try.hpp>
-#include <boost/noexcept/traits/boost/optional.hpp>
 #include <boost/optional.hpp>
 
 using namespace boost::noexcept_;

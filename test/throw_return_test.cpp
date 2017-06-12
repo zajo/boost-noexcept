@@ -3,9 +3,6 @@
 //Distributed under the Boost Software License, Version 1.0. (See accompanying
 //file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#include <boost/noexcept/traits/ptr.hpp>
-#include <boost/noexcept/traits/boost/shared_ptr.hpp>
-#include <boost/noexcept/traits/boost/unique_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/move/unique_ptr.hpp>
 #include <boost/noexcept/try.hpp>

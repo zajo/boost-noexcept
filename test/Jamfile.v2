@@ -35,9 +35,8 @@ headers-compile-test [ glob ../include/boost/noexcept/*.hpp ]
 run any_movable_test.cpp ;
 run multiple_active_errors_test.cpp ;
 run throw_test.cpp ;
-run succeeded_test.cpp ;
 run throw_exception_test.cpp ;
-run result_traits_ptr_test.cpp ;
+run throw_return_test.cpp ;
 run has_current_error_test.cpp ;
 
 run-fail _unhandled_error_test1.cpp ;

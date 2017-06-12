@@ -3,6 +3,13 @@
 ----
 namespace boost { namespace noexcept_ {
 
+    template <class R>
+    struct throw_return {
+
+        static R value() noexcept;
+
+    }
+
     class throw_ {
 
         throw_( throw_ const & )=delete;
@@ -17,6 +24,7 @@ namespace boost { namespace noexcept_ {
 
         template <class R>
         operator R() noexcept;
+        
     };
 
 } }

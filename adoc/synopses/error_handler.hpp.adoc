@@ -1,0 +1,28 @@
+[source,c++]
+.<boost/noexcept/error_handler.hpp>
+----
+namespace boost { namespace noexcept_ {
+
+    template <class R>
+    class error_handler {
+
+        error_handler( error_handler const & )=delete;
+        error_handler & operator=( error_handler const & )=delete;
+
+        public:
+
+        error_handler() noexcept;
+        ~error_handler() noexcept;
+
+        bool has_error() const noexcept;
+        bool has_unhandled_error const noexcept;
+
+        template <class E=std::exception>
+        E * catch_() noexcept;
+
+        void throw_exception();
+        
+    };
+
+} }
+----

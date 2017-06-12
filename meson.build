@@ -39,15 +39,15 @@ test( 'multiple_active_errors_test',
         dependencies: boost_thread,
         include_directories:includes) )
 
-test( 'throw_test',
-    executable( 'throw_test',
-        'test/throw_test.cpp',
+test( 'error_handler_test',
+    executable( 'error_handler_test',
+        'test/error_handler_test.cpp',
         dependencies: boost_thread,
         include_directories:includes) )
 
-test( 'succeeded_test',
-    executable( 'succeeded_test',
-        'test/succeeded_test.cpp',
+test( 'throw_test',
+    executable( 'throw_test',
+        'test/throw_test.cpp',
         dependencies: boost_thread,
         include_directories:includes) )
 
@@ -57,9 +57,9 @@ test( 'throw_exception_test',
         dependencies: boost_thread,
         include_directories:includes) )
 
-test( 'result_traits_ptr_test',
-    executable( 'result_traits_ptr_test',
-        'test/result_traits_ptr_test.cpp',
+test( 'throw_return_test',
+    executable( 'throw_return_test',
+        'test/throw_return_test.cpp',
         dependencies: boost_thread,
         include_directories:includes) )
 

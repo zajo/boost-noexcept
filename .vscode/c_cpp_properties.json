@@ -4,19 +4,17 @@
             "name": "Mac",
             "includePath": [
                 "${workspaceRoot}",
-                "${workspaceRoot}/../reverge/re",
-                "${workspaceRoot}/../reverge/dispatch/MACOSX",
-                "${workspaceRoot}/../lib/boost_1_62_0",
-                "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1"
+                "${workspaceRoot}/subprojects/boost_1_64_0",
+                "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1",
+				"/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include"
             ],
             "defines": [],
             "browse": {
                 "path": [
 					"${workspaceRoot}",
-					"${workspaceRoot}/../reverge/re",
-					"${workspaceRoot}/../reverge/dispatch/MACOSX",
-					"${workspaceRoot}/../lib/boost_1_62_0",
-					"/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1"
+	                "${workspaceRoot}/subprojects/boost_1_64_0",
+					"/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1",
+					"/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include"
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""
@@ -43,6 +41,7 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceRoot}",
+                "${workspaceRoot}/subprojects/boost_1_64_0",
                 "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/include"
             ],
             "defines": [
@@ -51,6 +50,8 @@
             ],
             "browse": {
                 "path": [
+					"${workspaceRoot}",
+					"${workspaceRoot}/subprojects/boost_1_64_0",
                     "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/include/*"
                 ],
                 "limitSymbolsToIncludedHeaders": true,
