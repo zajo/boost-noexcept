@@ -26,7 +26,7 @@ boost
                 {
                 BOOST_NOEXCEPT_ASSERT(e!=0);
                 BOOST_THROW_EXCEPTION(*static_cast<E *>(e));
-                abort();
+                std::terminate();
                 }
             typedef any_movable<128,std::exception> exception_holder;
             class
@@ -43,9 +43,9 @@ boost
                     };
                 ~current_error_holder() noexcept
                     {
-                    BOOST_NOEXCEPT_ASSERT(e_.empty() && "The thread terminates with unhandled error! Calling abort()! (Did you forget to use try_?)");
+                    BOOST_NOEXCEPT_ASSERT(e_.empty() && "The thread terminates with unhandled error! Calling std::terminate()! (Did you forget to use try_?)");
                     if( !e_.empty() )
-                        abort();
+                        std::terminate();
                     }
                 template <class E>
                 void

@@ -119,7 +119,7 @@ boost
                     {
                     handled_=true;
                     caught_->call_observer();
-                    abort();
+                    std::terminate();
                     }
                 }
             };

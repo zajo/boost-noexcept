@@ -47,7 +47,7 @@ include::{sourcedir}/examples/FILE_ptr_example.cpp[tabsize=1]
 <3> `<<error_handler_catch_,catch_>>` returns a pointer to the error object (or `0` if it can not be converted to `file_open_error`) and flags it as handled.
 <4> When `tr` is destroyed, the error object is destroyed if handled, otherwise left intact for another `try_`/`catch_` up the call stack to handle.
 
-WARNING: If unhandled errors remain at the time the current thread terminates, Noexcept calls `abort()`. Use `catch_<>` to handle any error regardless of its type.
+WARNING: If unhandled errors remain at the time the current thread terminates, Noexcept calls `std::terminate()`. Use `catch_<>` to handle any error regardless of its type.
 
 '''
 
@@ -336,6 +336,8 @@ or by capturing `f1` failures using `try_`:
  auto r1=try_(f1()); //capture possible f1 failures
  auto r2=f2(); //okay, even if both f1 and f2 fail
 +
+NOTE: The above is not unlike when using exception handling: if you want to call `f2` even if `f1` throws, you'd have to call `f1` from within a `try`/`catch`.
++
 (Nothrow asserts on `!<<has_current_error,has_current_error>>()` at the time an error object is passed to `<<thtrow_,throw_>>`).
 
 Does this mean that I should always use `try_`?:: No, only use `try_` if you want to handle errors (see `<<error_handler_catch_,catch_>>`). In error-neutral contexts, in case of errors simply return `<<throw_,throw_>>()` without argument:
@@ -345,6 +347,10 @@ Does this mean that I should always use `try_`?:: No, only use `try_` if you wan
  } else {
      return throw_(); //Something went wrong
  }
+
+What happens if I forget to check for errors?:: Then you'd be using a bad value. For example, if a function returns a `shared_ptr<T>` and you forget to check for success, attempting to dereference it leads to undefined behavior (segfault)..
++
+NOTE: If control is entering a scope where exception handling is enabled, you can convert Noexcept errors to exceptions by `try_(f()).result()`, which throws on error.
 
 What happens if `<<try_,try_>>` is called without any error being present?:: That is fine, in this case the value passed to `try_` will simply be moved into the returned `<<try_handler,try_handler>>` object, where it can be accessed using the `<<try_handler_result,result>>()` member function.
 

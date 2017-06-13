@@ -44,7 +44,7 @@ boost
                     {
                     BOOST_NOEXCEPT_ASSERT(has_error());
                     throw_exception();
-                    abort();
+                    std::terminate();
                     }
                 else
                     return res_;
@@ -56,7 +56,7 @@ boost
                     {
                     BOOST_NOEXCEPT_ASSERT(has_error());
                     throw_exception();
-                    abort();
+                    std::terminate();
                     }
                 else
                     return res_;
