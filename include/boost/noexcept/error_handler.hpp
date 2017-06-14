@@ -20,20 +20,20 @@ boost
             {
             error_handler( error_handler const & )=delete;
             error_handler & operator=( error_handler const & )=delete;
-            noexcept_detail::exception_holder internal_;
-            noexcept_detail::exception_holder const * caught_;
+            noexcept_detail::error_holder internal_;
+            noexcept_detail::error_holder const * caught_;
             bool handled_;
             static
-            noexcept_detail::exception_holder const *
+            noexcept_detail::error_holder const *
             init_caught() noexcept
                 {
                 noexcept_detail::current_error_holder & err=noexcept_detail::current_error();
-                return err.has_current_error()?&err.get_exception():0;
+                return err.has_current_error()?&err.get_error():0;
                 }
             void
-            store_internally( noexcept_detail::exception_holder && x ) noexcept
+            store_internally( noexcept_detail::error_holder && x ) noexcept
                 {
-                BOOST_NOEXCEPT_ASSERT(caught_==&noexcept_detail::current_error().get_exception());
+                BOOST_NOEXCEPT_ASSERT(caught_==&noexcept_detail::current_error().get_error());
                 BOOST_NOEXCEPT_ASSERT(internal_.empty());
                 internal_ = std::move(x);
                 caught_ = &internal_;
@@ -53,7 +53,7 @@ boost
                 x.handled_=0;
                 if( caught_ )
                     {
-                    BOOST_NOEXCEPT_ASSERT(x.caught_==&noexcept_detail::current_error().get_exception());
+                    BOOST_NOEXCEPT_ASSERT(x.caught_==&noexcept_detail::current_error().get_error());
                     noexcept_detail::current_error().set_handler(this);
                     }
                 }
@@ -75,12 +75,12 @@ boost
                         if( !handled_ )
                             {
                             BOOST_NOEXCEPT_ASSERT(!internal_.empty());
-                            cf.set_exception(std::move(internal_));
+                            cf.set_error(std::move(internal_));
                             }
                         }
                     else
                         {
-                        BOOST_NOEXCEPT_ASSERT(caught_==&cf.get_exception());
+                        BOOST_NOEXCEPT_ASSERT(caught_==&cf.get_error());
                         if( handled_ )
                             cf.clear_exception();
                         cf.unset_handler(this);

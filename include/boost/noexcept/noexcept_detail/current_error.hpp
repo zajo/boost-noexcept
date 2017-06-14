@@ -28,7 +28,7 @@ boost
                 BOOST_THROW_EXCEPTION(*static_cast<E *>(e));
                 std::terminate();
                 }
-            typedef any_movable<128,std::exception> exception_holder;
+            typedef any_movable<128,std::exception> error_holder;
             class
             current_error_holder
                 {
@@ -37,7 +37,7 @@ boost
                 handler_base
                     {
                     public:
-                    virtual void store_internally( exception_holder && ) noexcept=0;
+                    virtual void store_internally( error_holder && ) noexcept=0;
                     virtual void unhandle() noexcept=0;
                     protected:
                     ~handler_base() noexcept;
@@ -69,13 +69,13 @@ boost
                         h_->unhandle();
                         }
                     }
-                exception_holder const &
-                get_exception() noexcept
+                error_holder const &
+                get_error() noexcept
                     {
                     return e_;
                     }
                 void
-                set_exception( exception_holder && e ) noexcept
+                set_error( error_holder && e ) noexcept
                     {
                     BOOST_NOEXCEPT_ASSERT(e_.empty() && "Unhandled error is present at the time a new error is passed to throw_()! (Did you forget to use try_?)");
                     e_=std::move(e);
@@ -92,8 +92,10 @@ boost
                     }
                 void set_handler( handler_base * ) noexcept;
                 void unset_handler( handler_base * ) noexcept;
+                error_holder move_out() noexcept;
+                void move_in( error_holder && ) noexcept;
                 private:
-                exception_holder e_;
+                error_holder e_;
                 handler_base * h_;
                 };
             current_error_holder &

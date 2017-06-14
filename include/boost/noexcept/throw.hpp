@@ -16,6 +16,7 @@ boost
     namespace
     noexcept_
         {
+        typedef std::shared_ptr<noexcept_detail::error_holder> error_ptr;
         namespace
         noexcept_detail
             {
@@ -91,6 +92,7 @@ boost
                 {
                 noexcept_detail::current_error().rethrow();
                 }
+            explicit throw_( error_ptr const & );
             template <class E>
             throw_( E && e ) noexcept
                 {
@@ -99,7 +101,7 @@ boost
             template <class R>
             operator R() noexcept
                 {
-                BOOST_NOEXCEPT_ASSERT(!noexcept_detail::current_error().get_exception().empty());
+                BOOST_NOEXCEPT_ASSERT(!noexcept_detail::current_error().get_error().empty());
                 return throw_return<R>::value();
                 }
             };

@@ -100,7 +100,6 @@ boost
                     BOOST_NOEXCEPT_ASSERT(x.empty());
                     }
                 public:
-
                 any_movable() noexcept:
                     object_(0),
                     destroyer_(0),

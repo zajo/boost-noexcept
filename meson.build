@@ -69,6 +69,18 @@ test( 'has_current_error_test',
         dependencies: boost_thread,
         include_directories:includes) )
 
+test( 'error_ptr_test',
+    executable( 'error_ptr_test',
+        'test/error_ptr_test.cpp',
+        dependencies: boost_thread,
+        include_directories:includes) )
+
+test( 'error_info_test',
+    executable( 'error_info_test',
+        'test/error_info_test.cpp',
+        dependencies: boost_thread,
+        include_directories:includes) )
+
 test( '_rethrow_test',
     executable( '_rethrow_test',
         'test/_rethrow_test.cpp',
