@@ -5,7 +5,6 @@
 
 #include <boost/noexcept/try.hpp>
 #include <boost/noexcept/throw.hpp>
-#include <boost/optional.hpp>
 #include <boost/core/lightweight_test.hpp>
 
 using namespace boost::noexcept_;
@@ -30,24 +29,24 @@ f4_failed:
         {
         }
     };
-boost::optional<int>
+int
 f1() noexcept
     {
     return throw_(f1_failed(1));
     }
-boost::optional<int>
+int
 f2() noexcept
     {
     return f1();
     }
-boost::optional<int>
+int
 f3() noexcept
     {
     auto tr=try_(f2());
     BOOST_TEST(!tr);
     return throw_();
     }
-boost::optional<int>
+int
 f4() noexcept
     {
     auto tr=try_(f3());
@@ -55,10 +54,10 @@ f4() noexcept
     BOOST_TEST(tr.catch_<f1_failed>()->val==1);
     return throw_(f4_failed(2));
     }
-boost::optional<int>
+int
 f5() noexcept
     {
-    BOOST_TEST(!f4());
+    BOOST_TEST(f4()==-1);
     return throw_();
     }
 void
@@ -76,7 +75,7 @@ f6_b() noexcept
     BOOST_TEST(tr.catch_<f1_failed>()->val==2);
     }
 struct derives_from_std_exception: std::exception { };
-boost::optional<int>
+int
 throw_std_exception()
     {
     return throw_(derives_from_std_exception());
@@ -90,10 +89,28 @@ std_exception_test()
         BOOST_TEST(tr.catch_<>()!=0);
     }
 int
+rethrow_fn()
+    {
+    auto tr=try_(f1());
+    BOOST_TEST(!tr);
+    BOOST_TEST(!has_current_error());
+    BOOST_TEST(tr.catch_<>()!=0);
+    return throw_();
+    }
+void
+rethrow_test()
+    {
+    auto tr=try_(rethrow_fn());
+    BOOST_TEST(!tr);
+    BOOST_TEST(!has_current_error());
+    BOOST_TEST(tr.catch_<>()!=0);
+    }
+int
 main()
     {
     f6_a();
     f6_b();
     std_exception_test();
+    rethrow_test();
     return boost::report_errors();
     }

@@ -38,6 +38,7 @@ boost
                     {
                     public:
                     virtual void store_internally( exception_holder && ) noexcept=0;
+                    virtual void unhandle() noexcept=0;
                     protected:
                     ~handler_base() noexcept;
                     };
@@ -59,6 +60,15 @@ boost
                     BOOST_NOEXCEPT_ASSERT(e_.empty() && "Unhandled error is present at the time a new error is passed to throw_()! (Did you forget to use try_?)");
                     e_.put(std::move(e),&throw_exception_<E>);
                     }
+                void
+                rethrow() noexcept
+                    {
+                    if( !has_current_error() )
+                        {
+                        BOOST_NOEXCEPT_ASSERT(h_!=0);
+                        h_->unhandle();
+                        }
+                    }
                 exception_holder const &
                 get_exception() noexcept
                     {
@@ -76,7 +86,7 @@ boost
                     e_.clear();
                     }
                 bool
-                has_current_error() noexcept
+                has_current_error() const noexcept
                     {
                     return  !e_.empty() && !h_;
                     }

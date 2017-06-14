@@ -89,6 +89,7 @@ boost
             public:
             throw_() noexcept
                 {
+                noexcept_detail::current_error().rethrow();
                 }
             template <class E>
             throw_( E && e ) noexcept

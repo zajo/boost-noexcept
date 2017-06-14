@@ -69,6 +69,13 @@ test( 'has_current_error_test',
         dependencies: boost_thread,
         include_directories:includes) )
 
+test( '_rethrow_test',
+    executable( '_rethrow_test',
+        'test/_rethrow_test.cpp',
+        dependencies: boost_thread,
+        include_directories:includes),
+    should_fail:true )
+
 test( '_unhandled_error_test1',
     executable( '_unhandled_error_test1',
         'test/_unhandled_error_test1.cpp',

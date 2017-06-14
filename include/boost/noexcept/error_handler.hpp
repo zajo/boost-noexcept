@@ -38,6 +38,12 @@ boost
                 internal_ = std::move(x);
                 caught_ = &internal_;
                 }
+            void
+            unhandle() noexcept
+                {
+                BOOST_NOEXCEPT_ASSERT(has_error());
+                handled_=false;
+                }
             protected:
             error_handler( error_handler && x ) noexcept:
                 caught_(x.caught_),

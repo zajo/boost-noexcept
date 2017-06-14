@@ -3,7 +3,6 @@
 ----
 namespace boost { namespace noexcept_ {
 
-    template <class R>
     class error_handler {
 
         error_handler( error_handler const & )=delete;
