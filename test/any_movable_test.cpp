@@ -8,6 +8,31 @@
 #include <exception>
 #include <string>
 
+namespace
+boost
+    {
+    namespace
+    noexcept_
+        {
+        namespace
+        noexcept_detail
+            {
+            template <class T>
+            T *
+            new_nothrow_move( T && x )
+                {
+                return new (std::nothrow) T(std::move(x));
+                }
+            template <class T>
+            T *
+            new_nothrow_copy( T const & x )
+                {
+                return new (std::nothrow) T(x);
+                }
+            }
+        }
+    }
+
 static int const max_static_size=256;
 static int total_count_;
 static int small_count_;
@@ -176,6 +201,30 @@ test_lifetime() noexcept
             BOOST_TEST(ex1.get()->tag=="big");
             BOOST_TEST(check_counts(0,1));
             }
+        }
+    BOOST_TEST(check_counts(0,0));
+        {
+        test_type ex;
+        ex.put(small());
+        BOOST_TEST(check_counts(1,0));
+        test_type ex1=ex;
+        BOOST_TEST(check_counts(2,0));
+        ex.put(big());
+        BOOST_TEST(check_counts(1,1));
+        test_type ex2=ex;
+        BOOST_TEST(check_counts(1,2));
+        }
+    BOOST_TEST(check_counts(0,0));
+        {
+        test_type ex;
+        ex.put(big());
+        BOOST_TEST(check_counts(0,1));
+        test_type ex1=ex;
+        BOOST_TEST(check_counts(0,2));
+        ex.put(small());
+        BOOST_TEST(check_counts(1,1));
+        test_type ex2=ex;
+        BOOST_TEST(check_counts(2,1));
         }
     BOOST_TEST(check_counts(0,0));
     }

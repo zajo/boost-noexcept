@@ -58,7 +58,11 @@ boost
                         h_=0;
                         }
                     BOOST_NOEXCEPT_ASSERT(e_.empty() && "Unhandled error is present at the time a new error is passed to throw_()! (Did you forget to use try_?)");
-                    e_.put(std::move(e),&throw_exception_<E>);
+                    if( !e_.put(std::move(e),&throw_exception_<E>) )
+                        {
+                        std::bad_alloc * a=e_.put(std::bad_alloc(),&throw_exception_<std::bad_alloc>);
+                        BOOST_NOEXCEPT_ASSERT(a!=0);
+                        }
                     }
                 void
                 rethrow() noexcept
@@ -92,8 +96,7 @@ boost
                     }
                 void set_handler( handler_base * ) noexcept;
                 void unset_handler( handler_base * ) noexcept;
-                error_holder move_out() noexcept;
-                void move_in( error_holder && ) noexcept;
+                void set( error_holder  const & ) noexcept;
                 private:
                 error_holder e_;
                 handler_base * h_;
@@ -103,6 +106,43 @@ boost
                 {
                 return get_tl_object<current_error_holder>();
                 }
+            template <class E,bool DerivesFromStdException=std::is_base_of<std::exception,E>::value> struct put_dispatch;
+            template <class E>
+            struct
+            put_dispatch<E,true>
+                {
+                static
+                void
+                put_( E && e ) noexcept
+                    {
+                    noexcept_detail::current_error().put(std::move(e));
+                    }
+                };
+            template <class E>
+            struct
+            put_dispatch<E,false>
+                {
+                struct
+                injector:
+                    E,
+                    std::exception
+                    {
+                    explicit
+                    injector( E && x ) noexcept:
+                        E(std::move(x))
+                        {
+                        }
+                    ~injector() noexcept
+                        {
+                        }
+                    };
+                static
+                void
+                put_( E && e ) noexcept
+                    {
+                    noexcept_detail::current_error().put(injector(std::move(e)));
+                    }
+                };
             }
         }
     }

@@ -18,6 +18,8 @@ boost
         namespace
         noexcept_detail
             {
+            template <class T> T * new_nothrow_move( T && );
+            template <class T> T * new_nothrow_copy( T const & );
             template <class T,bool requires_dynamic_allocation>
             struct putter;
             template <class T>
@@ -40,7 +42,31 @@ boost
                 T *
                 put( T && obj, void * ) noexcept
                     {
-                    return new T(std::move(obj));
+                    return new_nothrow_move(std::move(obj));
+                    }
+                };
+            template <class T,bool requires_dynamic_allocation>
+            struct copier;
+            template <class T>
+            struct
+            copier<T,false>
+                {
+                static
+                void *
+                copy( void const * obj, void * where ) noexcept
+                    {
+                    return obj==0? 0 : new (where) T(*static_cast<T const *>(obj));
+                    }
+                };
+            template <class T>
+            struct
+            copier<T,true>
+                {
+                static
+                void *
+                copy( void const * obj, void * ) noexcept
+                    {
+                    return obj==0? 0 : new_nothrow_copy(*static_cast<T const *>(obj));
                     }
                 };
             template <class T>
@@ -67,19 +93,19 @@ boost
             class
             any_movable
                 {
-                any_movable( any_movable const & )=delete;
-                any_movable & operator=( any_movable const & )=delete;
                 unsigned char static_storage_[MaxStaticSize];
-                CommonBaseType * object_;
                 void (*destroyer_)( void * );
+                void * (*copier_)( void const *, void * );
                 void (*static_mover_)( void *, void * );
                 void (*observer_)( CommonBaseType * );
+                CommonBaseType * object_;
                 void
                 init( any_movable && x ) noexcept
                     {
                     if( x.object_ )
                         {
                         destroyer_=x.destroyer_;
+                        copier_=x.copier_;
                         observer_=x.observer_;
                         if( x.static_mover_ )
                             {
@@ -99,28 +125,64 @@ boost
                         BOOST_NOEXCEPT_ASSERT(empty());
                     BOOST_NOEXCEPT_ASSERT(x.empty());
                     }
+                void
+                init( any_movable const & x ) noexcept
+                    {
+                    if( x.object_ )
+                        {
+                        destroyer_=x.destroyer_;
+                        copier_=x.copier_;
+                        static_mover_=x.static_mover_;
+                        observer_=x.observer_;
+                        object_ = static_cast<CommonBaseType *>(copier_(x.object_,static_storage_));
+                        }
+                    else
+                        BOOST_NOEXCEPT_ASSERT(empty());
+                    }
                 public:
+                enum enum_ { max_static_size=MaxStaticSize };
                 any_movable() noexcept:
-                    object_(0),
                     destroyer_(0),
+                    copier_(0),
                     static_mover_(0),
-                    observer_(0)
+                    observer_(0),
+                    object_(0)
                     {
                     BOOST_NOEXCEPT_ASSERT(empty());
                     }
                 any_movable( any_movable && x ) noexcept:
-                    object_(0),
                     destroyer_(0),
+                    copier_(0),
                     static_mover_(0),
-                    observer_(0)
+                    observer_(0),
+                    object_(0)
                     {
                     init(std::move(x));
+                    }
+                any_movable( any_movable const & x ) noexcept:
+                    destroyer_(x.destroyer_),
+                    copier_(x.copier_),
+                    static_mover_(x.static_mover_),
+                    observer_(x.observer_),
+                    object_(static_cast<CommonBaseType *>(copier_(x.object_,static_storage_)))
+                    {
                     }
                 any_movable &
                 operator=( any_movable && x ) noexcept
                     {
                     clear();
                     init(std::move(x));
+                    return *this;
+                    }
+                any_movable &
+                operator=( any_movable const & x ) noexcept
+                    {
+                    clear();
+                    destroyer_=x.destroyer_;
+                    copier_=x.copier_;
+                    static_mover_=x.static_mover_;
+                    observer_=x.observer_;
+                    object_=static_cast<CommonBaseType *>(copier_(x.object_,static_storage_));
                     return *this;
                     }
                 ~any_movable() noexcept
@@ -153,11 +215,14 @@ boost
                     BOOST_NOEXCEPT_ASSERT(empty());
                     }
                 template <class T>
-                void
+                T *
                 put( T && obj, void (*observer)(CommonBaseType *)=0 ) noexcept
                     {
                     clear();
                     T * ob = putter<T,(sizeof(T)>MaxStaticSize)>::put(std::move(obj),static_storage_);
+                    if( !ob )
+                        return 0;
+                    copier_=&copier<T,(sizeof(T)>MaxStaticSize)>::copy;
                     object_=ob; //pointer adjustment in case of multiple inheritance
                     if( reinterpret_cast<unsigned char const *>(ob) == static_storage_ )
                         {
@@ -171,6 +236,7 @@ boost
                         destroyer_ = &delete_<T>;
                         }
                     observer_ = observer;
+                    return ob;
                     }
                 CommonBaseType *
                 get() const noexcept

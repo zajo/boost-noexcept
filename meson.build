@@ -75,6 +75,12 @@ test( 'error_ptr_test',
         dependencies: boost_thread,
         include_directories:includes) )
 
+test( 'bad_alloc_test',
+    executable( 'bad_alloc_test',
+        'test/bad_alloc_test.cpp',
+        dependencies: boost_thread,
+        include_directories:includes) )
+
 test( 'error_info_test',
     executable( 'error_info_test',
         'test/error_info_test.cpp',

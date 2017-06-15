@@ -128,6 +128,7 @@ boost
                     std::terminate();
                     }
                 }
+            std::shared_ptr<noexcept_detail::error_holder const> make_error_ptr() const noexcept;
             };
         namespace
         noexcept_detail
