@@ -16,7 +16,7 @@ FILE * open_file( char const * name ) noexcept {
 int main() {
     if( auto tr=try_(open_file("file_name")) ) {  //<2>
         //Success! Get the FILE pointer:
-        FILE * f=tr.result();
+        FILE * f=tr.get();
         //Use the file, then close it
         fclose(f);
     } else if( file_open_error * err=tr.catch_<file_open_error>() ) {  //<3>

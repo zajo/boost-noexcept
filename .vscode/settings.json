@@ -35,7 +35,9 @@
         "unordered_map": "cpp",
         "unordered_set": "cpp",
         "valarray": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "fstream": "cpp",
+        "locale": "cpp"
     },
 	"editor.insertSpaces": true
 }

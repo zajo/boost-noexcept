@@ -14,7 +14,7 @@ FILE * open_file( char const * name ) noexcept {
 }
 
 FILE * open_file_throw_on_error( char const * name ) {
-    return try_(open_file(name)).result();
+    return try_(open_file(name)).get();
 }
 
 int main() {

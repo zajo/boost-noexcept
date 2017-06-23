@@ -29,6 +29,21 @@ lua=subproject('lua').get_variable('all')
 boost_thread=subproject('boost').get_variable('thread')
 includes = include_directories('include')
 
+executable( 'c_api_example',
+    'examples/c_api_example.cpp',
+    dependencies: boost_thread,
+    include_directories:includes )
+
+executable( 'file_ptr_example',
+    'examples/file_ptr_example.cpp',
+    dependencies: boost_thread,
+    include_directories:includes )
+
+executable( 'file_ptr_throw_example',
+    'examples/file_ptr_throw_example.cpp',
+    dependencies: boost_thread,
+    include_directories:includes )
+
 executable( 'ifstream_example',
     'examples/ifstream_example.cpp',
     dependencies: boost_thread,
