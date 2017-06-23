@@ -15,11 +15,13 @@ boost
     noexcept_
         {
         template <class> class handler;
+        handler<void> void_try_() noexcept;
         template <>
         class
         handler<void>:
             public noexcept_detail::handler_base
             {
+            friend handler<void> void_try_() noexcept;
             handler( handler const & )=delete;
             handler & operator=( handler const & )=delete;
             noexcept_detail::error internal_;
@@ -40,12 +42,13 @@ boost
                 handled_=false;
                 noexcept_detail::current_error().unset_handler(caught_,handled_);
                 }
-            public:
+            protected:
             handler() noexcept:
                 caught_(noexcept_detail::current_error().set_handler(this)),
                 handled_(false)
                 {
                 }
+            public:
             handler( handler && x ) noexcept:
                 caught_(noexcept_detail::current_error().set_handler(this)),
                 handled_(false)
