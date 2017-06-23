@@ -521,6 +521,7 @@ table.CodeRay td.code>pre{padding:0}
 <ul class="sectlevel1">
 <li><a href="#_abstract">Abstract</a></li>
 <li><a href="#_license">License</a></li>
+<li><a href="#_feedback_support">Feedback / support</a></li>
 <li><a href="#design_rationale">Design rationale</a></li>
 <li><a href="#guarantee">No error gets ignored guarantee</a></li>
 <li><a href="#_crash_course">Crash course</a>
@@ -596,7 +597,7 @@ table.CodeRay td.code>pre{padding:0}
 <p>when errors are reported from a C-style callback;</p>
 </li>
 <li>
-<p>from C++ virtual function overrides;</p>
+<p>from C++ virtual function override when deriving from a third-party base type;</p>
 </li>
 <li>
 <p>when reported errors need to cross multiple API levels, each with their own error reporting mechanism;</p>
@@ -629,6 +630,14 @@ Noexcept is not part of Boost.
 </div>
 </div>
 <div class="sect1">
+<h2 id="_feedback_support">Feedback / support</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Please use the <a href="https://lists.boost.org/mailman/listinfo.cgi/boost">Boost Developers mailing list</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="design_rationale">Design rationale</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -650,7 +659,7 @@ Noexcept is not part of Boost.
 <div class="ulist">
 <ul>
 <li>
-<p>It is intrusive, so it couldn&#8217;t be used in many practical cases, for example when reporting errors from a C callback or when overriding a virtual function.</p>
+<p>It is intrusive, so it couldn&#8217;t be used in many practical cases, for example when reporting errors from a C callback or from a virtual function override when deriving from a third-party base type.</p>
 </li>
 <li>
 <p>C++ programmers do not even agree on what string type they should use, so interoperability between different parts of the program is going to be a problem.</p>
@@ -777,7 +786,7 @@ std::ifstream open_stream( <span class="predefined-type">char</span> <span class
         <span class="keyword">return</span> throw_(file_open_error());  <b class="conum">(1)</b>
 }
 
-std::<span class="predefined-type">string</span> read_line( std::ifstream &amp;&amp; f ) {
+std::<span class="predefined-type">string</span> read_line( std::ifstream &amp;&amp; f ) noexcept {
     BOOST_NOEXCEPT_CHECK
     assert(f.good());  <b class="conum">(2)</b>
     std::<span class="predefined-type">string</span> s;
@@ -788,7 +797,7 @@ std::<span class="predefined-type">string</span> read_line( std::ifstream &amp;&
         <span class="keyword">return</span> throw_(file_read_error());  <b class="conum">(3)</b>
 }
 
-std::<span class="predefined-type">string</span> read_string_from_file( <span class="predefined-type">char</span> <span class="directive">const</span> * name ) {
+std::<span class="predefined-type">string</span> read_string_from_file( <span class="predefined-type">char</span> <span class="directive">const</span> * name ) noexcept {
     <span class="keyword">return</span> read_line(open_stream(name));  <b class="conum">(4)</b>
 }
 
@@ -924,9 +933,9 @@ boost::optional&lt;<span class="predefined-type">float</span>&gt; erratic_caller
 <span class="directive">using</span> <span class="keyword">namespace</span> boost::noexcept_;
 
 <span class="keyword">struct</span> do_work_error { };
-<span class="predefined-type">int</span> do_work( lua_State * L );
+<span class="predefined-type">int</span> do_work( lua_State * L ) noexcept;
 
-std::shared_ptr&lt;lua_State&gt; init_lua_state() {  <b class="conum">(1)</b>
+std::shared_ptr&lt;lua_State&gt; init_lua_state() noexcept {  <b class="conum">(1)</b>
     std::shared_ptr&lt;lua_State&gt; L(lua_open(),&amp;lua_close);
     luaL_dostring( &amp;*L, <span class="string"><span class="delimiter">&quot;</span><span class="char">\
 </span><span class="char">\n</span><span class="content">        function call_do_work()</span><span class="char">\
@@ -936,7 +945,7 @@ std::shared_ptr&lt;lua_State&gt; init_lua_state() {  <b class="conum">(1)</b>
     <span class="keyword">return</span> L;
 }
 
-<span class="predefined-type">int</span> do_work( lua_State * L ) {
+<span class="predefined-type">int</span> do_work( lua_State * L ) noexcept {
     <span class="predefined-type">bool</span> success=rand()%<span class="integer">2</span>;
     <span class="keyword">if</span>( success )
         <span class="keyword">return</span> lua_pushnumber(L,<span class="integer">42</span>), <span class="integer">1</span>;  <b class="conum">(2)</b>
@@ -944,7 +953,7 @@ std::shared_ptr&lt;lua_State&gt; init_lua_state() {  <b class="conum">(1)</b>
         <span class="keyword">return</span> throw_(do_work_error()), lua_error(L);  <b class="conum">(3)</b>
 }
 
-<span class="predefined-type">int</span> call_lua( lua_State * L ) {  <b class="conum">(4)</b>
+<span class="predefined-type">int</span> call_lua( lua_State * L ) noexcept {  <b class="conum">(4)</b>
     lua_getfield( L, LUA_GLOBALSINDEX, <span class="string"><span class="delimiter">&quot;</span><span class="content">call_do_work</span><span class="delimiter">&quot;</span></span> );
     <span class="keyword">if</span>( <span class="predefined-type">int</span> err=lua_pcall(L,<span class="integer">0</span>,<span class="integer">1</span>,<span class="integer">0</span>) ) {
         lua_pop(L,<span class="integer">1</span>);
@@ -2049,10 +2058,11 @@ std::exception::what: my_error
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">class</span> <span class="class">file_read_error</span> {
-  std::<span class="predefined-type">string</span> file_name_;
+  std::<span class="predefined-type">string</span> fn_;
   <span class="directive">public</span>:
-  <span class="directive">explicit</span> file_read_error( std::<span class="predefined-type">string</span> <span class="directive">const</span> &amp; fn ): file_name_(fn) { }
-  std::<span class="predefined-type">string</span> <span class="directive">const</span> &amp; file_name() <span class="directive">const</span> noexcept { <span class="keyword">return</span> file_name_; }
+  <span class="directive">explicit</span> file_read_error( std::<span class="predefined-type">string</span> &amp;&amp; fn ) noexcept:
+    fn_(std::move(fn)) { }
+  std::<span class="predefined-type">string</span> <span class="directive">const</span> &amp; file_name() <span class="directive">const</span> noexcept { <span class="keyword">return</span> fn_; }
 };</code></pre>
 </div>
 </div>
@@ -2187,7 +2197,7 @@ std::exception::what: my_error
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">int</span> compute() {
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">int</span> compute() noexcept {
     <span class="keyword">if</span>( rand()%<span class="integer">2</span> )
         <span class="keyword">return</span> <span class="integer">42</span>;
     <span class="keyword">else</span>
