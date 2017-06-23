@@ -28,7 +28,7 @@ static int in_do_work2_=0;
 static int in_do_work3_=0;
 
 bool
-check_counters( int in_get_int, int in_negate, int in_convert_to_string, int in_reverse_string, bool clear=true )
+check_counters( int in_get_int, int in_negate, int in_convert_to_string, int in_reverse_string, bool clear=true ) noexcept
     {
     bool r = in_get_int==in_get_int_ && in_negate==in_negate_ && in_convert_to_string==in_convert_to_string_ && in_reverse_string==in_reverse_string_;
     if( clear )
@@ -36,7 +36,7 @@ check_counters( int in_get_int, int in_negate, int in_convert_to_string, int in_
     return r;
     }
 int
-get_int( bool succeed )
+get_int( bool succeed ) noexcept
     {
     ++in_get_int_;
     if( succeed )
@@ -45,7 +45,7 @@ get_int( bool succeed )
         return throw_(get_int_failed());
     }
 int
-negate( bool succeed, int x )
+negate( bool succeed, int x ) noexcept
     {
     BOOST_NOEXCEPT_CHECK
     ++in_negate_;
@@ -55,7 +55,7 @@ negate( bool succeed, int x )
         return throw_(negate_failed());
     }
 std::string
-convert_to_string( bool succeed, int x )
+convert_to_string( bool succeed, int x ) noexcept
     {
     BOOST_NOEXCEPT_CHECK
     ++in_convert_to_string_;
@@ -65,7 +65,7 @@ convert_to_string( bool succeed, int x )
         return throw_(convert_to_string_failed());
     }
 std::string
-reverse_string( bool succeed, std::string x )
+reverse_string( bool succeed, std::string x ) noexcept
     {
     BOOST_NOEXCEPT_CHECK
     ++in_reverse_string_;
@@ -78,7 +78,7 @@ reverse_string( bool succeed, std::string x )
         return throw_(reverse_string_failed());
     }
 bool
-check_do_work_counters( int in_do_work1, int in_do_work2, int in_do_work3, bool clear=true )
+check_do_work_counters( int in_do_work1, int in_do_work2, int in_do_work3, bool clear=true ) noexcept
     {
     bool r = in_do_work1==in_do_work1_ && in_do_work2==in_do_work2_ && in_do_work3==in_do_work3_;
     if( clear )
@@ -86,7 +86,7 @@ check_do_work_counters( int in_do_work1, int in_do_work2, int in_do_work3, bool 
     return r;
     }
 bool
-do_work1( bool succeed )
+do_work1( bool succeed ) noexcept
     {
     BOOST_NOEXCEPT_CHECK
     ++in_do_work1_;
@@ -96,7 +96,7 @@ do_work1( bool succeed )
         return throw_(do_work1_failed());
     }
 bool
-do_work2( bool succeed )
+do_work2( bool succeed ) noexcept
     {
     BOOST_NOEXCEPT_CHECK
     ++in_do_work2_;
@@ -106,7 +106,7 @@ do_work2( bool succeed )
         return throw_(do_work2_failed());
     }
 bool
-do_work3( bool succeed )
+do_work3( bool succeed ) noexcept
     {
     BOOST_NOEXCEPT_CHECK
     ++in_do_work3_;
@@ -116,7 +116,7 @@ do_work3( bool succeed )
         return throw_(do_work3_failed());
     }
 bool
-do_work( bool succeed1, bool succeed2, bool succeed3 )
+do_work( bool succeed1, bool succeed2, bool succeed3 ) noexcept
     {
     return
         do_work1(succeed1) &&

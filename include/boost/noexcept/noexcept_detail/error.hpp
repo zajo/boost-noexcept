@@ -27,7 +27,7 @@ boost
         namespace
         noexcept_detail
             {
-            template <class T> T * new_nothrow_move( T && );
+            template <class T> T * new_nothrow_move( T && ) noexcept;
             template <class> void tid_() { }
             typedef void (*type_id)();
             ///////////////////////////////
@@ -71,7 +71,7 @@ boost
                     void throw_exception_() const { BOOST_NOEXCEPT_THROW_EXCEPTION(*this); }
                     public:
                     explicit
-                    type( E && e ):
+                    type( E && e ) noexcept:
                         E(std::move(e))
                         {
                         }
@@ -93,7 +93,7 @@ boost
                     void throw_exception_() const { BOOST_NOEXCEPT_THROW_EXCEPTION(*this); }
                     public:
                     explicit
-                    type( E && e ):
+                    type( E && e ) noexcept:
                         E(std::move(e))
                         {
                         }
@@ -115,7 +115,7 @@ boost
                     void throw_exception_() const { BOOST_NOEXCEPT_THROW_EXCEPTION(*this); }
                     public:
                     explicit
-                    type( E && e ):
+                    type( E && e ) noexcept:
                         E(std::move(e))
                         {
                         }
@@ -136,7 +136,7 @@ boost
                     void throw_exception_() const { BOOST_NOEXCEPT_THROW_EXCEPTION(*this); }
                     public:
                     explicit
-                    type( E && e ):
+                    type( E && e ) noexcept:
                         E(std::move(e))
                         {
                         }
@@ -160,7 +160,7 @@ boost
                     void throw_exception_() const { throw value_; }
                     public:
                     explicit
-                    type( E && e ):
+                    type( E && e ) noexcept:
                         value_(std::move(e))
                         {
                         }
@@ -214,7 +214,7 @@ boost
                 private:
                 typedef error_base error_base;
                 std::aligned_storage<max_static_size,16>::type static_storage_;
-                void (*static_mover_)( void *, void * );
+                void (*static_mover_)( void *, void * ) noexcept;
                 error_base * px_;
                 void
                 init( error && x ) noexcept
@@ -423,13 +423,13 @@ boost
             struct
             dynamic<E,true>
                 {
-                static E * cast( error_base * px ) { return dynamic_cast<E *>(px); }
+                static E * cast( error_base * px ) noexcept { return dynamic_cast<E *>(px); }
                 };
             template <class E>
             struct
             dynamic<E,false>
                 {
-                static E * cast( error_base * ) { return 0; }
+                static E * cast( error_base * ) noexcept { return 0; }
                 };
             template <class E>
             E const *

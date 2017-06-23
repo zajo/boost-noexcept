@@ -18,7 +18,7 @@ std::ifstream open_stream( char const * name ) noexcept {
         return throw_(file_open_error());  //<1>
 }
 
-std::string read_line( std::ifstream && f ) {
+std::string read_line( std::ifstream && f ) noexcept {
     BOOST_NOEXCEPT_CHECK
     assert(f.good());  //<2>
     std::string s;
@@ -29,7 +29,7 @@ std::string read_line( std::ifstream && f ) {
         return throw_(file_read_error());  //<3>
 }
 
-std::string read_string_from_file( char const * name ) {
+std::string read_string_from_file( char const * name ) noexcept {
     return read_line(open_stream(name));  //<4>
 }
 

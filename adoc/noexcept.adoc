@@ -19,7 +19,7 @@ Noexcept is a small and efficient {CPP}11 error-handling library which does not 
 Because Noexcept does not interfere with function return types, it is able to report failures through third-party code which may be neither exception-safe nor able to use specific sophisticated error-reporting types. This makes Noexcept easily deployable even in tricky use cases where a more intrusive error handling mechanism could not be used:
 
 * when errors are reported from a C-style callback;
-* from {CPP} virtual function overrides;
+* from {CPP} virtual function override when deriving from a third-party base type;
 * when reported errors need to cross multiple API levels, each with their own error reporting mechanism;
 * when reported errors need to cross programming language boundaries.
 
@@ -28,6 +28,10 @@ Because Noexcept does not interfere with function return types, it is able to re
 Distributed under the link:http://www.boost.org/LICENSE_1_0.txt[Boost Software License, Version 1.0].
 
 NOTE: Noexcept is not part of Boost.
+
+== Feedback / support
+
+Please use the link:https://lists.boost.org/mailman/listinfo.cgi/boost[Boost Developers mailing list].
 
 [[design_rationale]]
 == Design rationale
@@ -39,7 +43,7 @@ Except when using exceptions, functions which could fail must communicate the fa
 
 This is a tough nut to crack. In addition, such design would lead to problems specific to {CPP}:
 
-* It is intrusive, so it couldn't be used in many practical cases, for example when reporting errors from a C callback or when overriding a virtual function.
+* It is intrusive, so it couldn't be used in many practical cases, for example when reporting errors from a C callback or from a virtual function override when deriving from a third-party base type.
 * {CPP} programmers do not even agree on what string type they should use, so interoperability between different parts of the program is going to be a problem.
 
 For these reasons, Noexcept does not define a special return type. Programmers may use any type whatsoever, the only requirement is that it provides a special state -- a value Noexept can return in case of a failure.
@@ -645,10 +649,11 @@ Consider the following error type:
 [source,c++]
 ----
 class file_read_error {
-  std::string file_name_;
+  std::string fn_;
   public:
-  explicit file_read_error( std::string const & fn ): file_name_(fn) { }
-  std::string const & file_name() const noexcept { return file_name_; }
+  explicit file_read_error( std::string && fn ) noexcept:
+    fn_(std::move(fn)) { }
+  std::string const & file_name() const noexcept { return fn_; }
 };
 ----
 
@@ -766,7 +771,7 @@ The `result<T>` class template is designed for use in such cases. For example, s
 
 [source,c++]
 ----
-int compute() {
+int compute() noexcept {
     if( rand()%2 )
         return 42;
     else

@@ -76,12 +76,12 @@ f6_b() noexcept
     }
 struct derives_from_std_exception: std::exception { };
 int
-throw_std_exception()
+throw_std_exception() noexcept
     {
     return throw_(derives_from_std_exception());
     }
 void
-std_exception_test()
+std_exception_test() noexcept
     {
     if( auto tr=try_(throw_std_exception()) )
         BOOST_TEST(false);
@@ -89,7 +89,7 @@ std_exception_test()
         BOOST_TEST(tr.catch_<>()!=0);
     }
 int
-rethrow_fn()
+rethrow_fn() noexcept
     {
     auto tr=try_(f1());
     BOOST_TEST(!tr);
@@ -98,7 +98,7 @@ rethrow_fn()
     return throw_();
     }
 void
-rethrow_test()
+rethrow_test() noexcept
     {
     auto tr=try_(rethrow_fn());
     BOOST_TEST(!tr);
@@ -106,7 +106,7 @@ rethrow_test()
     BOOST_TEST(tr.catch_<>()!=0);
     }
 void
-throw_void_test()
+throw_void_test() noexcept
     {
     return (void) throw_(f1_failed(42));
     }

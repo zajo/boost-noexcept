@@ -20,7 +20,7 @@ boost
             {
             template <class T>
             T *
-            new_nothrow_move( T && x )
+            new_nothrow_move( T && x ) noexcept
                 {
                 return new (std::nothrow) T(std::move(x));
                 }

@@ -31,7 +31,7 @@ template <> boost::shared_ptr<int> test_throw_return<boost::shared_ptr<int> >() 
 
 struct my_error { };
 int
-throw_error()
+throw_error() noexcept
     {
     return throw_(my_error());
     }

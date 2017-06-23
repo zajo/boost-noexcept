@@ -17,7 +17,7 @@ using namespace boost::noexcept_;
 struct compute_error { };
 
 int
-compute()
+compute() noexcept
     {
     if( rand()%2 )
         return 42;

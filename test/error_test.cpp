@@ -22,7 +22,7 @@ boost
             {
             template <class T>
             T *
-            new_nothrow_move( T && x )
+            new_nothrow_move( T && x ) noexcept
                 {
                 return new (std::nothrow) T(std::move(x));
                 }
@@ -135,20 +135,20 @@ check_counts( int sc, int bc ) noexcept
     }
 //////////////////////////////////
 void
-check_small_base( small_base const * x )
+check_small_base( small_base const * x ) noexcept
     {
     BOOST_TEST(x!=0);
     BOOST_TEST(strcmp(x->tag,"small")==0);
     }
 void
-check_small_std_exception( std::exception const * x )
+check_small_std_exception( std::exception const * x ) noexcept
     {
     BOOST_TEST(x!=0);
     BOOST_TEST(dynamic_cast<exception_info const *>(x)!=0);
     check_small_base(dynamic_cast<small_base const *>(x));
     }
 void
-check_small_exception_info( exception_info const * x )
+check_small_exception_info( exception_info const * x ) noexcept
     {
 #ifdef BOOST_NOEXCEPT_NO_EXCEPTION_INFO
     BOOST_TEST(x==0);
@@ -160,7 +160,7 @@ check_small_exception_info( exception_info const * x )
     }
 template <class Small>
 void
-check_small( error & err )
+check_small( error & err ) noexcept
     {
     BOOST_TEST(!err.empty());
     BOOST_TEST(err.holds_static());
@@ -181,20 +181,20 @@ check_small( error & err )
     }
 //////////////////////////////////
 void
-check_big_base( big_base const * x )
+check_big_base( big_base const * x ) noexcept
     {
     BOOST_TEST(x!=0);
     BOOST_TEST(strcmp(x->tag,"big")==0);
     }
 void
-check_big_std_exception( std::exception const * x )
+check_big_std_exception( std::exception const * x ) noexcept
     {
     BOOST_TEST(x!=0);
     BOOST_TEST(dynamic_cast<exception_info const *>(x)!=0);
     check_big_base(dynamic_cast<big_base const *>(x));
     }
 void
-check_big_exception_info( exception_info const * x )
+check_big_exception_info( exception_info const * x ) noexcept
     {
 #ifdef BOOST_NOEXCEPT_NO_EXCEPTION_INFO
     BOOST_TEST(x==0);
@@ -206,7 +206,7 @@ check_big_exception_info( exception_info const * x )
     }
 template <class Big>
 void
-check_big( error & err )
+check_big( error & err ) noexcept
     {
     BOOST_TEST(!err.empty());
     BOOST_TEST(!err.holds_static());
@@ -227,7 +227,7 @@ check_big( error & err )
     }
 //////////////////////////////////
 void
-check_int( error & err )
+check_int( error & err ) noexcept
     {
     BOOST_TEST(!err.empty());
     BOOST_TEST(err.holds_static());
@@ -258,7 +258,7 @@ check_int( error & err )
     }
 //////////////////////////////////
 void
-check_empty( error & err )
+check_empty( error & err ) noexcept
     {
     BOOST_TEST(err.empty());
     BOOST_TEST(!err.holds_static());

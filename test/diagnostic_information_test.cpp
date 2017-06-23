@@ -18,15 +18,15 @@ my_error:
     {
     char const * what() const noexcept { return "my_error"; }
     public:
-    my_error() { };
+    my_error() noexcept { };
     };
 int
-f1()
+f1() noexcept
     {
     return THROW_(my_error());
     }
 int
-f2()
+f2() noexcept
     {
     if( auto tr=try_(f1()) )
         return tr.get();

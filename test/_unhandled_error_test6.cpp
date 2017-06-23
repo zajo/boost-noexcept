@@ -20,7 +20,7 @@ get_result() noexcept
     return make_result(fail1());
     }
 void
-buggy( result<int> && r )
+buggy( result<int> && r ) noexcept
     {
     }
 int

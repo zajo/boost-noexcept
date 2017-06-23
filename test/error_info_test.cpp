@@ -14,12 +14,12 @@ struct my_error { };
 typedef boost::error_info<struct answer_,int> answer;
 
 int
-f1()
+f1() noexcept
     {
     return THROW_(my_error());
     }
 int
-f2()
+f2() noexcept
     {
     if( auto tr=try_(f1()) )
         return tr.get();

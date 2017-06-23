@@ -13,7 +13,7 @@ FILE * open_file( char const * name ) noexcept {
         return throw_(file_open_error());
 }
 
-FILE * open_file_throw_on_error( char const * name ) {
+FILE * open_file_throw_on_error( char const * name ) noexcept {
     return try_(open_file(name)).get();
 }
 

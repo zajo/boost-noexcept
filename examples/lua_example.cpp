@@ -9,9 +9,9 @@ extern "C" {
 using namespace boost::noexcept_;
 
 struct do_work_error { };
-int do_work( lua_State * L );
+int do_work( lua_State * L ) noexcept;
 
-std::shared_ptr<lua_State> init_lua_state() {  //<1>
+std::shared_ptr<lua_State> init_lua_state() noexcept {  //<1>
     std::shared_ptr<lua_State> L(lua_open(),&lua_close);
     luaL_dostring( &*L, "\
 \n        function call_do_work()\
@@ -21,7 +21,7 @@ std::shared_ptr<lua_State> init_lua_state() {  //<1>
     return L;
 }
 
-int do_work( lua_State * L ) {
+int do_work( lua_State * L ) noexcept {
     bool success=rand()%2;
     if( success )
         return lua_pushnumber(L,42), 1;  //<2>
@@ -29,7 +29,7 @@ int do_work( lua_State * L ) {
         return throw_(do_work_error()), lua_error(L);  //<3>
 }
 
-int call_lua( lua_State * L ) {  //<4>
+int call_lua( lua_State * L ) noexcept {  //<4>
     lua_getfield( L, LUA_GLOBALSINDEX, "call_do_work" );
     if( int err=lua_pcall(L,0,1,0) ) {
         lua_pop(L,1);

@@ -53,12 +53,12 @@ boost
         }
     }
 test_type
-succeeds()
+succeeds() noexcept
     {
     return test_type(42);
     }
 int
-fails()
+fails() noexcept
     {
     return throw_(test_type(43));
     }
