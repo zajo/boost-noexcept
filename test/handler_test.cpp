@@ -22,7 +22,7 @@ main( int argc, char const * argv[ ] )
         BOOST_TEST(h.get()==42);
         }
     BOOST_TEST(!has_current_error());
-    throw_(my_error<1>());
+    (void) throw_(my_error<1>());
     BOOST_TEST(has_current_error());
         {
         auto h=void_try_();
@@ -41,13 +41,13 @@ main( int argc, char const * argv[ ] )
         BOOST_TEST(!h.has_unhandled_error());
         }
     BOOST_TEST(!has_current_error());
-    throw_(my_error<1>());
+    (void) throw_(my_error<1>());
     BOOST_TEST(has_current_error());
         {
         auto h1=void_try_();
         BOOST_TEST(h1.has_error());
         BOOST_TEST(h1.has_unhandled_error());
-        throw_(my_error<2>());
+        (void) throw_(my_error<2>());
         BOOST_TEST(has_current_error());
             {
             auto h2=void_try_();
