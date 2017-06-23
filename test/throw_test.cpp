@@ -105,6 +105,11 @@ rethrow_test()
     BOOST_TEST(!has_current_error());
     BOOST_TEST(tr.catch_<>()!=0);
     }
+void
+throw_void_test()
+    {
+    return (void) throw_(f1_failed(42));
+    }
 int
 main()
     {
@@ -112,5 +117,11 @@ main()
     f6_b();
     std_exception_test();
     rethrow_test();
+        {
+        throw_void_test();
+        auto tr=void_try_();
+        BOOST_TEST(tr.has_error());
+        BOOST_TEST(tr.catch_<f1_failed>() && tr.catch_<f1_failed>()->val==42);
+        }
     return boost::report_errors();
     }

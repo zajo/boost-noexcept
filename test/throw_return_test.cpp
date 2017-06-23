@@ -5,7 +5,7 @@
 
 #include <boost/shared_ptr.hpp>
 #include <boost/noexcept/throw.hpp>
-#include <boost/noexcept/error_handler.hpp>
+#include <boost/noexcept/try.hpp>
 #include <boost/core/lightweight_test.hpp>
 
 using namespace boost::noexcept_;
@@ -29,11 +29,11 @@ template <> unsigned long long test_throw_return<unsigned long long>() { return 
 template <> int * test_throw_return<int *>() { return throw_(); }
 template <> boost::shared_ptr<int> test_throw_return<boost::shared_ptr<int> >() { return throw_(); }
 
-struct error { };
+struct my_error { };
 int
 throw_error()
     {
-    return throw_(error());
+    return throw_(my_error());
     }
 
 int
@@ -57,7 +57,6 @@ main()
     BOOST_TEST((test_throw_return<unsigned long long>()==static_cast<unsigned long long>(-1)));
     BOOST_TEST((test_throw_return<int *>()==0));
     BOOST_TEST((test_throw_return<boost::shared_ptr<int> >()==boost::shared_ptr<int>()));
-    error_handler err;
-    err.catch_<>();
+    void_try_().catch_<>();
     return boost::report_errors();
     }

@@ -9,18 +9,18 @@
 
 using namespace boost::noexcept_;
 
-struct error { };
+struct my_error { };
 
 boost::optional<int>
 fail1() noexcept
     {
-    return throw_(error());
+    return throw_(my_error());
     }
 boost::optional<int>
 buggy() noexcept
     {
     auto r1=try_(fail1());
-    //(void) r1.catch_<>(); //<--use this to ignore the error in r1
+    //(void) r1.catch_<>(); //<--use this to ignore the my_error in r1
     return fail1();
     }
 int

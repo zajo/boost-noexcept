@@ -7,8 +7,13 @@
 #define UUID_75B956744A2D11E7AAD921AAAD730A1C
 
 #include <boost/noexcept/noexcept_detail/current_error.hpp>
+#include <boost/current_function.hpp>
 #include <type_traits>
 #include <exception>
+
+#define BOOST_NOEXCEPT_CHECK { if( ::boost::noexcept_::has_current_error() ) return ::boost::noexcept_::throw_(); }
+#define BOOST_NOEXCEPT_CHECK_VOID { if( ::boost::noexcept_::has_current_error() ) return; }
+#define THROW_(x) ::boost::noexcept_::throw_((x),__FILE__,__LINE__,BOOST_CURRENT_FUNCTION)
 
 namespace
 boost
@@ -19,18 +24,6 @@ boost
         namespace
         noexcept_detail
             {
-            template <class T>
-            T *
-            new_nothrow_move( T && x )
-                {
-                return new (std::nothrow) T(std::move(x));
-                }
-            template <class T>
-            T *
-            new_nothrow_copy( T const & x )
-                {
-                return new (std::nothrow) T(x);
-                }
             template <class R,bool IsIntegral=std::is_integral<R>::value> struct default_throw_return;
             template <class R>
             struct
@@ -64,33 +57,27 @@ boost
             public:
             throw_() noexcept
                 {
-                noexcept_detail::current_error().rethrow();
-                }
-            explicit
-            throw_( std::shared_ptr<noexcept_detail::error_holder const> const & p )
-                {
-                if( p )
-                    noexcept_detail::current_error().set(*p);
+                noexcept_detail::current_error().throw_();
                 }
             template <class E>
             explicit
             throw_( E && e ) noexcept
                 {
-                noexcept_detail::put_dispatch<E>::put_(std::move(e));
+                noexcept_detail::current_error().put(std::move(e));
+                }
+            template <class E>
+            explicit
+            throw_( E && e, char const * file, int line, char const * function ) noexcept
+                {
+                noexcept_detail::current_error().put_with_location(std::move(e),file,line,function);
                 }
             template <class R>
             operator R() noexcept
                 {
-                BOOST_NOEXCEPT_ASSERT(!noexcept_detail::current_error().get_error().empty());
+                BOOST_NOEXCEPT_ASSERT(has_current_error());
                 return throw_return<R>::value();
                 }
             };
-        inline
-        bool
-        has_current_error() noexcept
-            {
-            return noexcept_detail::current_error().has_current_error();
-            }
         }
     }
 

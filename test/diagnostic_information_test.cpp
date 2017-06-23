@@ -5,14 +5,21 @@
 
 #include <boost/noexcept.hpp>
 #include <boost/exception/info.hpp>
-#include <boost/exception/get_error_info.hpp>
+#include <boost/exception/diagnostic_information.hpp>
 #include <boost/core/lightweight_test.hpp>
 
 using namespace boost::noexcept_;
 
-struct my_error { };
 typedef boost::error_info<struct answer_,int> answer;
 
+class
+my_error:
+    public std::exception
+    {
+    char const * what() const noexcept { return "my_error"; }
+    public:
+    my_error() { };
+    };
 int
 f1()
     {
@@ -36,9 +43,8 @@ main( int argc, char const * argv[ ] )
         BOOST_TEST(false);
     else
         {
-        my_error & err=*tr.catch_<my_error>();
-        auto & info=*tr.catch_<boost::exception>();
-        BOOST_TEST(boost::get_error_info<answer>(info) && *boost::get_error_info<answer>(info)==42);
+        auto & err=*tr.catch_<std::exception>();
+        std::cout << boost::diagnostic_information(err) << '\n';
         }
     return boost::report_errors();
     }

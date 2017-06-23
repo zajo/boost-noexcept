@@ -9,12 +9,12 @@
 
 using namespace boost::noexcept_;
 
-struct error { };
+struct my_error { };
 
 boost::optional<int>
 fail1() noexcept
     {
-    return throw_(error());
+    return throw_(my_error());
     }
 int
 buggy() noexcept

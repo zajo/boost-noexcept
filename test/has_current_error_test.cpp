@@ -9,13 +9,13 @@
 
 using namespace boost::noexcept_;
 
-struct error { };
+struct my_error { };
 
 int
 main()
     {
     BOOST_TEST(!has_current_error());
-    void * a=throw_(error());
+    void * a=throw_(my_error());
     BOOST_TEST(!a);
     BOOST_TEST(has_current_error());
         {

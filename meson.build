@@ -12,24 +12,79 @@ if not meson.is_subproject()
         add_global_arguments(
             '-Wno-unused-local-typedefs',
             '-Wno-non-virtual-dtor',
-            '-std=c++14',
+            '-Wno-dangling-else',
+            '-std=c++11',
             language:'cpp' )
     elif compiler_id=='gcc'
         add_global_arguments(
             '-Wno-unused-local-typedefs',
             '-Wno-non-virtual-dtor',
-            '-std=c++17',
+            '-std=c++11',
             language:'cpp' )
     elif compiler_id=='msvc'
     endif
 endif
 
+lua=subproject('lua').get_variable('all')
 boost_thread=subproject('boost').get_variable('thread')
 includes = include_directories('include')
 
-test( 'any_movable_test',
-    executable( 'any_movable_test',
-        'test/any_movable_test.cpp',
+executable( 'ifstream_example',
+    'examples/ifstream_example.cpp',
+    dependencies: boost_thread,
+    include_directories:includes )
+
+executable( 'lua_example',
+    'examples/lua_example.cpp',
+    dependencies: [ boost_thread, lua ],
+    include_directories:includes )
+
+test( 'bad_alloc_test',
+    executable( 'bad_alloc_test',
+        'test/bad_alloc_test.cpp',
+        dependencies: boost_thread,
+        include_directories:includes) )
+
+test( 'check_test',
+    executable( 'check_test',
+        'test/check_test.cpp',
+        dependencies: boost_thread,
+        include_directories:includes) )
+
+test( 'error_info_test',
+    executable( 'error_info_test',
+        'test/error_info_test.cpp',
+        dependencies: boost_thread,
+        include_directories:includes) )
+
+test( 'diagnostic_information_test',
+    executable( 'diagnostic_information_test',
+        'test/diagnostic_information_test.cpp',
+        dependencies: boost_thread,
+        include_directories:includes) )
+
+test( 'error_test',
+    executable( 'error_test',
+        'test/error_test.cpp',
+        dependencies: boost_thread,
+        include_directories:includes) )
+
+test( 'error_test_no_exception_info',
+    executable( 'error_test_no_exception_info',
+        'test/error_test.cpp',
+        dependencies: boost_thread,
+        include_directories:includes,
+        cpp_args: [ '-DBOOST_NOEXCEPT_NO_EXCEPTION_INFO' ] ) )
+
+test( 'handler_test',
+    executable( 'handler_test',
+        'test/handler_test.cpp',
+        dependencies: boost_thread,
+        include_directories:includes) )
+
+test( 'has_current_error_test',
+    executable( 'has_current_error_test',
+        'test/has_current_error_test.cpp',
         dependencies: boost_thread,
         include_directories:includes) )
 
@@ -39,15 +94,15 @@ test( 'multiple_active_errors_test',
         dependencies: boost_thread,
         include_directories:includes) )
 
-test( 'error_handler_test',
-    executable( 'error_handler_test',
-        'test/error_handler_test.cpp',
+test( 'result_test',
+    executable( 'result_test',
+        'test/result_test.cpp',
         dependencies: boost_thread,
         include_directories:includes) )
 
-test( 'throw_test',
-    executable( 'throw_test',
-        'test/throw_test.cpp',
+test( 'result_mt_test',
+    executable( 'result_mt_test',
+        'test/result_mt_test.cpp',
         dependencies: boost_thread,
         include_directories:includes) )
 
@@ -63,27 +118,9 @@ test( 'throw_return_test',
         dependencies: boost_thread,
         include_directories:includes) )
 
-test( 'has_current_error_test',
-    executable( 'has_current_error_test',
-        'test/has_current_error_test.cpp',
-        dependencies: boost_thread,
-        include_directories:includes) )
-
-test( 'error_ptr_test',
-    executable( 'error_ptr_test',
-        'test/error_ptr_test.cpp',
-        dependencies: boost_thread,
-        include_directories:includes) )
-
-test( 'bad_alloc_test',
-    executable( 'bad_alloc_test',
-        'test/bad_alloc_test.cpp',
-        dependencies: boost_thread,
-        include_directories:includes) )
-
-test( 'error_info_test',
-    executable( 'error_info_test',
-        'test/error_info_test.cpp',
+test( 'throw_test',
+    executable( 'throw_test',
+        'test/throw_test.cpp',
         dependencies: boost_thread,
         include_directories:includes) )
 
@@ -91,58 +128,40 @@ test( '_rethrow_test',
     executable( '_rethrow_test',
         'test/_rethrow_test.cpp',
         dependencies: boost_thread,
-        include_directories:includes),
-    should_fail:true )
+        include_directories:includes), should_fail: true )
 
 test( '_unhandled_error_test1',
     executable( '_unhandled_error_test1',
         'test/_unhandled_error_test1.cpp',
         dependencies: boost_thread,
-        include_directories:includes),
-    should_fail:true )
+        include_directories:includes), should_fail: true )
 
 test( '_unhandled_error_test2',
     executable( '_unhandled_error_test2',
         'test/_unhandled_error_test2.cpp',
         dependencies: boost_thread,
-        include_directories:includes),
-    should_fail:true )
+        include_directories:includes), should_fail: true )
 
 test( '_unhandled_error_test3',
     executable( '_unhandled_error_test3',
         'test/_unhandled_error_test3.cpp',
         dependencies: boost_thread,
-        include_directories:includes),
-    should_fail:true )
+        include_directories:includes), should_fail: true )
 
 test( '_unhandled_error_test4',
     executable( '_unhandled_error_test4',
         'test/_unhandled_error_test4.cpp',
         dependencies: boost_thread,
-        include_directories:includes),
-    should_fail:true )
+        include_directories:includes), should_fail: true )
 
 test( '_unhandled_error_test5',
     executable( '_unhandled_error_test5',
         'test/_unhandled_error_test5.cpp',
         dependencies: boost_thread,
-        include_directories:includes),
-    should_fail:true )
+        include_directories:includes), should_fail: true )
 
-test( 'c_api_example',
-    executable( 'c_api_example',
-        'examples/c_api_example.cpp',
+test( '_unhandled_error_test6',
+    executable( '_unhandled_error_test6',
+        'test/_unhandled_error_test6.cpp',
         dependencies: boost_thread,
-        include_directories:includes ) )
-
-test( 'FILE_ptr_example',
-    executable( 'FILE_ptr_example',
-        'examples/FILE_ptr_example.cpp',
-        dependencies: boost_thread,
-        include_directories:includes ) )
-
-test( 'FILE_ptr_throw_example',
-    executable( 'FILE_ptr_throw_example',
-        'examples/FILE_ptr_throw_example.cpp',
-        dependencies: boost_thread,
-        include_directories:includes ) )
+        include_directories:includes), should_fail: true )

@@ -3,30 +3,29 @@
 //Distributed under the Boost Software License, Version 1.0. (See accompanying
 //file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#include <boost/noexcept/throw.hpp>
-#include <boost/noexcept/try.hpp>
-#include <boost/optional.hpp>
+#include <boost/noexcept/result.hpp>
 
 using namespace boost::noexcept_;
 
 struct my_error { };
-struct wrong_error { };
 
-boost::optional<int>
+int
 fail1() noexcept
     {
     return throw_(my_error());
     }
-int
-fail2() noexcept
+result<int>
+get_result() noexcept
     {
-    auto tr=try_(fail1());
-    (void) tr.catch_<wrong_error>();
-    return 42;
+    return make_result(fail1());
+    }
+void
+buggy( result<int> && r )
+    {
     }
 int
 main()
     {
-    (void) fail2();
+    (void) buggy(get_result());;
     return 0;
     }

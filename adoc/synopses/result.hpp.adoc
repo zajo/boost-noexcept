@@ -1,0 +1,30 @@
+[source,c++]
+.#include <boost/noexcept/result.hpp>
+----
+namespace boost { namespace noexcept_ {
+
+    template <class T>
+    class result {
+
+        result( result const & )=delete;
+        result & operator=( result const & )=delete;
+
+        public:
+
+        result( result && ) noexcept;
+        ~result() noexcept;
+
+    };
+
+    template <class T>
+    result<T> make_result( T && x ) noexcept;
+
+    result<void> make_result( throw_ && ) noexcept;
+
+    result<void> make_void_result() noexcept;
+
+    template <class T>
+    handler<T> try_( result<T> && x ) noexcept;
+
+} }
+----

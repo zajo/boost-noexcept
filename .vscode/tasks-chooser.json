@@ -2,46 +2,60 @@
 	"selectDescription": "Select build setting",
 	"items": [
 		{
+			"displayName": "bad_alloc_test",
+			"description": "Unit test",
+			"isBuildCommand": "true",
+			"command": "sh",
+			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest bad_alloc_test" ]
+		},
+		{
+			"displayName": "check_test",
+			"description": "Unit test",
+			"isBuildCommand": "true",
+			"command": "sh",
+			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest check_test" ]
+		},
+		{
+			"displayName": "error_info_test",
+			"description": "Unit test",
+			"isBuildCommand": "true",
+			"command": "sh",
+			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest error_info_test" ]
+		},
+		{
+			"displayName": "diagnostic_information_test",
+			"description": "Unit test",
+			"isBuildCommand": "true",
+			"command": "sh",
+			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest diagnostic_information_test" ]
+		},
+		{
+			"displayName": "error_test",
+			"description": "Unit test",
+			"isBuildCommand": "true",
+			"command": "sh",
+			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest error_test" ]
+		},
+		{
+			"displayName": "error_test_no_exception_info",
+			"description": "Unit test",
+			"isBuildCommand": "true",
+			"command": "sh",
+			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest error_test_no_exception_info" ]
+		},
+		{
+			"displayName": "handler_test",
+			"description": "Unit test",
+			"isBuildCommand": "true",
+			"command": "sh",
+			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest handler_test" ]
+		},
+		{
 			"displayName": "has_current_error_test",
 			"description": "Unit test",
 			"isBuildCommand": "true",
 			"command": "sh",
 			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest has_current_error_test" ]
-		},
-		{
-			"displayName": "result_traits_ptr_test",
-			"description": "Unit test",
-			"isBuildCommand": "true",
-			"command": "sh",
-			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest result_traits_ptr_test" ]
-		},
-		{
-			"displayName": "All unit tests",
-			"description": "Unit test",
-			"isBuildCommand": "true",
-			"command": "sh",
-			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest" ]
-		},
-		{
-			"displayName": "throw_exception_test",
-			"description": "Unit test",
-			"isBuildCommand": "true",
-			"command": "sh",
-			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest throw_exception_test" ]
-		},
-		{
-			"displayName": "throw_error_code_test",
-			"description": "Unit test",
-			"isBuildCommand": "true",
-			"command": "sh",
-			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest throw_error_code_test" ]
-		},
-		{
-			"displayName": "throw_test",
-			"description": "Unit test",
-			"isBuildCommand": "true",
-			"command": "sh",
-			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest throw_test" ]
 		},
 		{
 			"displayName": "multiple_active_errors_test",
@@ -51,11 +65,39 @@
 			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest multiple_active_errors_test" ]
 		},
 		{
-			"displayName": "any_movable_test",
+			"displayName": "result_test",
 			"description": "Unit test",
 			"isBuildCommand": "true",
 			"command": "sh",
-			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest any_movable_test" ]
+			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest result_test" ]
+		},
+		{
+			"displayName": "throw_exception_test",
+			"description": "Unit test",
+			"isBuildCommand": "true",
+			"command": "sh",
+			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest throw_exception_test" ]
+		},
+		{
+			"displayName": "throw_return_test",
+			"description": "Unit test",
+			"isBuildCommand": "true",
+			"command": "sh",
+			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest throw_return_test" ]
+		},
+		{
+			"displayName": "throw_test",
+			"description": "Unit test",
+			"isBuildCommand": "true",
+			"command": "sh",
+			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest throw_test" ]
+		},
+		{
+			"displayName": "All unit tests",
+			"description": "Unit test",
+			"isBuildCommand": "true",
+			"command": "sh",
+			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest" ]
 		}
 	],
 	"baseItem": {

@@ -6,10 +6,8 @@
 #ifndef UUID_C95230D44A3311E781E9B0B2AD730A1C
 #define UUID_C95230D44A3311E781E9B0B2AD730A1C
 
-#include <boost/noexcept/noexcept_detail/any_movable.hpp>
-#include <boost/noexcept/noexcept_config/throw_exception.hpp>
+#include <boost/noexcept/noexcept_detail/error.hpp>
 #include <boost/noexcept/noexcept_config/thread_local.hpp>
-#include <exception>
 
 namespace
 boost
@@ -20,31 +18,50 @@ boost
         namespace
         noexcept_detail
             {
-            template <class E>
-            void
-            throw_exception_( std::exception * e )
+            template <class T>
+            T *
+            new_nothrow_move( T && x )
                 {
-                BOOST_NOEXCEPT_ASSERT(e!=0);
-                BOOST_THROW_EXCEPTION(*static_cast<E *>(e));
-                std::terminate();
+                return new (std::nothrow) T(std::move(x));
                 }
-            typedef any_movable<128,std::exception> error_holder;
+            class
+            handler_base
+                {
+                public:
+                virtual void store_internally( error && ) noexcept=0;
+                virtual void unhandle() noexcept=0;
+                protected:
+                ~handler_base() noexcept;
+                };
             class
             current_error_holder
                 {
-                public:
-                class
-                handler_base
+                current_error_holder( current_error_holder const & )=delete;
+                current_error_holder & operator=( current_error_holder const & )=delete;
+                void
+                ensure_empty() noexcept
                     {
-                    public:
-                    virtual void store_internally( error_holder && ) noexcept=0;
-                    virtual void unhandle() noexcept=0;
-                    protected:
-                    ~handler_base() noexcept;
-                    };
+                    if( h_ )
+                        {
+                        h_->store_internally(std::move(e_));
+                        h_=0;
+                        }
+                    else
+                        {
+                        BOOST_NOEXCEPT_ASSERT(e_.empty() && "Unhandled error is present at the time a new error is being set()! Calling std::terminate()!");
+                        if( !e_.empty() )
+                            std::terminate();
+                        }
+                    BOOST_NOEXCEPT_ASSERT(e_.empty());
+                    }
+                public:
+                current_error_holder() noexcept:
+                    h_(0)
+                    {
+                    }
                 ~current_error_holder() noexcept
                     {
-                    BOOST_NOEXCEPT_ASSERT(e_.empty() && "The thread terminates with unhandled error! Calling std::terminate()! (Did you forget to use try_?)");
+                    BOOST_NOEXCEPT_ASSERT(e_.empty() && "The thread terminates with unhandled error! Calling std::terminate()!");
                     if( !e_.empty() )
                         std::terminate();
                     }
@@ -52,53 +69,47 @@ boost
                 void
                 put( E && e ) noexcept
                     {
-                    if( h_ )
-                        {
-                        h_->store_internally(std::move(e_));
-                        h_=0;
-                        }
-                    BOOST_NOEXCEPT_ASSERT(e_.empty() && "Unhandled error is present at the time a new error is passed to throw_()! (Did you forget to use try_?)");
-                    if( !e_.put(std::move(e),&throw_exception_<E>) )
-                        {
-                        std::bad_alloc * a=e_.put(std::bad_alloc(),&throw_exception_<std::bad_alloc>);
-                        BOOST_NOEXCEPT_ASSERT(a!=0);
-                        }
+                    ensure_empty();
+                    e_.put(std::move(e));
+                    }
+                template <class E>
+                void
+                put_with_location( E && e, char const * file, int line, char const * function ) noexcept
+                    {
+                    ensure_empty();
+                    e_.put_with_location(std::move(e),file,line,function);
                     }
                 void
-                rethrow() noexcept
+                set( error && e ) noexcept
                     {
-                    if( !has_current_error() )
-                        {
-                        BOOST_NOEXCEPT_ASSERT(h_!=0);
-                        h_->unhandle();
-                        }
-                    }
-                error_holder const &
-                get_error() noexcept
-                    {
-                    return e_;
-                    }
-                void
-                set_error( error_holder && e ) noexcept
-                    {
-                    BOOST_NOEXCEPT_ASSERT(e_.empty() && "Unhandled error is present at the time a new error is passed to throw_()! (Did you forget to use try_?)");
+                    ensure_empty();
                     e_=std::move(e);
                     }
                 void
-                clear_exception() noexcept
+                throw_() noexcept
                     {
-                    e_.clear();
+                    if( !has_error() )
+                        {
+                        BOOST_NOEXCEPT_ASSERT(h_!=0 && "throw_() called when !has_current_error()!");
+                        h_->unhandle();
+                        }
+                    }
+                error
+                extract() noexcept
+                    {
+                    BOOST_NOEXCEPT_ASSERT(has_error());
+                    BOOST_NOEXCEPT_ASSERT(!h_);
+                    return error(std::move(e_));
                     }
                 bool
-                has_current_error() const noexcept
+                has_error() const noexcept
                     {
                     return  !e_.empty() && !h_;
                     }
-                void set_handler( handler_base * ) noexcept;
-                void unset_handler( handler_base * ) noexcept;
-                void set( error_holder  const & ) noexcept;
+                error * set_handler( handler_base * ) noexcept;
+                void unset_handler( error *, bool ) noexcept;
                 private:
-                error_holder e_;
+                error e_;
                 handler_base * h_;
                 };
             current_error_holder &
@@ -106,43 +117,18 @@ boost
                 {
                 return get_tl_object<current_error_holder>();
                 }
-            template <class E,bool DerivesFromStdException=std::is_base_of<std::exception,E>::value> struct put_dispatch;
-            template <class E>
-            struct
-            put_dispatch<E,true>
+            current_error_holder *
+            get_current_error() noexcept
                 {
-                static
-                void
-                put_( E && e ) noexcept
-                    {
-                    noexcept_detail::current_error().put(std::move(e));
-                    }
-                };
-            template <class E>
-            struct
-            put_dispatch<E,false>
-                {
-                struct
-                injector:
-                    E,
-                    std::exception
-                    {
-                    explicit
-                    injector( E && x ) noexcept:
-                        E(std::move(x))
-                        {
-                        }
-                    ~injector() noexcept
-                        {
-                        }
-                    };
-                static
-                void
-                put_( E && e ) noexcept
-                    {
-                    noexcept_detail::current_error().put(injector(std::move(e)));
-                    }
-                };
+                current_error_holder & eh=current_error();
+                return eh.has_error()?&eh:0;
+                }
+            }
+        inline
+        bool
+        has_current_error() noexcept
+            {
+            return noexcept_detail::current_error().has_error();
             }
         }
     }

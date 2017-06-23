@@ -1,12 +1,12 @@
 [source,c++]
-.<boost/noexcept/throw.hpp>
+.#include <boost/noexcept/throw.hpp>
 ----
 namespace boost { namespace noexcept_ {
 
-    template <class R>
+    template <class T>
     struct throw_return {
 
-        static R value() noexcept;
+        static T value() noexcept;
 
     }
 
@@ -17,17 +17,31 @@ namespace boost { namespace noexcept_ {
 
         public:
 
-        throw_() noexcept { }
-
         template <class E>
         throw_( E && e ) noexcept;
 
-        template <class R>
-        operator R() noexcept;
+        template <class E>
+        throw_( E && e, char const * file, int line, char const * function ) noexcept;
+
+        throw_() noexcept { }
+
+        template <class T>
+        operator T() noexcept;
         
     };
 
     bool has_current_error() noexcept;
 
 } }
+
+#define THROW_(e)\
+    ::boost::noexcept::throw_(e,__FILE__,__LINE__,BOOST_CURRENT_FUNCTION)
+
+#define BOOST_NOEXCEPT_CHECK\
+    { if( ::boost::noexcept_::has_current_error() )\
+        return ::boost::noexcept_::throw_(); }
+
+#define BOOST_NOEXCEPT_CHECK_VOID\
+    { if( ::boost::noexcept_::has_current_error() )\
+        return; }
 ----

@@ -1,29 +1,38 @@
 [source,c++]
-.<boost/noexcept/try.hpp>
+.#include <boost/noexcept/try.hpp>
 ----
-#include <boost/noexcept/error_handler.hpp>
-
 namespace boost { namespace noexcept_ {
 
-    template <class R>
-    class try_handler: public error_handler {
+    template <class T>
+    class handler {
 
-        try_handler( try_handler const & )=delete;
-        try_handler & operator=( try_handler const & )=delete;
+        handler( handler const & )=delete;
+        handler & operator=( handler const & )=delete;
 
         public:
 
-        explicit try_handler( R && res ) noexcept;
-        try_handler( try_handler && x ) noexcept;
+        ~handler() noexcept;
+
+        bool has_error() const noexcept;
+        bool has_unhandled_error const noexcept;
 
         explicit operator bool() const noexcept;
 
-        R const & result() const;
-        R & result();
+        template <class E=std::exception>
+        E * catch_() noexcept;
+
+        void throw_exception();
+
+        //Not available in handler<void>:
+        T const & get() const;
+        T & get();
+        
     };
 
-    template <class R>
-    try_handler<R> try_( R && res ) noexcept;
+    template <class T>
+    handler<T> try_( T && res ) noexcept;
+
+    handler<void> void_try_() noexcept;
 
 } }
 ----
