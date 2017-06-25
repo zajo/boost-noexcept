@@ -2322,7 +2322,7 @@ If control is entering a scope where exception handling is enabled, you can conv
 </li>
 <li>
 <p><em>Has Noexcept been benchmarked?</em></p>
-<p>Not yet, but performance is an important design goal in Noexcept and I welcome any data or analysis contributions. That said, except in functions that handle errors (see <code><a href="#try_">try_</a></code>, Noexcept has no effect on the speed of passing return values up the call chain.</p>
+<p>Not yet, but performance is an important design goal in Noexcept and I welcome any data or analysis contributions. That said, except in functions that handle errors (see <code><a href="#try_">try_</a></code>), Noexcept has no effect on the speed of passing return values up the call chain.</p>
 </li>
 <li>
 <p><em>Doesn&#8217;t Noexcept make it too easy to forget to check for errors? For example, if a function that may fail returns a type without explicit empty state (like <code>int</code>), there is nothing to protect the user from ignoring errors by mistake!</em></p>
