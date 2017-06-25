@@ -91,9 +91,9 @@ test( 'error_test_no_exception_info',
         include_directories:includes,
         cpp_args: [ '-DBOOST_NOEXCEPT_NO_EXCEPTION_INFO' ] ) )
 
-test( 'handler_test',
-    executable( 'handler_test',
-        'test/handler_test.cpp',
+test( 'result_test',
+    executable( 'result_test',
+        'test/result_test.cpp',
         dependencies: boost_thread,
         include_directories:includes) )
 
@@ -106,12 +106,6 @@ test( 'has_current_error_test',
 test( 'multiple_active_errors_test',
     executable( 'multiple_active_errors_test',
         'test/multiple_active_errors_test.cpp',
-        dependencies: boost_thread,
-        include_directories:includes) )
-
-test( 'result_test',
-    executable( 'result_test',
-        'test/result_test.cpp',
         dependencies: boost_thread,
         include_directories:includes) )
 
@@ -172,11 +166,5 @@ test( '_unhandled_error_test4',
 test( '_unhandled_error_test5',
     executable( '_unhandled_error_test5',
         'test/_unhandled_error_test5.cpp',
-        dependencies: boost_thread,
-        include_directories:includes), should_fail: true )
-
-test( '_unhandled_error_test6',
-    executable( '_unhandled_error_test6',
-        'test/_unhandled_error_test6.cpp',
         dependencies: boost_thread,
         include_directories:includes), should_fail: true )

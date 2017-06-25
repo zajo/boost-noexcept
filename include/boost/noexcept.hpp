@@ -5,4 +5,3 @@
 
 #include <boost/noexcept/throw.hpp>
 #include <boost/noexcept/try.hpp>
-#include <boost/noexcept/result.hpp>

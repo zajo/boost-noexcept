@@ -6,7 +6,7 @@
 #ifndef UUID_75B956744A2D11E7AAD921AAAD730A1C
 #define UUID_75B956744A2D11E7AAD921AAAD730A1C
 
-#include <boost/noexcept/noexcept_detail/current_error.hpp>
+#include <boost/noexcept/noexcept_detail/ceh.hpp>
 #include <boost/current_function.hpp>
 #include <type_traits>
 #include <exception>
@@ -55,21 +55,21 @@ boost
             throw_( throw_ const & )=delete;
             throw_ & operator=( throw_ const & )=delete;
             public:
-            throw_() noexcept
-                {
-                noexcept_detail::current_error().throw_();
-                }
             template <class E>
             explicit
             throw_( E && e ) noexcept
                 {
-                noexcept_detail::current_error().put(std::move(e));
+                noexcept_detail::ceh().put(std::move(e));
                 }
             template <class E>
             explicit
             throw_( E && e, char const * file, int line, char const * function ) noexcept
                 {
-                noexcept_detail::current_error().put_with_location(std::move(e),file,line,function);
+                noexcept_detail::ceh().put_with_location(std::move(e),file,line,function);
+                }
+            throw_() noexcept
+                {
+                noexcept_detail::ceh().throw_();
                 }
             template <class R>
             operator R() noexcept
@@ -78,6 +78,37 @@ boost
                 return throw_return<R>::value();
                 }
             };
+        namespace
+        noexcept_detail
+            {
+            template <class E>
+            void
+            current_error_holder::
+            put( E && e ) noexcept
+                {
+                ensure_empty();
+                e_.put(std::move(e));
+                }
+            template <class E>
+            void
+            current_error_holder::
+            put_with_location( E && e, char const * file, int line, char const * function ) noexcept
+                {
+                ensure_empty();
+                e_.put_with_location(std::move(e),file,line,function);
+                }
+            inline
+            void
+            current_error_holder::
+            throw_() noexcept
+                {
+                if( !has_error() )
+                    {
+                    BOOST_NOEXCEPT_ASSERT(current_handler_!=0 && "throw_() called without a catch_!");
+                    current_handler_->unhandle();
+                    }
+                }
+            }
         }
     }
 

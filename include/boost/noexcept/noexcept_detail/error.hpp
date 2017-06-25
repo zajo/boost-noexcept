@@ -7,6 +7,7 @@
 #define UUID_4074489A481911E7BE231D4A7F4E887A
 
 #include <boost/noexcept/noexcept_config/assert.hpp>
+#include <boost/noexcept/noexcept_config/rtti.hpp>
 #include <boost/noexcept/noexcept_config/throw_exception.hpp>
 #ifdef BOOST_NOEXCEPT_NO_EXCEPTION_INFO
 namespace boost { namespace noexcept_ { class exception_info { }; } }
@@ -423,7 +424,11 @@ boost
             struct
             dynamic<E,true>
                 {
+#ifdef BOOST_NOEXCEPT_NO_RTTI
+                static E * cast( error_base * ) noexcept { return 0; }
+#else                    
                 static E * cast( error_base * px ) noexcept { return dynamic_cast<E *>(px); }
+#endif
                 };
             template <class E>
             struct

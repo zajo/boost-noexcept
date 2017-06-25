@@ -4,14 +4,14 @@
 namespace boost { namespace noexcept_ {
 
     template <class T>
-    class handler {
+    class result {
 
-        handler( handler const & )=delete;
-        handler & operator=( handler const & )=delete;
+        result( result const & )=delete;
+        result & operator=( result const & )=delete;
 
         public:
 
-        ~handler() noexcept;
+        ~result() noexcept;
 
         bool has_error() const noexcept;
         bool has_unhandled_error const noexcept;
@@ -23,16 +23,15 @@ namespace boost { namespace noexcept_ {
 
         void throw_exception();
 
-        //Not available in handler<void>:
         T const & get() const;
         T & get();
         
     };
 
     template <class T>
-    handler<T> try_( T && res ) noexcept;
+    result<T> try_( T && res ) noexcept;
 
-    handler<void> void_try_() noexcept;
+    result<void> current_error() noexcept;
 
 } }
 ----

@@ -20,8 +20,8 @@ fail1() noexcept
 int
 fail2() noexcept
     {
-    auto tr=try_(fail1());
-    (void) tr.catch_<wrong_error>();
+    auto r=try_(fail1());
+    (void) r.catch_<wrong_error>();
     return 42;
     }
 int

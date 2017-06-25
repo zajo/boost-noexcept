@@ -6,6 +6,7 @@
 #include <boost/noexcept/try.hpp>
 #include <boost/noexcept/throw.hpp>
 #include <boost/core/lightweight_test.hpp>
+#include <system_error>
 
 using namespace boost::noexcept_;
 
@@ -42,16 +43,16 @@ f2() noexcept
 int
 f3() noexcept
     {
-    auto tr=try_(f2());
-    BOOST_TEST(!tr);
+    auto r=try_(f2());
+    BOOST_TEST(!r);
     return throw_();
     }
 int
 f4() noexcept
     {
-    auto tr=try_(f3());
-    BOOST_TEST(!tr);
-    BOOST_TEST(tr.catch_<f1_failed>()->val==1);
+    auto r=try_(f3());
+    BOOST_TEST(!r);
+    BOOST_TEST(r.catch_<f1_failed>()->val==1);
     return throw_(f4_failed(2));
     }
 int
@@ -63,16 +64,16 @@ f5() noexcept
 void
 f6_a() noexcept
     {
-    auto tr=try_(f5());
-    BOOST_TEST(!tr);
-    BOOST_TEST(tr.catch_<f4_failed>()->val==2);
+    auto r=try_(f5());
+    BOOST_TEST(!r);
+    BOOST_TEST(r.catch_<f4_failed>()->val==2);
     }
 void
 f6_b() noexcept
     {
-    auto tr=try_(f5());
-    BOOST_TEST(!tr);
-    BOOST_TEST(tr.catch_<f1_failed>()->val==2);
+    auto r=try_(f5());
+    BOOST_TEST(!r);
+    BOOST_TEST(r.catch_<f1_failed>()->val==2);
     }
 struct derives_from_std_exception: std::exception { };
 int
@@ -83,32 +84,37 @@ throw_std_exception() noexcept
 void
 std_exception_test() noexcept
     {
-    if( auto tr=try_(throw_std_exception()) )
+    if( auto r=try_(throw_std_exception()) )
         BOOST_TEST(false);
     else
-        BOOST_TEST(tr.catch_<>()!=0);
+        BOOST_TEST(r.catch_<>()!=0);
     }
 int
 rethrow_fn() noexcept
     {
-    auto tr=try_(f1());
-    BOOST_TEST(!tr);
+    auto r=try_(f1());
+    BOOST_TEST(!r);
     BOOST_TEST(!has_current_error());
-    BOOST_TEST(tr.catch_<>()!=0);
+    BOOST_TEST(r.catch_<>()!=0);
     return throw_();
     }
 void
 rethrow_test() noexcept
     {
-    auto tr=try_(rethrow_fn());
-    BOOST_TEST(!tr);
+    auto r=try_(rethrow_fn());
+    BOOST_TEST(!r);
     BOOST_TEST(!has_current_error());
-    BOOST_TEST(tr.catch_<>()!=0);
+    BOOST_TEST(r.catch_<>()!=0);
     }
 void
 throw_void_test() noexcept
     {
     return (void) throw_(f1_failed(42));
+    }
+int
+throw_error_code_test()
+    {
+    return throw_(std::error_code{42,std::system_category()});
     }
 int
 main()
@@ -119,9 +125,14 @@ main()
     rethrow_test();
         {
         throw_void_test();
-        auto tr=void_try_();
-        BOOST_TEST(tr.has_error());
-        BOOST_TEST(tr.catch_<f1_failed>() && tr.catch_<f1_failed>()->val==42);
+        auto r=current_error();
+        BOOST_TEST(r.has_error());
+        BOOST_TEST(r.catch_<f1_failed>() && r.catch_<f1_failed>()->val==42);
+        }
+        {
+        auto r=try_(throw_error_code_test());
+        BOOST_TEST(!r);
+        BOOST_TEST(r.catch_<std::error_code>()->value()==42);
         }
     return boost::report_errors();
     }

@@ -2,20 +2,16 @@
 #include <fstream>
 #include <string>
 #include <iostream>
+#include <system_error>
 
 using namespace boost::noexcept_;
-
-struct io_error { };
-struct file_error: io_error { };
-struct file_open_error: file_error { };
-struct file_read_error: file_error { };
 
 std::ifstream open_stream( char const * name ) noexcept {
     std::ifstream f(name);
     if( f.good() )
         return f;  //<1>
     else
-        return throw_(file_open_error());  //<1>
+        return throw_( std::error_code{ errno, std::generic_category() } );  //<1>
 }
 
 std::string read_line( std::ifstream && f ) noexcept {
@@ -26,7 +22,7 @@ std::string read_line( std::ifstream && f ) noexcept {
     if( f.good() )
         return s;  //<3>
     else
-        return throw_(file_read_error());  //<3>
+        return throw_( std::error_code{ errno, std::generic_category() } );  //<3>
 }
 
 std::string read_string_from_file( char const * name ) noexcept {
@@ -34,19 +30,17 @@ std::string read_string_from_file( char const * name ) noexcept {
 }
 
 int main() {
-    if( auto tr=try_(read_string_from_file("test.txt")) ) {
+    if( auto r=try_(read_string_from_file("test.txt")) ) {
         //Success!
-        std::cout << tr.get() << '\n';
+        std::cout << r.get() << '\n';
         return 0;
-    } else if( tr.catch_<file_open_error>() ) {  //<5>
-        std::cerr << "Failed to open file!\n";
-    } else if( tr.catch_<file_read_error>() ) {  //<5>
-        std::cerr << "Failed to read file!\n";
+    } else if( auto err=r.catch_<std::error_code>() ) {  //<5>
+        std::cerr << err->message();
     } /*else {  //<6>
         std::cerr <<
             "Unhandled error reached main!\n"
             "Diagnostic information below:\n" <<
-            boost::diagnostic_information(*tr.catch_<>());
+            boost::diagnostic_information(*r.catch_<>());
     }*/
     return 1;
 }

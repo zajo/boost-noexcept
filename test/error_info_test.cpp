@@ -21,23 +21,23 @@ f1() noexcept
 int
 f2() noexcept
     {
-    if( auto tr=try_(f1()) )
-        return tr.get();
+    if( auto r=try_(f1()) )
+        return r.get();
     else
         {
-        (*tr.catch_<boost::exception>()) << answer(42);
+        (*r.catch_<boost::exception>()) << answer(42);
         return throw_();
         }
     }
 int
 main( int argc, char const * argv[ ] )
     {
-    if( auto tr=try_(f2()) )
+    if( auto r=try_(f2()) )
         BOOST_TEST(false);
     else
         {
-        my_error & err=*tr.catch_<my_error>();
-        auto & info=*tr.catch_<boost::exception>();
+        my_error & err=*r.catch_<my_error>();
+        auto & info=*r.catch_<boost::exception>();
         BOOST_TEST(boost::get_error_info<answer>(info) && *boost::get_error_info<answer>(info)==42);
         }
     return boost::report_errors();

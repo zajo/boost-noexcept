@@ -133,7 +133,7 @@ main()
                     get_int( true ) ) ) ) == "24-" );
     BOOST_TEST(!has_current_error());
     BOOST_TEST(check_counters(1,1,1,1));
-    if( auto tr=try_(
+    if( auto r=try_(
         reverse_string( true,
             convert_to_string( true,
                 negate( true,
@@ -142,9 +142,9 @@ main()
     else
         {
         BOOST_TEST(check_counters(1,0,0,0));
-        BOOST_TEST(tr.catch_<get_int_failed>()!=0);
+        BOOST_TEST(r.catch_<get_int_failed>()!=0);
         }
-    if( auto tr=try_(
+    if( auto r=try_(
         reverse_string( true,
             convert_to_string( true,
                 negate( false,
@@ -153,9 +153,9 @@ main()
     else
         {
         BOOST_TEST(check_counters(1,1,0,0));
-        BOOST_TEST(tr.catch_<negate_failed>()!=0);
+        BOOST_TEST(r.catch_<negate_failed>()!=0);
         }
-    if( auto tr=try_(
+    if( auto r=try_(
         reverse_string( true,
             convert_to_string( false,
                 negate( true,
@@ -164,9 +164,9 @@ main()
     else
         {
         BOOST_TEST(check_counters(1,1,1,0));
-        BOOST_TEST(tr.catch_<convert_to_string_failed>()!=0);
+        BOOST_TEST(r.catch_<convert_to_string_failed>()!=0);
         }
-    if( auto tr=try_(
+    if( auto r=try_(
         reverse_string( false,
             convert_to_string( true,
                 negate( true,
@@ -175,32 +175,32 @@ main()
     else
         {
         BOOST_TEST(check_counters(1,1,1,1));
-        BOOST_TEST(tr.catch_<reverse_string_failed>()!=0);
+        BOOST_TEST(r.catch_<reverse_string_failed>()!=0);
         }
-    if( auto tr=try_(do_work(false,true,true)) )
+    if( auto r=try_(do_work(false,true,true)) )
         BOOST_TEST(false);
     else
         {
         BOOST_TEST(check_do_work_counters(1,0,0));
-        BOOST_TEST(tr.catch_<do_work1_failed>()!=0);
+        BOOST_TEST(r.catch_<do_work1_failed>()!=0);
         }
-    if( auto tr=try_(do_work(true,false,true)) )
+    if( auto r=try_(do_work(true,false,true)) )
         BOOST_TEST(false);
     else
         {
         BOOST_TEST(check_do_work_counters(1,1,0));
-        BOOST_TEST(tr.catch_<do_work2_failed>()!=0);
+        BOOST_TEST(r.catch_<do_work2_failed>()!=0);
         }
-    if( auto tr=try_(do_work(true,true,false)) )
+    if( auto r=try_(do_work(true,true,false)) )
         BOOST_TEST(false);
     else
         {
         BOOST_TEST(check_do_work_counters(1,1,1));
-        BOOST_TEST(tr.catch_<do_work3_failed>()!=0);
+        BOOST_TEST(r.catch_<do_work3_failed>()!=0);
         }
         {
-        auto tr=try_(do_work(true,true,true));
-        BOOST_TEST(tr);
+        auto r=try_(do_work(true,true,true));
+        BOOST_TEST(r);
         check_do_work_counters(1,1,1);
         }
     return boost::report_errors();

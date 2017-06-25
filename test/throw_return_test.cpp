@@ -57,6 +57,6 @@ main()
     BOOST_TEST((test_throw_return<unsigned long long>()==static_cast<unsigned long long>(-1)));
     BOOST_TEST((test_throw_return<int *>()==0));
     BOOST_TEST((test_throw_return<boost::shared_ptr<int> >()==boost::shared_ptr<int>()));
-    void_try_().catch_<>();
+    current_error().catch_<>();
     return boost::report_errors();
     }

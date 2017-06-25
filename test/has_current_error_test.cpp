@@ -19,14 +19,14 @@ main()
     BOOST_TEST(!a);
     BOOST_TEST(has_current_error());
         {
-        auto tr=try_(std::move(a));
+        auto r=try_(std::move(a));
         BOOST_TEST(!has_current_error());
         }
     BOOST_TEST(has_current_error());
         {
-        auto tr=try_(std::move(a));
+        auto r=try_(std::move(a));
         BOOST_TEST(!has_current_error());
-        BOOST_TEST(tr.catch_<>()!=0);
+        BOOST_TEST(r.catch_<>()!=0);
         }
     BOOST_TEST(!has_current_error());
     return boost::report_errors();

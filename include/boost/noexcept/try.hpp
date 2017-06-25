@@ -6,7 +6,7 @@
 #ifndef UUID_5872130C482B11E7B84F4C607F4E887A
 #define UUID_5872130C482B11E7B84F4C607F4E887A
 
-#include <boost/noexcept/noexcept_detail/current_error.hpp>
+#include <boost/noexcept/noexcept_detail/ceh.hpp>
 
 namespace
 boost
@@ -14,78 +14,107 @@ boost
     namespace
     noexcept_
         {
-        template <class> class handler;
-        handler<void> void_try_() noexcept;
-        template <>
+        template <class T> class result;
+        ///////////////////////////////////
+        template <class T> result<T> try_( T && ) noexcept;
+        template <class T>
         class
-        handler<void>:
+        result:
             public noexcept_detail::handler_base
             {
-            friend handler<void> void_try_() noexcept;
-            handler( handler const & )=delete;
-            handler & operator=( handler const & )=delete;
-            noexcept_detail::error internal_;
-            noexcept_detail::error * caught_;
-            bool handled_;
-            void
-            store_internally( noexcept_detail::error && x ) noexcept
+            result( result const & )=delete;
+            result & operator=( result const & )=delete;
+            protected:
+            typedef boost::noexcept_::noexcept_detail::error error;
+            private:
+            friend result<T> try_<T>( T && ) noexcept;
+            union
                 {
-                BOOST_NOEXCEPT_ASSERT(caught_!=&internal_);
-                BOOST_NOEXCEPT_ASSERT(internal_.empty());
-                internal_ = std::move(x);
-                caught_ = &internal_;
-                }
+                T val_;
+                mutable error err_;
+                };
+            enum
+            what_type
+                {
+                wh_value,
+                wh_unhandled_error,
+                wh_error
+                };
+            mutable what_type what_;
             void
-            unhandle() noexcept
+            unhandle() const noexcept
                 {
                 BOOST_NOEXCEPT_ASSERT(has_error());
-                handled_=false;
-                noexcept_detail::current_error().unset_handler(caught_,handled_);
+                noexcept_detail::ceh().set(std::move(err_));
+                what_=wh_error;
                 }
             protected:
-            handler() noexcept:
-                caught_(noexcept_detail::current_error().set_handler(this)),
-                handled_(false)
+            explicit
+            result( T && val ) noexcept:
+                val_(std::move(val)),
+                what_(wh_value)
+                {
+                BOOST_NOEXCEPT_ASSERT(!has_current_error());
+                }
+            explicit
+            result() noexcept:
+                err_(noexcept_detail::ceh().extract()),
+                what_(wh_unhandled_error)
                 {
                 }
             public:
-            handler( handler && x ) noexcept:
-                caught_(noexcept_detail::current_error().set_handler(this)),
-                handled_(false)
+            result( result && x ) noexcept:
+                what_(x.what_)
                 {
-                x.caught_=0;
+                if( x.has_error() )
+                    {
+                    (void) new (&err_) error(std::move(err_));
+                    if( x.has_unhandled_error() )
+                        x.what_=wh_error;
+                    }
+                else
+                    {
+                   BOOST_NOEXCEPT_ASSERT(!has_error());
+                    (void) new (&val_) T(std::move(x.val_));
+                    }
                 }
-            ~handler() noexcept
+            ~result() noexcept
                 {
-                noexcept_detail::current_error().unset_handler(caught_,handled_);
+                if( has_error() )
+                    {
+                    if( has_unhandled_error() )
+                        noexcept_detail::ceh().set(std::move(err_));
+                    err_.~error();
+                    }
+                else
+                    {
+                    BOOST_NOEXCEPT_ASSERT(!has_error());
+                    val_.~T();
+                    }
                 }
             explicit operator bool() const noexcept
                 {
-                return !has_error();
+                noexcept_detail::ceh().set_current_handler(this);
+                return what_==wh_value;
                 }
             bool
             has_error() const noexcept
                 {
-                return caught_!=0;
+                return what_!=wh_value;
                 }
             bool
             has_unhandled_error() const noexcept
                 {
-                return has_error() && !handled_;
-                }
-            bool
-            has_internal_error_() const noexcept
-                {
-                return caught_==&internal_;
+                return what_==wh_unhandled_error;
                 }
             template <class E=std::exception>
             E *
             catch_() noexcept
                 {
-                if( caught_ )
-                    if( E * e=caught_->get<E>() )
+                if( has_error() )
+                    if( E * e=err_.get<E>() )
                         {
-                        handled_=true;
+                        what_=wh_error;
                         return e;
                         }
                 return 0;
@@ -95,28 +124,8 @@ boost
             throw_exception()
                 {
                 BOOST_NOEXCEPT_ASSERT(has_error());
-                handled_=true;
-                caught_->throw_exception();
-                }
-            };
-        template <class T>
-        class
-        handler:
-            public handler<void>
-            {
-            handler( handler const & )=delete;
-            handler & operator=( handler const & )=delete;
-            T res_;
-            public:
-            explicit
-            handler( T && res ) noexcept:
-                res_(std::move(res))
-                {
-                }
-            handler( handler && x ) noexcept:
-                handler<void>(std::move(x)),
-                res_(std::move(x.res_))
-                {
+                what_=wh_error;
+                err_.throw_exception();
                 }
             T const &
             get() const
@@ -124,7 +133,7 @@ boost
                 if( has_error() )
                     throw_exception();
                 else
-                    return res_;
+                    return val_;
                 }
             T &
             get()
@@ -132,21 +141,53 @@ boost
                 if( has_error() )
                     throw_exception();
                 else
-                    return res_;
+                    return val_;
                 }
             };
         template <class T>
-        handler<T>
+        result<T>
         try_( T && x ) noexcept
             {
-            return handler<T>(std::move(x));
+            if( has_current_error() )
+                return result<T>();
+            else
+                return result<T>(std::move(x));
             }
-        inline
-        handler<void>
-        void_try_() noexcept
+        ///////////////////////////////////
+        result<void> current_error() noexcept;
+        template <>
+        class
+        result<void>:
+            public result<bool>
             {
-            return handler<void>();
+            result( result const & )=delete;
+            result & operator=( result const & )=delete;
+            friend result<void> current_error() noexcept;
+            typedef result<bool> base;
+            explicit
+            result( bool x ):
+                base(std::move(x))
+                {
+                }
+            result()
+                {
+                }
+            public:
+            result( result && x ) noexcept:
+                base(std::move(x))
+                {
+                }
+            };
+        inline
+        result<void>
+        current_error() noexcept
+            {
+            if( has_current_error() )
+                return result<void>();
+            else
+                return result<void>(true);
             }
+        ///////////////////////////////////
         namespace
         noexcept_detail
             {
@@ -154,33 +195,30 @@ boost
             handler_base::
             ~handler_base() noexcept
                 {
+                (void) noexcept_detail::ceh().set_current_handler(0);
                 }
             inline
-            error *
+            error
             current_error_holder::
-            set_handler( handler_base * h ) noexcept
+            extract() noexcept
                 {
-                if( e_.empty() )
-                    return 0;
-                else
-                    {
-                    h_=h;
-                    return &e_;
-                    }
+                BOOST_NOEXCEPT_ASSERT(has_error());
+                return error(std::move(e_));
                 }
             inline
             void
             current_error_holder::
-            unset_handler( error * caught, bool handled ) noexcept
+            set( error && e ) noexcept
                 {
-                h_=0;
-                if( caught==&e_ )
-                    {
-                    if( handled )
-                        e_.clear();
-                    }
-                else if( caught && !handled )
-                    set(std::move(*caught));
+                ensure_empty();
+                e_=std::move(e);
+                }
+            inline
+            void
+            current_error_holder::
+            set_current_handler( handler_base const * h ) noexcept
+                {
+                current_handler_=h;
                 }
             }
         }

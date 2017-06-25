@@ -32,26 +32,17 @@ test1() noexcept
         BOOST_TEST(false);
     else
         {
-        BOOST_TEST(!err1);
-        BOOST_TEST(!err1.has_internal_error_());
         if( auto err2=try_(compute_int<tag2>(false)) )
             BOOST_TEST(false);
         else
             {
             BOOST_TEST(!err1);
-            BOOST_TEST(err1.has_internal_error_());
-            BOOST_TEST(!err2);
-            BOOST_TEST(!err2.has_internal_error_());
             if( auto err3=try_(compute_int<tag3>(false)) )
                 BOOST_TEST(false);
             else
                 {
                 BOOST_TEST(!err1);
-                BOOST_TEST(err1.has_internal_error_());
                 BOOST_TEST(!err2);
-                BOOST_TEST(err2.has_internal_error_());
-                BOOST_TEST(!err3);
-                BOOST_TEST(!err3.has_internal_error_());
                 BOOST_TEST(err3.catch_<compute_int_failed<tag3> >()!=0);
                 BOOST_TEST(!err3);
                 }

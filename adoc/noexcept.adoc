@@ -2,26 +2,26 @@
 :sourcedir: ..
 :source-highlighter: coderay
 = Noexcept
-Error handling without exceptions for C++11
+Lightweight error handling without exceptions for C++11
 :toc: left
 :toc-title:
 
 [abstract]
 == Abstract
 
-Noexcept is a small and efficient {CPP}11 error-handling library which does not use exception handling and does not require exception-safety. Some of its features are:
+Noexcept is small and efficient {CPP}11 error-handling library which does not use exception handling and does not require exception-safe environment. Some of its features are:
 
-* function return values are not burdened with transporting error objects in case of a failure;
-* errors can be identified by static types (allowing classification of failures using a class hierarchy), or they can be identified by error codes;
-* error-neutral contexts can forward to the caller any error condition detected in lower level functions;
-* error-handling contexts may selectively handle some errors but remain neutral to others.
+* Function return values are not burdened with transporting error objects in case of a failure.
+* Errors can be identified by error code _values_ (including `std::error_code`), or by static _types_ if type safety is desired.
+* Error-neutral contexts can forward to the caller any error condition detected in lower level functions, without touching the error object.
+* Error-handling contexts may selectively handle some errors but remain neutral to others.
 
-Because Noexcept does not interfere with function return types, it is able to report failures through third-party code which may be neither exception-safe nor able to use specific sophisticated error-reporting types. This makes Noexcept easily deployable even in tricky use cases where a more intrusive error handling mechanism could not be used:
+Because Noexcept is not intrusive to function return types, it is able to propagate failures even across third-party code which may not be able to use specific sophisticated error-reporting types. This makes Noexcept easily deployable even in tricky use cases where a more intrusive error handling mechanism could not be used:
 
-* when errors are reported from a C-style callback;
-* from {CPP} virtual function override when deriving from a third-party base type;
-* when reported errors need to cross multiple API levels, each with their own error reporting mechanism;
-* when reported errors need to cross programming language boundaries.
+* When errors are reported from a C-style callback, or
+* from a {CPP} virtual function override when deriving from a third-party base type.
+* When reported errors need to cross multiple API levels, each with their own error reporting mechanism.
+* When reported errors need to cross programming language boundaries.
 
 == License
 
@@ -36,26 +36,32 @@ Please use the link:https://lists.boost.org/mailman/listinfo.cgi/boost[Boost Dev
 [[design_rationale]]
 == Design rationale
 
-Except when using exceptions, functions which could fail must communicate the failure directly to the caller, and they also need to be able to return a value in case of success. This naturally leads designers of error-handling libraries to creating a special return type capable of transporting any value or any error, with two competing design goals:
+Functions which could fail (except if they use exception handling) must communicate the failure directly to the caller -- but they also need to be able to return a value in case of success.
 
-* On one hand, this type should have zero abstraction penalty, at the very least in the case the function succeeds.
-* On the other hand, it must be flexible enough to be able to transport a wide range of error types and data pertaining to error conditions.
+This naturally leads designers of error-handling libraries to creating a special return type capable of transporting any value or any error, with two design goals:
 
-This is a tough nut to crack. In addition, such design would lead to problems specific to {CPP}:
+. Zero abstraction penalty, at the very least in the case the function succeeds.
+. Flexibility to transport a wide range of error objects and data pertaining to error conditions.
 
-* It is intrusive, so it couldn't be used in many practical cases, for example when reporting errors from a C callback or from a virtual function override when deriving from a third-party base type.
-* {CPP} programmers do not even agree on what string type they should use, so interoperability between different parts of the program is going to be a problem.
+The problem is that these are competing goals -- which would force us into a compromise, the victim _probably_ being the flexibility of the error-transporting facilities. This is not ideal for an error handling library.
 
-For these reasons, Noexcept does not define a special return type. Programmers may use any type whatsoever, the only requirement is that it provides a special state -- a value Noexept can return in case of a failure.
+In addition, such design would lead to problems specific to C and {CPP}:
 
-When a failure is detected, the error object is created in thread-local storage rather than passed up the call chain one level at a time. It is destroyed when control reaches an error-handling function that recognizes it and recovers from the failure.
+* It is intrusive, so it couldn't be used in many practical cases, for example when reporting errors from a C callback.
+* {CPP} programmers do not even agree on what string type they should use, so interoperability between the different parts of a large program is going to be a problem.
 
-NOTE: Noexcept still does define a `<<result,result<T> >>` template, which can be used to capture the result of a function call (value-or-error), but it is designed for the case where its consumption must be postponed, for example if it has to be transported to a different thread; see <<programming_techniques,Programming techniques and guidelines>>.
+NOTE: Because translation between different error reporting mechanisms in large programs is both imperfect and prone to errors (and because error handling code is very difficult to test), such traslation should be kept to the absolute minimum. Ideally, the same object created when the error is first reported should reach the error handling code intact.
+
+For these reasons, Noexcept does not define a special return type. Programmers may use any type whatsoever, the only requirement is that it provides a special state -- a value that can be returned in case of a failure. As a bonus, this virtually eliminates the chance of Noexcept impacting the performance of passing values up the call chain.
+
+When a failure is detected, the error object is created in thread-local storage rather than passed up one level at a time. It is destroyed when control reaches an error-handling function that recognizes it and recovers from the failure.
+
+NOTE: Noexcept does define a `<<try_,result<T> >>` template, which can be used to capture the result of a function call (value-or-error) in case its consumption must be postponed, for example if it has to be transported to a different thread; see <<programming_techniques,Programming techniques and guidelines>>.
 
 [[guarantee]]
 == No error gets ignored guarantee
 
-Noexcept will never ignore an error once it is reported. The handling of any given error may be postponed (e.g. using `<<result,result<T> >>`), but eventually the program is required to recognize each and every error object and flag it as handled. Situations which would lead to a pending error being ignored are detected and result in a call to `std::terminate`.
+Noexcept will never ignore an error once it is reported. The handling of any given error may be postponed (e.g. using `<<try_,result<T> >>`), but eventually the program is required to recognize each and every error object and flag it as handled. Situations which would lead to a pending error being ignored are detected and result in a call to `std::terminate`.
 
 == Crash course
 
@@ -65,10 +71,10 @@ Noexcept will never ignore an error once it is reported. The handling of any giv
 ----
 include::{sourcedir}/examples/FILE_ptr_example.cpp[tabsize=1]
 ----
-<1> `<<throw_,throw_>>` associates the passed `file_open_error` object with the calling thread and converts to `0` for the return value (as specified by the `<<throw_,throw_return>>` template).
-<2> `<<try_,try_>>` both checks for success and moves the return value of `open_file` into `tr`.
-<3> `<<handler_catch_,catch_>>` returns a pointer to the error object (or `0` if it can not be converted to `file_open_error`) and flags it as handled.
-<4> When `tr` is destroyed, the error object is destroyed if handled, otherwise left intact for another `try_`/`catch_` up the call chain to handle.
+<1> If an error is detected, `<<throw_,throw_>>` associates the passed `std::error_code` object with the calling thread and converts to a `0` `FILE *` for the return value (as specified by the `<<throw_,throw_return>>` template).
+<2> `<<try_,try_>>` checks for success and moves the return value of `open_file` (or the error it passed to `throw_`) into `r`.
+<3> `<<catch_,catch_>>` returns a pointer to the error object (or `0` if it is not a `std::error_code`) and flags it as handled.
+<4> When `r` is destroyed, the error object is destroyed if handled, otherwise left intact for another `try_`/`catch_` up the call chain to handle.
 
 WARNING: If unhandled errors remain at the time the current thread terminates, Noexcept calls `std::terminate()`. Use the default for the `catch_<>` function template to handle any error regardless of its type.
 
@@ -82,12 +88,28 @@ This program shows how to use Noexcept with `std::ifstream`, and demonstrates th
 ----
 include::{sourcedir}/examples/ifstream_example.cpp[]
 ----
-<1> `open_stream` returns a "good" `ifstream` or `file_open_error` (the `throw_` converts to an empty `ifstream`, as specified by the `<<throw_,throw_return>>` template).
+<1> `open_stream` returns a "good" `ifstream` or `std::error_code` (the `throw_` converts to an empty `ifstream`, as specified by the `<<throw_,throw_return>>` template).
 <2> The `BOOST_NOEXCEPT_CHECK` (on the previous line) would immediately return any pending errors to the caller using `return throw_()`, so here we can `assert(f.good())`.
-<3> The `read_line` function returns a `string` or `file_read_error`.
+<3> The `read_line` function returns a `string` or another `std::error_code`.
 <4> Thanks to the `BOOST_NOEXCEPT_CHECK` in `read_line`, here we don't need to check for errors: any success or failure reported by `read_line` or `open_stream` will be propagated automatically.
 <5> Dispatch on known errors and print the appropriate message.
 <6> The commented-out section shows how `link:http://www.boost.org/doc/libs/release/libs/exception/doc/diagnostic_information.html[boost::diagnostic_information]()` could be used by a more complex program to report that `main()` could not recognize an error object that reached it.
+
+***
+
+=== Propagating errors across Lua functions
+
+This program demonstrates that errors reported by Noexcept survive intact across API and even programming language boundaries. From {CPP}, it calls a link:http://www.lua.org/[Lua] function, which calls back a {CPP} function. If the callback {CPP} function fails, the error is propagated all the way to `main()` where it is handled.
+
+[source,c++]
+----
+include::{sourcedir}/examples/lua_example.cpp[]
+----
+<1> Initialize the Lua interpreter and define a simple Lua function (provided as a C string literal) called `call_do_work`, which simply returns the value returned by the Lua-global `do_work` function, which is a {CPP} function.
+<2> In the {CPP} `do_work` function, in case of success we return `42` back to Lua.
+<3> In case of a failure, we pass `do_work_error` to `throw_` as usual, and call `lua_error`.
+<4> The `call_lua` function instructs the Lua interpreter to execute the `call_do_work` Lua function (which calls `do_work`). If `do_work` was successful, `call_lua` returns the answer; otherwise it forwards failures by `return throw_()`, as usual.
+<5> In case `do_work` fails, the reported error object (which at this point has been propagated from {CPP}, through Lua and back into {CPP}) is handled here.
 
 ***
 
@@ -102,24 +124,8 @@ include::{sourcedir}/examples/c_api_example.cpp[]
 <1> A C function which uses `int` status codes to indicate success or failure, and a `float` pointer to store the result.
 <2> A simple error type to report failures from the C API function.
 <3> The cumbersome `float` pointer interface of the `C` function is converted to `boost::optional<float>`. The `<<throw_,throw_>>` returns an empty `optional` in case of failure (as specified by the `<<throw_return,throw_return>>` template).
-<4> `<<try_,try_>>` both checks for success and moves the return value of `erratic_caller` into `tr`.
-<5> `<<handler_catch_,catch_>>` returns a pointer to the error object (or `0` if it can not be converted to `erratic_error`) and flags it as handled.
-
-***
-
-=== Propagating errors across API and programming language boundaries
-
-This program demonstrates that errors reported by Noexcept survive intact across API and even programming language boundaries. From {CPP}, it calls a link:http://www.lua.org/[Lua] function, which calls back a {CPP} function. If the callback {CPP} function fails, the error is propagated all the way to `main()` where it is handled.
-
-[source,c++]
-----
-include::{sourcedir}/examples/lua_example.cpp[]
-----
-<1> Initialize the Lua interpreter and define a simple Lua function (provided as a C string literal) called `call_do_work`, which simply returns the value returned by the Lua-global `do_work` function, which is a {CPP} function.
-<2> In the {CPP} `do_work` function, in case of success we return `42` back to Lua.
-<3> In case of a failure, we pass `do_work_error` to `throw_` as usual, and call `lua_error`.
-<4> The `call_lua` function instructs the Lua interpreter to execute the `call_do_work` Lua function (which calls `do_work`). If `do_work` was successful, `call_lua` returns the answer; otherwise it forwards failures by `return throw_()`, as usual.
-<5> In case `do_work` fails, the reported error object (which at this point has been propagated from {CPP}, through Lua and back into {CPP}) is handled here.
+<4> `<<try_,try_>>` both checks for success and moves the return value of `erratic_caller` into `r`.
+<5> `<<catch_,catch_>>` returns a pointer to the error object (or `0` if it can not be converted to `erratic_error`) and flags it as handled.
 
 == Synopsis
 
@@ -128,8 +134,6 @@ include::{sourcedir}/adoc/synopses/noexcept.hpp.adoc[]
 include::{sourcedir}/adoc/synopses/throw.hpp.adoc[]
 
 include::{sourcedir}/adoc/synopses/try.hpp.adoc[]
-
-include::{sourcedir}/adoc/synopses/result.hpp.adoc[]
 
 == Reference
 
@@ -143,9 +147,14 @@ include::{sourcedir}/adoc/synopses/throw.hpp.adoc[]
 
 [source,c++]
 ----
-return throw_(my_error());
+return throw_( my_error() );
 ----
-The passed `my_error` object becomes the current error for the calling thread. The error remains current until captured by a `<<try_,handler>>` (see `<<try_,try_>>`). For threads that have a current error, `<<has_current_error,has_current_error>>()` returns `true`.
+or
+[source,c++]
+----
+return throw_( std::error_code { 42, my_domain } );
+----
+The passed object becomes the current error for the calling thread. The error remains current until captured into a `<<try_,result>>` object (see `<<try_,try_>>`). For threads that have a current error, `<<has_current_error,has_current_error>>()` returns `true`.
 
 The `throw_` object itself converts to any type so it can be used in `return` expressions in any function: if the function return type is `T`, the returned value is `throw_return<T>::value()`.
 
@@ -199,7 +208,7 @@ Returns: :: `throw_return<T>::value()`.
 ----
 bool has_current_error() noexcept;
 ----
-Returns: :: If `<<throw_,throw_>>` was used to set the current error for the calling thread, and if that error has not been captured by a `<<try_,handler>>` (see `<<try_,try_>>`), `has_current_error` returns `true`. Otherwise it returns `false`.
+Returns: :: If `<<throw_,throw_>>` was used to set the current error for the calling thread, and if that error has not been captured by a `<<try_,result>>` object (see `<<try_,try_>>`), `has_current_error` returns `true`. Otherwise it returns `false`.
 
 ***
 
@@ -223,79 +232,80 @@ These macros are designed to be used right after the opening `{` of a function t
 
 include::{sourcedir}/adoc/synopses/try.hpp.adoc[]
 
-Pass a function return value to `try_` (or use `void_try_`) if you want to _handle_ the errors it may report:
+Pass a function return value directly to `try_` (or use `current_error()` in the case of void functions) if you want to _handle_ the errors it could report:
 
-* If the function was successful (`has_current_error()` is `false`), use the `get` member function to obtain the returned value.
-* Otherwise the returned `handler` object captures the current error, which leaves the calling thread without a current error. Use the `<<handler_catch_,catch_>>` member function to detect specific errors (recognized by their type).
+* If the function was successful (`has_current_error()` is `false`), use the `<<result_get,get>>` member function of the returned `result<T>` object to obtain the returned value.
+* Otherwise instead of storing a `T` result, the returned `result<T>` object captures the current error, which leaves the calling thread without a current error. Use the `<<catch_,catch_>>` member function template to handle specific errors (recognized by their type).
 
 The following convenient syntax is supported:
 
 [source,c++]
 ----
-if( auto tr=try_(f()) ) {
-    //Success, use tr.get() to obtain the result from f()
+if( auto r=try_(f()) ) {
+    //Success, use r.get() to obtain the value returned by f()
 } else {
-    //Handle error, see handler::catch_<>
+    //Handle error, see result::catch_<>
 }
 ----
 
-The `handler` template defines the following public members:
+The `result` template defines the following public members:
 
-[[handler_dtor]]
+[[result_dtor]]
 [source,c++]
 ----
-~handler() noexcept;
+~result() noexcept;
 ----
-* If `<<handler_has_unhandled_error,has_unhandled_error>>()` is `true`:
-** If `has_current_error()`, calls `std::terminate()`.
+* At the time a `result<T>` object for which `<<result_has_unhandled_error,has_unhandled_error>>()` is `true` is destroyed:
+** If `<<has_current_error,has_current_error>>()` is also `true`, `result<T>` calls `std::terminate()`.
 ** Otherwise the error contained in `*this` becomes the current error for the calling thread again. +
-* Otherwise, if `<<handler_has_error,has_error>>()` is `true`, the captured error object is destroyed.
+* Otherwise (`has_unhandled_error()` is `false`), if `<<result_has_error,has_error>>()` is `true`, the captured error object is destroyed.
+* Otherwise the captured `T` value is destroyed.
 
 ***
 
-[[handler_has_error]]
+[[result_has_error]]
 [source,c++]
 ----
 bool has_error() const noexcept;
 ----
-Returns: :: `true` if `*this` contains an error object, `false` otherwise.
+Returns: :: `true` if `*this` contains an error object, `false` if it contains a value.
 
 ***
 
-[[handler_has_unhandled_error]]
+[[result_has_unhandled_error]]
 [source,c++]
 ----
 bool has_unhandled_error() const noexcept;
 ----
 Returns: :: `true` if `has_error()` and the error has not yet been handled, `false` otherwise.
 
-NOTE: The error contained in a `handler` is marked as handled when `<<handler_catch_,catch_>><E>` is called, but only if it can be converted to type `E`.
+NOTE: The error contained in a `result` is marked as handled when `<<catch_,catch_>><E>` is called, but only if it can be converted to type `E`.
 
 ***
 
-[[handler_operator_bool]]
+[[result_operator_bool]]
 [source,c++]
 ----
 explicit operator bool() const noexcept;
 ----
-Returns: :: Equivalent to `return !<<handler_has_error,has_error>>()`.
+Returns: :: Equivalent to `return !<<result_has_error,has_error>>()`.
 
 ***
 
-[[handler_catch_]]
+[[catch_]]
 [source,c++]
 ----
 template <class E=std::exception>
 E * catch_() noexcept;
 ----
-Returns: :: If `<<handler_has_error,has_error>>()` is `true`, if the error object contained in `*this` can be converted to `E`, returns a pointer to that object; otherwise returns `0`. The returned pointer becomes invalid if the `handler` object is moved or destroyed.
-Effects: :: If the conversion is successful, the error object captured into `*this` is marked as handled. See `<<handler_dtor,~handler>>()`.
+Returns: :: If `<<result_has_error,has_error>>()` is `true` _and_ the error object contained in `*this` is of type `E`, returns a pointer to that object; otherwise returns `0`. The returned pointer becomes invalid if the `result` object is moved or destroyed.
+Effects: :: The error object captured into `*this` is marked as handled but only if it is of type `E`; see `<<result_dtor,~result>>()`.
 
 NOTE: `catch_<>` (using the default for `E`) serves similar function to `catch(pass:[...])` when handling exceptions, however in Noexcept any error object passed to `throw_` (even objects of built-in types) internally will have a `std::exception` component, so `catch_<>` is able to return a valid `std::exception` pointer regardless of the type passed to `throw_`.
 
 ***
 
-[[handler_throw_exception]]
+[[result_throw_exception]]
 [source,c++]
 ----
 void throw_exception();
@@ -306,102 +316,14 @@ Effects: :: Throws the error object as a {CPP} exception.
 
 ***
 
-[[handler_get]]
+[[result_get]]
 [source,c++]
 ----
-//Not available in handler<void>:
+//Not available in result<void>:
 T const & get() const;
 T & get();
 ----
-Effects: :: If `!<<handler_has_error,has_error>>()`, `get()` returns a reference to the object passed to `<<try_,try_>>` and moved into `*this`; otherwise `get()` calls `<<handler_throw_exception,throw_exception>>()`.
-
-***
-
-[[handler_try_]]
-[source,c++]
-----
-template <class T>
-handler<T> try_( T && res ) noexcept;
-
-handler<void> void_try_() noexcept;
-----
-
-Effects: ::
-+
-* `res` is moved into the returned `handler` object.
-* If `<<has_current_error,has_current_error>>()`, the current error for the calling thread is moved into the returned `handler` object also.
-Postconditions: :: `!has_current_error()`.
-
-{empty} +
-
-[[result]]
-=== `result<T>`: encapsulating results
-
-include::{sourcedir}/adoc/synopses/result.hpp.adoc[]
-
-Sometimes, rather than checking for success and handling errors, it is instead necessary to store the result from a given operation -- success or failure -- and deal with it at a later time, possibly in another thread.
-
-The `result` class template is a movable (but not copyable) type which may contain either a value or an error. It is initialized by passing the return value of a function to `<<make_result,make_result>><T>()` which -- depending on `<<has_current_error,has_current_error>>()` -- returns a `<<result,result<T> >>` that wraps the passed value, or captures the current error object for the calling thread.
-
-To access the value or the error at a later time, pass the `result` object to `<<result_try_,try_>>()`.
-
-WARNING: Noexcept will call `std::terminate()` if a `result` object that contains an error is destroyed without having been passed to `try_()` (and without having been moved to another `result<T>` object).
-
-***
-
-[[result_ctor]]
-[source,c++]
-----
-result( result && x ) noexcept;
-----
-Effects: :: Move constructor: `x` is moved into `*this` and left in an unspecified but valid state.
-
-***
-
-[[result_dtor]]
-[source,c++]
-----
-~result() noexcept;
-----
-Effects: :: If `*this` contains an error, has not been passed to `try_`, and has not been moved into another `result<T>` instance, calls `std::terminate()`. Otherwise destroys `*this`.
-
-***
-
-[[make_result]]
-[source,c++]
-----
-template <class T>
-result<T> make_result( T && x ) noexcept;
-
-result<void> make_void_result() noexcept;
-----
-
-Effects: :: If `has_current_error()`, `x` is ignored and the current error for the calling thread is moved into the returned `result<T>` object. Otherwise `x` is moved into the returned object instead.
-
-Postconditions: :: `!has_current_error()`.
-
-NOTE: `result<T>` itself does not provide any access to its contents; instead, it is designed to be passed to `<<result_try_,try_>>`, which returns a `<<try_,handler<T> >>` that can be used to access the value or handle the error (as usual).
-
-***
-
-[source,c++]
-----
-result<void> make_result( throw && ) noexcept;
-----
-
-Preconditions: :: `has_current_error()`.
-
-Effects: :: The current error for the calling thread is moved into the returned object.
-
-Postconditions: :: `!has_current_error()`.
-
-NOTE: Use the following syntax: +
- +
-`make_result( throw_(my_error()) )` +
- +
-or: +
- +
-`make_result( throw_() )`
+Effects: :: If `!<<result_has_error,has_error>>()`, `get()` returns a reference to the object passed to `<<try_,try_>>` and moved into `*this`; otherwise `get()` calls `<<result_throw_exception,throw_exception>>()`.
 
 ***
 
@@ -409,12 +331,18 @@ or: +
 [source,c++]
 ----
 template <class T>
-handler<T> try_( result<T> && x ) noexcept;
+result<T> try_( T && res ) noexcept;
+
+result<void> void_try_() noexcept;
 ----
 
-This namespace-scope function examines the passed `<<result,result<T> >>` object and configures the returned `handler` depending on whether the `result` object contains an error or a value.
-
+Effects: ::
++
+* If `!<<has_current_error,has_current_error>>()`, `res` is moved into the returned `result<T>` object, later accessible by a call to `<<result_get,get>>()`.
+* Otherwise the current error for the calling thread is moved into the returned `result<T>` object, later accessible by a call to `<<catch_,catch_>>()`.
 Postconditions: :: `!has_current_error()`.
+
+NOTE: `result<T>` fully encapsulates the result (value or error) of the function call and has no association with the calling thread, so `result<T>` objects can be temporarily stored (e.g. in some `queue< result<T> >`) or moved to a different thread before their contents is consumed; see <<programming_techniques,Programming techniques and guidelines>> for an example.
 
 {empty} +
 
@@ -425,7 +353,7 @@ Postconditions: :: `!has_current_error()`.
 
 Noexcept is able to propagate failures without imposing a specific function return type, which is important because sometimes failures need to be propagated through third-party functions whose return types are beyond our control.
 
-When it is possible to take Noexcept into account in the design of function return value semantics, it is best to pick types that have a natural state (in the respective function domain) that can be used to detect failures without resorting to `<<has_current_error,has_current_error>>()`. In this case Noexcept stays completely out of the way, except when detected errors are being handled.
+When it is possible to take Noexcept into account in the design of function return value semantics, it is best to pick types that have a natural state (in the respective function domain) that can be used to detect failures without resorting to `<<has_current_error,has_current_error>>()`. In this case Noexcept can stay completely out of the way, except when detected errors are being handled.
 
 There are many function return types which usually fit this guideline quite naturally. Here are a few examples:
 
@@ -445,7 +373,7 @@ Other types that have an empty state may require more careful consideration:
 * `string`
 * `vector<T>` (and any other container type)
 
-Case in point, `string` works great with functions that return a file name or user name because these may not be empty. When an empty `string` is a valid value, requiring the caller to use `has_current_error()` to check for error is usually the best choice, but sometimes it might make sense to use a wrapper, e.g. `optional<string>` or `shared_ptr<vector<T> >`.
+Case in point, `string` works great with functions that return a file name or user name because these may not be empty. When an empty `string` is a valid return value, requiring the caller to use `has_current_error()` to check for error is usually the best choice, but sometimes it might make sense to use a wrapper, e.g. `optional<string>` or `shared_ptr<vector<T> >`.
 
 === Enforcing successful control flow
 
@@ -473,13 +401,13 @@ In terms of Noexcept, we could use:
 [source,c++]
 ----
 int count_words_in_file( FILE * f ) noexcept {
-    if( auto tr = try_( read_file(f) ) )
-        return count_words( tr.get() );
+    if( auto r = try_( read_file(f) ) )
+        return count_words( r.get() );
     else
         return throw_();
 }
 ----
-This is not too bad: at least errors are pushed out of the way, and we don't have to worry about how to propagate all possible errors up the call stack. Still, requiring users to check for errors every time they call `read_file` is prone to errors -- and in this case it is particularly annoying, since `count_words` and `read_file` fit so well together.
+This is not too bad: at least errors are pushed out of the way, and we don't have to worry about how to propagate all possible errors up the call chain. Still, requiring users to check for errors every time they call `read_file` is prone to errors -- and in this case it is particularly annoying, since `count_words` and `read_file` fit so well together.
 
 Using Noexcept we can do better: we can have functions like `count_words` check for errors themselves. That's because error-neutral contexts can propagate errors up the call stack using `return <<throw_,throw_>>()`:
 
@@ -525,21 +453,21 @@ While `void` function calls can not be composed, the `BOOST_NOEXCEPT_CHECK_VOID`
 void f1() noexcept {
     BOOST_NOEXCEPT_CHECK_VOID
     ....
-    if( !success )
+    if( !f1_succeeds )
         return (void) throw_( error1() );
 }
 
 void f2() noexcept {
     BOOST_NOEXCEPT_CHECK_VOID
     ....
-    if( !success )
+    if( !f2_succeeds )
         return (void) throw_( error2() );
 }
 
 void f3() noexcept {
     BOOST_NOEXCEPT_CHECK_VOID
     ....
-    if( !success )
+    if( !f3_succeeds )
         return (void) throw_( error3() );
 }
 
@@ -561,7 +489,7 @@ Can Noexcept help avoid calling `f2` or `f3` if `f1` fails? Yes it can, though w
 bool f1() noexcept {
     BOOST_NOEXCEPT_CHECK
     ....
-    if( success )
+    if( f1_succeeds )
         return true;
     else
         return throw_( error1() );
@@ -570,7 +498,7 @@ bool f1() noexcept {
 bool f2() noexcept {
     BOOST_NOEXCEPT_CHECK
     ....
-    if( success )
+    if( f2_succeeds )
         return true;
     else
         return throw_( error2() );
@@ -579,7 +507,7 @@ bool f2() noexcept {
 bool f3() noexcept {
     BOOST_NOEXCEPT_CHECK
     ....
-    if( success )
+    if( f3_succeeds )
         return true;
     else
         return throw_( error3() );
@@ -611,17 +539,17 @@ One possible use case is to print diagnostic information about unhandled errors 
 [source,c++]
 ----
 int main() {
-    if( auto tr=try_(do_work(....)) ) {
+    if( auto r=try_(do_work(....)) ) {
         return 0;
-    } else if( auto err=tr.catch_<error1>() ) {
+    } else if( auto err=r.catch_<error1>() ) {
         //print an error message about error1, then return to the OS
         return 1;
-    } else if( auto err=tr.catch_<error2>() ) {
+    } else if( auto err=r.catch_<error2>() ) {
         //print an error message about error2, then return to the OS
         return 2;
     } else {
         //Unknown error!
-        auto err=tr.catch_<>();
+        auto err=r.catch_<>();
         assert(err!=0); //catch_<> will bind any error type
         std::cerr <<
             "Unhandled error reached main!\n"
@@ -657,11 +585,11 @@ class file_read_error {
 };
 ----
 
-A call to `<<handler_catch_,catch_>>` that handles `file_read_error`:
+A call to `<<catch_,catch_>>` that handles `file_read_error`:
 
 [source,c++]
 ----
-if( auto e=tr.catch_<file_read_error>() ) {
+if( auto e=r.catch_<file_read_error>() ) {
   std::cerr << "Error reading \"" << e->file_name() << "\"\n";
 }
 ----
@@ -674,7 +602,7 @@ bool read_file(FILE * f) noexcept {
   ....
   size_t nr=fread(buf,1,count,f);
   if(ferror(f))
-    return throw_(file_read_error(???)); //File name not available here!
+    return throw_(file_read_error("???")); //File name not available here!
   ....
 }
 ----
@@ -686,6 +614,7 @@ Using `link:http://www.boost.org/doc/libs/release/libs/exception/doc/error_info.
 [source,c++]
 ----
 class file_io_error: public boost::exception { };
+class file_open_error: public virtual file_io_error { };
 class file_read_error: public virtual file_io_error { };
 typedef boost::error_info<struct xi_file_name_,std::string> xi_file_name;
 typedef boost::error_info<struct xi_errno_,int> xi_errno;
@@ -704,10 +633,10 @@ bool process_file(char const * name) noexcept {
     if( FILE * fp=fopen(name,"rt") ) {
         std::shared_ptr<FILE> f(fp,fclose);
 
-        if( auto tr=try_(read_file(fp)) ) {
+        if( auto r=try_(read_file(fp)) ) {
             //success!
             return true;
-        } else if( auto err=tr.catch_<boost::exception>() ) {
+        } else if( auto err=r.catch_<boost::exception>() ) {
             //Augment any passing error:
             (*err) << xi_file_name(name);
             return throw_();
@@ -731,12 +660,12 @@ bool do_work() noexcept {
 }
 
 int main() {
-    if( auto tr=try_(do_work()) ) {
+    if( auto r=try_(do_work()) ) {
 
         std::cout << "Success!\n";
         return 0;
 
-    } else if( auto err=tr.catch_<file_io_error> {
+    } else if( auto err=r.catch_<file_io_error> {
 
         std::cerr << "I/O error!\n";
         std::string const * fn=boost::get_error_info<xi_file_name>();
@@ -747,7 +676,7 @@ int main() {
     } else {
 
         //Unknown error!
-        auto err=tr.catch_<>();
+        auto err=r.catch_<>();
         assert(err!=0); //catch_<> will bind any error type
         std::cerr <<
             "Unhandled error reached main!\n"
@@ -765,7 +694,7 @@ NOTE: `boost::error_info` does not require exception handling. Noexcept is not c
 
 === Passing "value-or-error" between threads using `result<T>`
 
-The usual Noexcept error handling semantics (<<throw_,throw_>>, <<try_,try_>>, <<handler_catch_,catch_>>) are a poor match for use cases where the value (or the error) can not be consumed immediately, for example when it is produced asynchronously in a worker thread, or when values are temporarily stored into a queue for later consumption, in which case the queue must have the ability to hold multiple outstanding errors.
+The usual Noexcept error handling semantics (<<throw_,throw_>>, <<try_,try_>>, <<catch_,catch_>>) are a poor match for use cases where the value (or the error) can not be consumed immediately, for example when it is produced asynchronously in a worker thread, or when values are temporarily stored into a queue for later consumption, in which case the queue must have the ability to hold multiple outstanding errors.
 
 The `result<T>` class template is designed for use in such cases. For example, suppose we have this function which simulates a computation which may succeed or fail:
 
@@ -786,10 +715,10 @@ As usual, it uses `<<throw_,throw_>>` to report failures. Using `std::future<res
 std::vector<std::future<result<int> > > fut;
 
 //Create and launch 100 tasks:
-std::generate_n( std::inserter(fut,fut.end()), 100, [ ] ( ) {
-    //Call compute() and capture the result with make_result
-    std::packaged_task<result<int>()> task( [ ] ( ) {
-        return make_result(compute());
+std::generate_n( std::inserter(fut,fut.end()), 100, [ ] {
+    //Call compute() and capture the result with into a result<int>:
+    std::packaged_task<result<int>()> task( [ ] {
+        return try_(compute());
     } );
 
     //Get the future and kick off the task
@@ -803,23 +732,24 @@ We can now `wait` on each future then pass the collected `result` object to `<<r
 
 [source,c++]
 ----
-std::for_each( fut.begin(), fut.end(), [ ] ( std::future<result<int> > & f ) {
+for( auto & f:fut ) {
     f.wait();
-    if( auto tr=try_(f.get()) )
-        std::cout << "Success! Answer=" << tr.get() << '\n';
-    else if( auto err=tr.catch_<compute_error>() )
+    if( auto r=try_(f.get()) )
+        std::cout << "Success! Answer=" << r.get() << '\n';
+    else if( auto err=r.catch_<compute_error>() )
         std::cout << "Failure!\n";
-} );
+}
 ----
 
 {empty} +
 
+[[configuration]]
 == Macros and configuration
 
 ----
 BOOST_NOEXCEPT_ASSERT
 ----
-All assertions in Noexcept use this macro; if not `#defined`, Noexcept header files `#define` it to link:http://www.boost.org/doc/libs/release/libs/assert/assert.html[`BOOST_ASSERT`].
+All assertions in Noexcept use this macro; if not `#defined`, Noexcept header files `#define` it as link:http://www.boost.org/doc/libs/release/libs/assert/assert.html[`BOOST_ASSERT`].
 
 ***
 
@@ -827,6 +757,8 @@ All assertions in Noexcept use this macro; if not `#defined`, Noexcept header fi
 BOOST_NOEXCEPT_USE_STD_THREAD_LOCAL
 ----
 If `#defined`, Noexcept uses the {CPP} standard `thread_local` keyword for static thread-local storage, otherwise it uses link:http://www.boost.org/doc/libs/release/doc/html/thread/thread_local_storage.html[`boost::thread_specific_ptr`].
+
+NOTE: At the time of this writing, the standard `thread_local` is not yet available on some platforms or may not be used with non-trivial types.
 
 ***
 
@@ -838,9 +770,26 @@ If `#defined`, Noexcept assumes that static storage is equivalent to thread-loca
 ***
 
 ----
+BOOST_NOEXCEPT_NO_RTTI
+----
+If `#defined`, Noexcept will not use `dynamic_cast` (and errors bound by `<<catch_,catch_<T> >>()` must match `T` exactly).
+
+If `BOOST_NOEXCEPT_NO_RTTI` is not explicitly `#defined`, the availability of RTTI is determined using `BOOST_NO_RTTI`.
+
+***
+
+----
 BOOST_NOEXCEPT_THROW_EXCEPTION
 ----
-All Noexcept functions are declared as `noexcept`, except for `<<handler_get,handler::get>>()` which throws exceptions using this macro. If not `#defined`, Noexcept header files `#define` it to link:http://www.boost.org/doc/libs/release/libs/exception/doc/BOOST_THROW_EXCEPTION.html[`BOOST_THROW_EXCEPTION`].
+All Noexcept functions are declared as `noexcept`, except for `<<result_get,result::get>>()` which throws exceptions using this macro. If not `#defined`, Noexcept header files `#define` it as link:http://www.boost.org/doc/libs/release/libs/exception/doc/BOOST_THROW_EXCEPTION.html[`BOOST_THROW_EXCEPTION`].
+
+***
+
+----
+BOOST_NOEXCEPT_NO_EXCEPTION_INFO
+----
+
+While Noexcept is not coupled with `boost::error_info`, by default it is coupled with a tiny part of Boost which is needed to make `boost::error_info` work if used. Defining this macro removes that dependency.
 
 {empty} +
 
@@ -874,14 +823,24 @@ However, parts of Boost Exception do not require exception handling, for example
 
 === Comparison to Outcome
 
-Outcome is an error handling library (which recently underwent a formal Boost review) similar to Noexcept in that it does not use exceptions, but it takes the alternative design approach Noexcept <<design_rationale,seeks to avoid>>.
+link:https://ned14.github.io/outcome/[Outcome] is another error handling library (which recently underwent a formal Boost review). It is similar to Noexcept in that it does not use exceptions, but it takes an alternative design approach.
 
-The potential benefit of that approach is in the hard value-or-error invariant for functions returning `outcome<T>`; however Outcome seems to have abandoned that invariant in its post-review evolution.
+The main difference is that Outcome transports errors up the call chain one level at a time: functions are required to return `outcome<T>` which may store a value in case of success -- and there are several possibilities for transporting different error objects in case of a failure. In contrast, Noexcept does not impose a special return type; see <<design_rationale,Design rationale>>.
+
+== Acknowledgements
+
+Noexcept was inspired by the discussions on the Boost Developers mailing list during the review of the link:https://ned14.github.io/outcome/[Outcome] library by Niall Douglas.
+
+This second evolution of Noexcept incorporates valuable positive and negative feedback received after Noexcept was announced. Special thanks to Bjorn Reese and Peter Dimov for pointing out the previous inability of Noexcept to capture results into a `result<T>` with a hard value-or-error invariant, to Gavin Lambert for helping me discover that that `throw_()` _was_ broken, and to Andrzej Krzemienski whose criticisms lead to improvements in the Noexcept mechanisms for writing error-neutral functions.
 
 [[qanda]]
 == Q&A
 
 [qanda]
+Does Noexcept allocate memory dynamically?:: Generally no, except for very large objects passed to `throw_`. In addition, if using `boost::thread_specific_ptr` as the TLS provider (see <<configuration,Macros and configuration>>), it will perform a single allocation only the very first time `throw_` is used in a given thread.
+
+Does Noexcept require RTTI?:: No.
+
 When using exception handling, there can be multiple active exception objects in each thread. Does Noexcept support multiple active errors?:: Yes, the current error object can be captured using `<<try_,try_>>`, at which point the calling thread is left without a current error.
 +
 However, it is up to the user to call `try_`: the code below is ill-formed, assuming that both function calls may fail -- that is, return using `<<throw_,throw_>>(my_error())`, for some user-defined type `my_error`:
@@ -907,7 +866,7 @@ NOTE: The above is not unlike when using exception handling: if you want to call
 +
 (Nothrow asserts on `!<<has_current_error,has_current_error>>()` at the time an error object is passed to `<<throw_,throw_>>`).
 
-Does this mean that I should always use `try_`?:: No, only use `try_` if you want to handle errors (see `<<handler_catch_,catch_>>`). In error-neutral contexts, in case of errors simply return `<<throw_,throw_>>()` without argument:
+Does this mean that I should always use `try_`?:: No, only use `try_` if you want to handle errors (see `<<catch_,catch_>>`). In error-neutral contexts, in case of errors simply return `<<throw_,throw_>>()` without argument:
 +
  if( auto r=f() ) {
      //Success -- use r
@@ -923,7 +882,7 @@ NOTE: If control is entering a scope where exception handling is enabled, you ca
 +
 That said, it is sometimes possible to get away with not checking for errors in error-neutral contexts, see <<programming_techniques,Programming techniques and guidelines>>.
 
-What happens if `<<try_,try_>>` is called without any error being present?:: That is fine, in this case the value passed to `try_` will simply be moved into the returned `<<try_,handler>>` object, where it can be accessed using the `<<handler_get,get>>()` member function.
+What happens if `<<try_,try_>>` is called without any error being present?:: That is fine, in this case the value passed to `try_` will simply be moved into the returned `<<try_,result>>` object, where it can be accessed using the `<<result_get,get>>()` member function.
 
 Has Noexcept been benchmarked?:: Not yet, but performance is an important design goal in Noexcept and I welcome any data or analysis contributions. That said, except in functions that handle errors (see `<<try_,try_>>`, Noexcept has no effect on the speed of passing return values up the call chain.
 
@@ -931,7 +890,7 @@ Doesn't Noexcept make it too easy to forget to check for errors? For example, if
 +
 If this does not suffice, don't write functions that return `int` to indicate success or failure. However, consider that wrapping the `int` in a user-defined type adds complexity which may or may not be appropriate.
 
-Passing errors through thread-local storage doesn't work if the consumption of the result of a function call (success or error) can not be consumed immediately. What if I need to postpone that until later?:: The `<<result,result<T> >>` template solves this exact problem. See <<programming_techniques,Programming techniques and guidelines>>.
+Passing errors through thread-local storage doesn't work if the consumption of the result of a function call (success or error) can not be consumed immediately. What if I need to postpone that until later?:: The `<<try_,result<T> >>` template solves this exact problem. See <<programming_techniques,Programming techniques and guidelines>>.
 
 == Download
 
