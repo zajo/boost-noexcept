@@ -884,7 +884,7 @@ That said, it is sometimes possible to get away with not checking for errors in 
 
 What happens if `<<try_,try_>>` is called without any error being present?:: That is fine, in this case the value passed to `try_` will simply be moved into the returned `<<try_,result>>` object, where it can be accessed using the `<<result_get,get>>()` member function.
 
-Has Noexcept been benchmarked?:: Not yet, but performance is an important design goal in Noexcept and I welcome any data or analysis contributions. That said, except in functions that handle errors (see `<<try_,try_>>`, Noexcept has no effect on the speed of passing return values up the call chain.
+Has Noexcept been benchmarked?:: Not yet, but performance is an important design goal in Noexcept and I welcome any data or analysis contributions. That said, except in functions that handle errors (see `<<try_,try_>>`), Noexcept has no effect on the speed of passing return values up the call chain.
 
 Doesn't Noexcept make it too easy to forget to check for errors? For example, if a function that may fail returns a type without explicit empty state (like `int`), there is nothing to protect the user from ignoring errors by mistake!:: Noexcept does protect the user from this type of mistakes, but it can't do it on the spot; see the <<guarantee,No error gets ignored guarantee>>.
 +
