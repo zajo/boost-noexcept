@@ -1626,6 +1626,7 @@ result&lt;<span class="directive">void</span>&gt; void_try_() noexcept;</code></
 <div class="paragraph">
 <p>Case in point, <code>string</code> works great with functions that return a file name or user name because these may not be empty. When an empty <code>string</code> is a valid return value, requiring the caller to use <code>has_current_error()</code> to check for error is usually the best choice, but sometimes it might make sense to use a wrapper, e.g. <code>optional&lt;string&gt;</code> or <code>shared_ptr&lt;vector&lt;T&gt; &gt;</code>.</p>
 </div>
+<hr>
 </div>
 <div class="sect2">
 <h3 id="_enforcing_successful_control_flow">Enforcing successful control flow</h3>
