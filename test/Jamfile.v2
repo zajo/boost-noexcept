@@ -32,12 +32,18 @@ headers-compile-test [ glob ../include/boost/noexcept/*.hpp ]
         noexcept
     ;
 
+run-fail _rethrow_test.cpp ;
+run-fail _unhandled_error_test1.cpp ;
+run-fail _unhandled_error_test2.cpp ;
+run-fail _unhandled_error_test3.cpp ;
+run-fail _unhandled_error_test4.cpp ;
+run-fail _unhandled_error_test5.cpp ;
+
 run bad_alloc_test.cpp ;
 run check_test.cpp ;
 run diagnostic_information_test.cpp ;
 run error_info_test.cpp ;
 run error_test.cpp ;
-run handler_test.cpp ;
 run has_current_error_test.cpp ;
 run multiple_active_errors_test.cpp ;
 run result_mt_test.cpp ;
@@ -45,14 +51,6 @@ run result_test.cpp ;
 run throw_exception_test.cpp ;
 run throw_return_test.cpp ;
 run throw_test.cpp ;
-
-run-fail _rethrow_test.cpp ;
-run-fail _unhandled_error_test1.cpp ;
-run-fail _unhandled_error_test2.cpp ;
-run-fail _unhandled_error_test3.cpp ;
-run-fail _unhandled_error_test4.cpp ;
-run-fail _unhandled_error_test5.cpp ;
-run-fail _unhandled_error_test6.cpp ;
 
 compile ../examples/c_api_example.cpp ;
 compile ../examples/FILE_ptr_example.cpp ;
