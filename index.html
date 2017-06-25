@@ -2202,7 +2202,7 @@ When calling a function <code>f</code> which reports errors using Noexcept, the 
 <p><a href="https://ned14.github.io/outcome/">Outcome</a> is another error handling library (which recently underwent a formal Boost review). It is similar to Noexcept in that it does not use exceptions, but it takes an alternative design approach.</p>
 </div>
 <div class="paragraph">
-<p>The main difference is that Outcome transports errors up the call chain one level at a time: functions are required to return <code>outcome&lt;T&gt;</code> which may store a value in case of success&#8201;&#8212;&#8201;and there are several possibilities for transporting different error objects in case of a failure. In contrast, Noexcept does not impose a special return type; see <a href="#design_rationale">Design rationale</a>.</p>
+<p>The main difference is that Outcome transports errors up the call chain one level at a time: functions are required to return <code>outcome&lt;T&gt;</code> which can store a value in case of success&#8201;&#8212;&#8201;and there are several possibilities for transporting different error objects in case of a failure. In contrast, Noexcept does not impose a special return type; see <a href="#design_rationale">Design rationale</a>.</p>
 </div>
 </div>
 </div>
