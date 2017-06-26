@@ -375,6 +375,8 @@ Other types that have an empty state may require more careful consideration:
 
 Case in point, `string` works great with functions that return a file name or user name because these may not be empty. When an empty `string` is a valid return value, requiring the caller to use `has_current_error()` to check for error is usually the best choice, but sometimes it might make sense to use a wrapper, e.g. `optional<string>` or `shared_ptr<vector<T> >`.
 
+***
+
 === Enforcing successful control flow
 
 Consider the following declarations:
@@ -482,7 +484,6 @@ void caller() noexcept {
 This works, but as is the case when using function composition with non-`void` functions, all 3 functions will be called, even though they would return immediately in case the previous one failed.
 
 Can Noexcept help avoid calling `f2` or `f3` if `f1` fails? Yes it can, though we must refactor the `void` functions to return `bool` (indicating success or failure) which is a good idea anyway for any `void` function which could fail:
-
 
 [source,c++]
 ----
@@ -825,7 +826,7 @@ However, parts of Boost Exception do not require exception handling, for example
 
 link:https://ned14.github.io/outcome/[Outcome] is another error handling library (which recently underwent a formal Boost review). It is similar to Noexcept in that it does not use exceptions, but it takes an alternative design approach.
 
-The main difference is that Outcome transports errors up the call chain one level at a time: functions are required to return `outcome<T>` which may store a value in case of success -- and there are several possibilities for transporting different error objects in case of a failure. In contrast, Noexcept does not impose a special return type; see <<design_rationale,Design rationale>>.
+The main difference is that Outcome transports errors up the call chain one level at a time: functions are required to return `outcome<T>` which can store a value in case of success -- and there are several possibilities for transporting different error objects in case of a failure. In contrast, Noexcept does not impose a special return type; see <<design_rationale,Design rationale>>.
 
 == Acknowledgements
 
