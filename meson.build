@@ -25,6 +25,8 @@ if not meson.is_subproject()
     endif
 endif
 
+add_global_arguments( '-DBOOST_NOEXCEPT_THROW_EXCEPTION(x)=throw(x)', language:'cpp' )
+
 lua=subproject('lua').get_variable('all')
 boost_thread=subproject('boost').get_variable('thread')
 includes = include_directories('include')
