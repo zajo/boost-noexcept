@@ -29,7 +29,7 @@ boost
         noexcept_detail
             {
             enum { sizeof_max_error=128 };
-            typedef std::aligned_storage<sizeof_max_error,16>::type error_storage;
+            typedef std::aligned_storage<sizeof_max_error>::type error_storage;
             template <class> void tid_() { }
             typedef void (*type_id)();
             ///////////////////////////////
@@ -167,7 +167,15 @@ boost
                     std::exception * get_std_exception() noexcept { return this; }
                     exception_info * get_exception_info() noexcept { return this; }
                     void * get_obj( void (*typeid_)() ) noexcept { return typeid_==&tid_<E const>?&value_:0; }
-                    void throw_exception_() { throw value_; }
+                    void
+                    throw_exception_()
+                        {
+#ifdef BOOST_NOEXCEPT_NO_EXCEPTIONS
+                        std::terminate();
+#else
+                        throw value_;
+#endif
+                        }
                     public:
                     explicit
                     type( E && e ) noexcept:
