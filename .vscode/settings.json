@@ -37,7 +37,12 @@
         "valarray": "cpp",
         "vector": "cpp",
         "fstream": "cpp",
-        "locale": "cpp"
+        "locale": "cpp",
+        "__config": "cpp",
+        "cstddef": "cpp",
+        "new": "cpp",
+        "stdexcept": "cpp",
+        "typeinfo": "cpp"
     },
 	"editor.insertSpaces": true
 }

@@ -35,31 +35,50 @@ boost
             class
             current_error_holder
                 {
+                private:
                 current_error_holder( current_error_holder const & )=delete;
+                current_error_holder( current_error_holder && )=delete;
                 current_error_holder & operator=( current_error_holder const & )=delete;
+                current_error_holder & operator=( current_error_holder && )=delete;
+                error_storage storage_;
+                error_base * px_;
+                mover_t * mover_;
+                handler_base const * current_handler_;
                 void
                 ensure_empty() noexcept
                     {
-                    BOOST_NOEXCEPT_ASSERT(e_.empty() && "Unhandled error is present at the time a new error is being set()! Calling std::terminate()!");
-                    if( !e_.empty() )
+                    BOOST_NOEXCEPT_ASSERT(empty() && "Unhandled error is present at the time a new error is being set()! Calling std::terminate()!");
+                    if( !empty() )
                         std::terminate();
-                    BOOST_NOEXCEPT_ASSERT(e_.empty());
                     }
                 public:
-                current_error_holder() noexcept:
+                constexpr current_error_holder() noexcept:
+                    storage_(),
+                    px_(0),
+                    mover_(0),
                     current_handler_(0)
                     {
                     }
                 ~current_error_holder() noexcept
                     {
-                    BOOST_NOEXCEPT_ASSERT(e_.empty() && "The thread terminates with unhandled error! Calling std::terminate()!");
-                    if( !e_.empty() )
+                    BOOST_NOEXCEPT_ASSERT(empty() && "The thread terminates with unhandled error! Calling std::terminate()!");
+                    if( !empty() )
                         std::terminate();
                     }
                 bool
-                has_error() const noexcept
+                empty() const noexcept
                     {
-                    return  !e_.empty();
+                    return px_==0;
+                    }
+                void
+                clear() noexcept
+                    {
+                    if( !empty() )
+                        {
+                        px_->~error_base();
+                        px_=0;
+                        }
+                    BOOST_NOEXCEPT_ASSERT(empty());
                     }
                 //defined in throw.hpp:
                 template <class E> void put( E && ) noexcept;
@@ -69,21 +88,14 @@ boost
                 error extract() noexcept;
                 void set( error && ) noexcept;
                 void set_current_handler( handler_base const * ) noexcept;
-                private:
-                error e_;
-                handler_base const * current_handler_;
                 };
-            current_error_holder &
-            ceh() noexcept
-                {
-                return get_tl_object<current_error_holder>();
-                }
+            thread_local current_error_holder ceh;
             }
         inline
         bool
         has_current_error() noexcept
             {
-            return noexcept_detail::ceh().has_error();
+            return !noexcept_detail::ceh.empty();
             }
         }
     }

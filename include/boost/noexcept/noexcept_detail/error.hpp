@@ -28,7 +28,8 @@ boost
         namespace
         noexcept_detail
             {
-            template <class T> T * new_nothrow_move( T && ) noexcept;
+            enum { sizeof_max_error=128 };
+            typedef std::aligned_storage<sizeof_max_error,16>::type error_storage;
             template <class> void tid_() { }
             typedef void (*type_id)();
             ///////////////////////////////
@@ -42,13 +43,13 @@ boost
                 virtual void * get_obj( void (*typeid_)() ) noexcept=0;
                 BOOST_NOEXCEPT_NORETURN
                 void
-                throw_exception() const
+                throw_exception()
                     {
                     throw_exception_();
                     std::terminate();
                     }
                 private:
-                virtual void throw_exception_() const=0;
+                virtual void throw_exception_()=0;
                 };
             ///////////////////////////////
             template <class E,
@@ -69,31 +70,7 @@ boost
                     std::exception * get_std_exception() noexcept { return this; }
                     exception_info * get_exception_info() noexcept { return this; }
                     void * get_obj( void (*typeid_)() ) noexcept { return typeid_==&tid_<E const>?static_cast<E *>(this):0; }
-                    void throw_exception_() const { BOOST_NOEXCEPT_THROW_EXCEPTION(*this); }
-                    public:
-                    explicit
-                    type( E && e ) noexcept:
-                        E(std::move(e))
-                        {
-                        }
-                    type( type const & ) = default;
-                    type( type && ) = default;
-                    };
-                };
-            template <class E>
-            struct
-            class_dispatch<E,true,false>
-                {
-                class
-                type:
-                    public exception_info,
-                    public error_base,
-                    public E
-                    {
-                    std::exception * get_std_exception() noexcept { return this; }
-                    exception_info * get_exception_info() noexcept { return this; }
-                    void * get_obj( void (*typeid_)() ) noexcept { return typeid_==&tid_<E const>?static_cast<E *>(this):0; }
-                    void throw_exception_() const { BOOST_NOEXCEPT_THROW_EXCEPTION(*this); }
+                    void throw_exception_() { BOOST_NOEXCEPT_THROW_EXCEPTION(*this); }
                     public:
                     explicit
                     type( E && e ) noexcept:
@@ -117,7 +94,31 @@ boost
                     std::exception * get_std_exception() noexcept { return this; }
                     exception_info * get_exception_info() noexcept { return this; }
                     void * get_obj( void (*typeid_)() ) noexcept { return typeid_==&tid_<E const>?static_cast<E *>(this):0; }
-                    void throw_exception_() const { BOOST_NOEXCEPT_THROW_EXCEPTION(*this); }
+                    void throw_exception_() { BOOST_NOEXCEPT_THROW_EXCEPTION(*this); }
+                    public:
+                    explicit
+                    type( E && e ) noexcept:
+                        E(std::move(e))
+                        {
+                        }
+                    type( type const & ) = default;
+                    type( type && ) = default;
+                    };
+                };
+            template <class E>
+            struct
+            class_dispatch<E,true,false>
+                {
+                class
+                type:
+                    public exception_info,
+                    public error_base,
+                    public E
+                    {
+                    std::exception * get_std_exception() noexcept { return this; }
+                    exception_info * get_exception_info() noexcept { return this; }
+                    void * get_obj( void (*typeid_)() ) noexcept { return typeid_==&tid_<E const>?static_cast<E *>(this):0; }
+                    void throw_exception_() { BOOST_NOEXCEPT_THROW_EXCEPTION(*this); }
                     public:
                     explicit
                     type( E && e ) noexcept:
@@ -140,7 +141,7 @@ boost
                     std::exception * get_std_exception() noexcept { return this; }
                     exception_info * get_exception_info() noexcept { return this; }
                     void * get_obj( void (*typeid_)() ) noexcept { return typeid_==&tid_<E const>?static_cast<E *>(this):0; }
-                    void throw_exception_() const { BOOST_NOEXCEPT_THROW_EXCEPTION(*this); }
+                    void throw_exception_() { BOOST_NOEXCEPT_THROW_EXCEPTION(*this); }
                     public:
                     explicit
                     type( E && e ) noexcept:
@@ -151,10 +152,10 @@ boost
                     type( type && ) = default;
                     };
                 };
-            template <class E,bool IsClass=std::is_class<E>::value> struct wrap;
+            template <class E,bool IsClass=std::is_class<E>::value,bool ErrorTypeTooBig=(sizeof(E)>sizeof_max_error)> struct wrap;
             template <class E>
             struct
-            wrap<E,false>
+            wrap<E,false,false>
                 {
                 class
                 type:
@@ -166,7 +167,7 @@ boost
                     std::exception * get_std_exception() noexcept { return this; }
                     exception_info * get_exception_info() noexcept { return this; }
                     void * get_obj( void (*typeid_)() ) noexcept { return typeid_==&tid_<E const>?&value_:0; }
-                    void throw_exception_() const { throw value_; }
+                    void throw_exception_() { throw value_; }
                     public:
                     explicit
                     type( E && e ) noexcept:
@@ -179,179 +180,97 @@ boost
                 };
             template <class E>
             struct
-            wrap<E,true>
+            wrap<E,true,false>
                 {
                 typedef typename class_dispatch<E>::type type;
                 };
             ///////////////////////////////
-            template <class T,bool requires_dynamic_allocation>
-            struct putter;
-            template <class T>
-            struct
-            putter<T,false>
-                {
-                static
-                T *
-                put( T && obj, void * where ) noexcept
-                    {
-                    BOOST_NOEXCEPT_ASSERT(where!=0);
-                    return new (where) T(std::move(obj));
-                    }
-                };
-            template <class T>
-            struct
-            putter<T,true>
-                {
-                static
-                T *
-                put( T && obj, void * ) noexcept
-                    {
-                    return new_nothrow_move<T>(std::move(obj));
-                    }
-                };
-            ///////////////////////////////
             template <class T>
             void
-            static_move_( void * dst, void * src ) noexcept
+            move_( void * dst, void * src ) noexcept
                 {
                 (void) new (dst) T(std::move(*reinterpret_cast<T *>(src)));
+                }
+            typedef void (mover_t)( void *, void *);
+            void
+            move_error( mover_t * & dst_mvr, void * dst, error_base * & dst_px, mover_t * src_mvr, void * src, error_base * & src_px ) noexcept
+                {
+                if( src_px )
+                    {
+                    dst_mvr=src_mvr;
+                    src_mvr(dst,src);
+                    dst_px = reinterpret_cast<error_base *>(reinterpret_cast<unsigned char *>(dst) + (reinterpret_cast<unsigned char const *>(src_px) - reinterpret_cast<unsigned char *>(src)));
+                    src_px->~error_base();
+                    src_px=0;
+                    }
+                else
+                    dst_px=0;
                 }
             ///////////////////////////////
             class
             error
                 {
-                public:
-                enum enum_ { max_static_size=128 };
-                private:
-                typedef error_base error_base;
-                std::aligned_storage<max_static_size,16>::type static_storage_;
-                void (*static_mover_)( void *, void * ) noexcept;
+                error( error const & )=delete;
+                error & operator=( error const & )=delete;
+                error_storage storage_;
                 error_base * px_;
-                void
-                init( error && x ) noexcept
+                mover_t * mover_;
+                template <class E>
+                typename wrap<E>::type *
+                init( E && e ) noexcept
                     {
-                    if( x.px_ )
-                        {
-                        if( x.static_mover_ )
-                            {
-                            BOOST_NOEXCEPT_ASSERT(reinterpret_cast<unsigned char *>(x.px_)>=reinterpret_cast<unsigned char *>(&x.static_storage_));
-                            BOOST_NOEXCEPT_ASSERT(reinterpret_cast<unsigned char *>(x.px_)<reinterpret_cast<unsigned char *>(&x.static_storage_+max_static_size));
-                            static_mover_=x.static_mover_;
-                            static_mover_(&static_storage_,&x.static_storage_);
-                            px_ = reinterpret_cast<error_base *>(reinterpret_cast<unsigned char *>(&static_storage_) + (reinterpret_cast<unsigned char const *>(x.px_) - reinterpret_cast<unsigned char *>(&x.static_storage_)));
-                            x.px_->~error_base();
-                            }
-                        else
-                            px_=x.px_;
-                        x.px_=0;
-                        BOOST_NOEXCEPT_ASSERT(!empty());
-                        }
-                    else
-                        BOOST_NOEXCEPT_ASSERT(empty());
-                    BOOST_NOEXCEPT_ASSERT(x.empty());
-                    }
-                template <class T>
-                T *
-                put_( T && obj ) noexcept
-                    {
-                    clear();
-                    T * ob = putter<T,(sizeof(T)>max_static_size)>::put(std::move(obj),&static_storage_);
-                    if( !ob )
-                        {
-                        BOOST_NOEXCEPT_ASSERT(sizeof(T)>max_static_size);
-                        return 0;
-                        }
-                    if( reinterpret_cast<unsigned char const *>(ob) == reinterpret_cast<unsigned char const *>(&static_storage_) )
-                        static_mover_ = &static_move_<T>;
-                    else
-                        static_mover_=0;
-                    px_=ob;
-                    return ob;
+                    typedef typename wrap<E>::type T;
+                    T * w = new (&storage_) T(std::move(e));
+                    px_ = w;
+                    mover_ = &move_<T>;
+                    return w;
                     }
                 public:
-                error() noexcept:
-                    static_mover_(0),
-                    px_(0)
+                template <class E>
+                explicit
+                error( E && e ) noexcept
                     {
-                    BOOST_NOEXCEPT_ASSERT(empty());
+                    (void) init(std::move(e));
                     }
-                error( error && x ) noexcept:
-                    static_mover_(0),
-                    px_(0)
+                template <class E>
+                explicit
+                error( E && e, char const * file, int line, char const * function ) noexcept
                     {
-                    init(std::move(x));
+                    typename wrap<E>::type * w=init(std::move(e));
+#ifdef BOOST_NOEXCEPT_NO_EXCEPTION_INFO
+                    (void) w;
+#else
+                    using namespace ::boost::exception_detail;
+                    set_info(*w,throw_file(file));
+                    set_info(*w,throw_line(line));
+                    set_info(*w,throw_function(function));
+#endif
                     }
-                error &
-                operator=( error && x ) noexcept
+                error( error && x ) noexcept
                     {
-                    clear();
-                    init(std::move(x));
-                    return *this;
+                    move_error(mover_,&storage_,px_,x.mover_,&x.storage_,x.px_);
+                    BOOST_NOEXCEPT_ASSERT(x.px_==0);
+                    }
+                error( mover_t * src_mvr, void * src, error_base * & src_px ) noexcept
+                    {
+                    move_error(mover_,&storage_,px_,src_mvr,src,src_px);
+                    }
+                void
+                move_to( mover_t * & dst_mvr, void * dst, error_base * & dst_px ) noexcept
+                    {
+                    move_error(dst_mvr,dst,dst_px,mover_,&storage_,px_);
+                    BOOST_NOEXCEPT_ASSERT(px_==0);
                     }
                 ~error() noexcept
                     {
-                    clear();
-                    }
-                bool
-                empty() const noexcept
-                    {
-                    return px_==0;
-                    }
-                bool
-                holds_static() const noexcept
-                    {
-                    return !empty() && static_mover_!=0;
-                    }
-                bool
-                holds_dynamic() const noexcept
-                    {
-                    return !empty()!=0 && static_mover_==0;
-                    }
-                void
-                clear() noexcept
-                    {
-                    if( !empty() )
-                        {
-                        if( holds_static() )
-                            px_->~error_base();
-                        else
-                            delete px_;
-                        px_=0;
-                        }
-                    BOOST_NOEXCEPT_ASSERT(empty());
-                    }
-                template <class E>
-                exception_info *
-                put( E && e ) noexcept
-                    {
-                    if( auto p=put_(typename wrap<E>::type(std::move(e))) )
-                        return p;
-                    else
-                        {
-                        BOOST_NOEXCEPT_ASSERT(empty());
-                        return put_(typename wrap<std::bad_alloc>::type(std::bad_alloc()));
-                        }
-                    }
-                template <class E>
-                void
-                put_with_location( E && e, char const * file, int line, char const * function ) noexcept
-                    {
-                    BOOST_NOEXCEPT_ASSERT(file&&*file);
-                    BOOST_NOEXCEPT_ASSERT(line>0);
-                    BOOST_NOEXCEPT_ASSERT(function&&*function);
-                    exception_info & xi=*put(std::move(e));
-#ifndef BOOST_NOEXCEPT_NO_EXCEPTION_INFO                
-                    using namespace ::boost::exception_detail;
-                    set_info(xi,throw_file(file));
-                    set_info(xi,throw_line(line));
-                    set_info(xi,throw_function(function));
-#endif
+                    if( px_ )
+                        px_->~error_base();
                     }
                 BOOST_NOEXCEPT_NORETURN
                 void
-                throw_exception() const
+                throw_exception()
                     {
-                    BOOST_NOEXCEPT_ASSERT(!empty());
+                    BOOST_NOEXCEPT_ASSERT(px_!=0);
                     px_->throw_exception();
                     }
                 template <class E=std::exception> E const * get() const noexcept;

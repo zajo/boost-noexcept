@@ -5,7 +5,7 @@
 			"name": "C++ Launch",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "${workspaceRoot}/bld/debug/result_mt_test",
+			"program": "${workspaceRoot}/bld/debug/error_test",
 			"cwd": "${workspaceRoot}/test",
 			"args": [],
 			"stopAtEntry": false,

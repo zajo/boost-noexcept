@@ -56,12 +56,6 @@ executable( 'lua_example',
     dependencies: [ boost_thread, lua ],
     include_directories:includes )
 
-test( 'bad_alloc_test',
-    executable( 'bad_alloc_test',
-        'test/bad_alloc_test.cpp',
-        dependencies: boost_thread,
-        include_directories:includes) )
-
 test( 'check_test',
     executable( 'check_test',
         'test/check_test.cpp',

@@ -45,7 +45,7 @@ boost
             unhandle() const noexcept
                 {
                 BOOST_NOEXCEPT_ASSERT(has_error());
-                noexcept_detail::ceh().set(std::move(err_));
+                noexcept_detail::ceh.set(std::move(err_));
                 what_=wh_error;
                 }
             protected:
@@ -58,7 +58,7 @@ boost
                 }
             explicit
             result() noexcept:
-                err_(noexcept_detail::ceh().extract()),
+                err_(noexcept_detail::ceh.extract()),
                 what_(wh_unhandled_error)
                 {
                 }
@@ -83,7 +83,7 @@ boost
                 if( has_error() )
                     {
                     if( has_unhandled_error() )
-                        noexcept_detail::ceh().set(std::move(err_));
+                        noexcept_detail::ceh.set(std::move(err_));
                     err_.~error();
                     }
                 else
@@ -94,7 +94,7 @@ boost
                 }
             explicit operator bool() const noexcept
                 {
-                noexcept_detail::ceh().set_current_handler(this);
+                noexcept_detail::ceh.set_current_handler(this);
                 return what_==wh_value;
                 }
             bool
@@ -192,15 +192,14 @@ boost
             handler_base::
             ~handler_base() noexcept
                 {
-                (void) noexcept_detail::ceh().set_current_handler(0);
+                (void) noexcept_detail::ceh.set_current_handler(0);
                 }
             inline
             error
             current_error_holder::
             extract() noexcept
                 {
-                BOOST_NOEXCEPT_ASSERT(has_error());
-                return error(std::move(e_));
+                return error(mover_,&storage_,px_);
                 }
             inline
             void
@@ -208,7 +207,7 @@ boost
             set( error && e ) noexcept
                 {
                 ensure_empty();
-                e_=std::move(e);
+                e.move_to(mover_,&storage_,px_);
                 }
             inline
             void
