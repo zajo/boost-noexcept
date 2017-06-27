@@ -76,6 +76,8 @@ boost
                         E(std::move(e))
                         {
                         }
+                    type( type const & ) = default;
+                    type( type && ) = default;
                     };
                 };
             template <class E>
@@ -98,6 +100,8 @@ boost
                         E(std::move(e))
                         {
                         }
+                    type( type const & ) = default;
+                    type( type && ) = default;
                     };
                 };
             template <class E>
@@ -120,6 +124,8 @@ boost
                         E(std::move(e))
                         {
                         }
+                    type( type const & ) = default;
+                    type( type && ) = default;
                     };
                 };
             template <class E>
@@ -141,6 +147,8 @@ boost
                         E(std::move(e))
                         {
                         }
+                    type( type const & ) = default;
+                    type( type && ) = default;
                     };
                 };
             template <class E,bool IsClass=std::is_class<E>::value> struct wrap;
@@ -165,6 +173,8 @@ boost
                         value_(std::move(e))
                         {
                         }
+                    type( type const & ) = default;
+                    type( type && ) = default;
                     };
                 };
             template <class E>

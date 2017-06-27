@@ -173,10 +173,7 @@ boost
                 {
                 }
             public:
-            result( result && x ) noexcept:
-                base(std::move(x))
-                {
-                }
+            result( result && ) = default;
             };
         inline
         result<void>
