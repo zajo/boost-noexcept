@@ -585,7 +585,8 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_acknowledgements">Acknowledgements</a></li>
 <li><a href="#qanda">Q&amp;A</a></li>
 <li><a href="#_download">Download</a></li>
-<li><a href="#_installation">Installation</a></li>
+<li><a href="#_building_and_installation">Building and installation</a></li>
+<li><a href="#_building_the_unit_tests">Building the unit tests</a></li>
 </ul>
 </div>
 </div>
@@ -2202,23 +2203,11 @@ std::generate_n( std::inserter(fut,fut.end()), <span class="integer">100</span>,
 <hr>
 <div class="listingblock">
 <div class="content">
-<pre>BOOST_NOEXCEPT_USE_STD_THREAD_LOCAL</pre>
+<pre>BOOST_NOEXCEPT_USE_BOOST_TSS</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>If <code>#defined</code>, Noexcept uses the C++ standard <code>thread_local</code> keyword for static thread-local storage, otherwise it uses <a href="http://www.boost.org/doc/libs/release/doc/html/thread/thread_local_storage.html"><code>boost::thread_specific_ptr</code></a>.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-At the time of this writing, the standard <code>thread_local</code> is not yet available on some platforms or may not be used with non-trivial types.
-</td>
-</tr>
-</table>
+<p>By default, Noexcept uses the standard <code>thread_local</code> macro for thread-local storage. If <code>BOOST_NOEXCEPT_USE_BOOST_TSS</code> is <code>#defined</code>, Noexcept uses <a href="http://www.boost.org/doc/libs/release/doc/html/thread/thread_local_storage.html"><code>boost::thread_specific_ptr</code></a> instead.</p>
 </div>
 <hr>
 <div class="listingblock">
@@ -2467,10 +2456,21 @@ If control is entering a scope where exception handling is enabled, you can conv
 </div>
 </div>
 <div class="sect1">
-<h2 id="_installation">Installation</h2>
+<h2 id="_building_and_installation">Building and installation</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Noexcept is a header-only library and requires no installation. The unit tests can be built with Boost Build: clone Noexcept under the <code>libs</code> directory in your Boost install, then <code>cd</code> into <code>libs/noexcept/test</code> and execute <code>b2</code> as usual.</p>
+<p>Noexcept is a header-only library and requires no building or installation.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_building_the_unit_tests">Building the unit tests</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The unit tests can be build within the Boost framework: clone Noexcept under the <code>libs</code> subdirectory in your boost installation, then <code>cd</code> into <code>noexcept/test</code> and execute <code>b2</code> as usual.</p>
+</div>
+<div class="paragraph">
+<p>Alternatively, the unit tests can be built using <a href="http://mesonbuild.com">Meson</a>. In this case, both Boost and Lua (needed for one of the examples) will be downloaded automatically under the <code>subprojects</code> directory. Use <code>mesonconf</code> to select the build configuration (multiple build options are available).</p>
 </div>
 <div class="paragraph">
 <p><br></p>
