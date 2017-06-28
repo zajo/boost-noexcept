@@ -939,9 +939,15 @@ Passing errors through thread-local storage doesn't work if the consumption of t
 
 https://github.com/zajo/boost-noexcept
 
-== Installation
+== Building and installation
 
-Noexcept is a header-only library and requires no installation. The unit tests can be built with Boost Build: clone Noexcept under the `libs` directory in your Boost install, then `cd` into `libs/noexcept/test` and execute `b2` as usual.
+Noexcept is a header-only library and requires no building or installation.
+
+== Building the unit tests
+
+The unit tests can be build within the Boost framework: clone Noexcept under the `libs` subdirectory in your boost installation, then `cd` into `noexcept/test` and execute `b2` as usual.
+
+Alternatively, the unit tests can be built using link:http://mesonbuild.com[Meson]. In this case, both Boost and Lua (needed for one of the examples) will be downloaded automatically under the `subprojects` directory. Use `mesonconf` to select the build configuration (multiple build options are available).
 
 {empty} +
 

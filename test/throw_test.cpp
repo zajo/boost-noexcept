@@ -73,8 +73,10 @@ f6_b() noexcept
     {
     auto r=try_(f5());
     BOOST_TEST(!r);
-    if( auto v=r.catch_<f1_failed>() ) //In case of no RTTI
+    if( auto v=r.catch_<f1_failed>() )
         BOOST_TEST(v->val==2);
+    else
+        (void) r.catch_<f4_failed>(); //In case of no RTTI
     }
 struct derives_from_std_exception: std::exception { };
 int
