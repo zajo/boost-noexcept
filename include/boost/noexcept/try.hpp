@@ -73,7 +73,7 @@ boost
                 {
                 if( x.has_error() )
                     {
-                    (void) new (&err_) error(std::move(err_));
+                    (void) new (&err_) error(std::move(x.err_));
                     if( x.has_unhandled_error() )
                         x.what_=wh_error;
                     }

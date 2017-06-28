@@ -68,16 +68,6 @@ boost
                     {
                     return px_==0;
                     }
-                void
-                clear() noexcept
-                    {
-                    if( !empty() )
-                        {
-                        px_->~error_base();
-                        px_=0;
-                        }
-                    BOOST_NOEXCEPT_ASSERT(empty());
-                    }
                 //defined in throw.hpp:
                 template <class E> void put( E && ) noexcept;
                 template <class E> void put_with_location( E &&, char const * file, int line, char const * function ) noexcept;
@@ -87,7 +77,7 @@ boost
                 };
             inline
             current_error_holder &
-            ceh()
+            ceh() noexcept
                 {
                 return get_tl_object<current_error_holder>();
                 }

@@ -7,20 +7,21 @@
                 "${workspaceRoot}/subprojects/boost_1_64_0",
                 "${workspaceRoot}/subprojects/lua-5.1.5/src",
                 "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1",
-				"/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include"
+                "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include"
             ],
             "defines": [],
             "browse": {
                 "path": [
-					"${workspaceRoot}",
-	                "${workspaceRoot}/subprojects/boost_1_64_0",
+                    "${workspaceRoot}",
+                    "${workspaceRoot}/subprojects/boost_1_64_0",
                     "${workspaceRoot}/subprojects/lua-5.1.5/src",
-					"/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1",
-					"/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include"
+                    "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1",
+                    "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include"
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""
-            }
+            },
+            "intelliSenseMode": "clang-x64"
         },
         {
             "name": "Linux",
@@ -37,7 +38,8 @@
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""
-            }
+            },
+            "intelliSenseMode": "clang-x64"
         },
         {
             "name": "Win32",
@@ -52,13 +54,14 @@
             ],
             "browse": {
                 "path": [
-					"${workspaceRoot}",
-					"${workspaceRoot}/subprojects/boost_1_64_0",
+                    "${workspaceRoot}",
+                    "${workspaceRoot}/subprojects/boost_1_64_0",
                     "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/include/*"
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""
-            }
+            },
+            "intelliSenseMode": "msvc-x64"
         }
     ]
 }
