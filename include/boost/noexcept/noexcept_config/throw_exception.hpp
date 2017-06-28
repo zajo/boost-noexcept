@@ -6,13 +6,9 @@
 #ifndef UUID_FB56599248D611E78192CFCF7E4E887A
 #define UUID_FB56599248D611E78192CFCF7E4E887A
 
-#ifdef BOOST_NOEXCEPT_NO_EXCEPTIONS
-#   define BOOST_NOEXCEPT_THROW_EXCEPTION(x) std::terminate()
-#else
-#   ifndef BOOST_NOEXCEPT_THROW_EXCEPTION
-#       include <boost/throw_exception.hpp>
-#       define BOOST_NOEXCEPT_THROW_EXCEPTION ::boost::throw_exception
-#   endif
+#if !defined(BOOST_NOEXCEPT_NO_EXCEPTIONS) && !defined(BOOST_NOEXCEPT_THROW_EXCEPTION)
+#   include <boost/throw_exception.hpp>
+#   define BOOST_NOEXCEPT_THROW_EXCEPTION ::boost::throw_exception
 #endif
 
 #if !defined(BOOST_NOEXCEPT_NORETURN)
