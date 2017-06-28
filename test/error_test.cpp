@@ -99,7 +99,7 @@ test_lifetime() noexcept
         }
     BOOST_TEST(!tr.expired());
     BOOST_TEST(err1!=0);
-    BOOST_TEST(mv1==&move_<typename wrap<T>::type>);
+    BOOST_TEST(mv1==&move_<typename final_type<T>::type>);
     BOOST_TEST(check<T>(err1,true));
         {
         error e1(mv1,&st1,err1);
@@ -130,7 +130,7 @@ test_lifetime<int>() noexcept
         BOOST_TEST(e2.get<int>()==0);
         }
     BOOST_TEST(err1!=0);
-    BOOST_TEST(mv1==&move_<typename wrap<int>::type>);
+    BOOST_TEST(mv1==&move_<typename final_type<int>::type>);
     BOOST_TEST(check<int>(err1,false));
         {
         error e1(mv1,&st1,err1);

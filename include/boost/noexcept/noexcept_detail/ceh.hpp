@@ -46,7 +46,7 @@ boost
                         std::terminate();
                     }
                 template <class E>
-                typename wrap<E>::type * init( E && ) noexcept;
+                typename final_type<E>::type * init( E && ) noexcept;
                 public:
                 constexpr current_error_holder() noexcept:
                     storage_(),

@@ -152,10 +152,10 @@ boost
                     type( type && ) = default;
                     };
                 };
-            template <class E,bool IsClass=std::is_class<E>::value,bool ErrorTypeTooBig=(sizeof(E)>sizeof_max_error)> struct wrap;
+            template <class E,bool IsClass=std::is_class<E>::value> struct wrap;
             template <class E>
             struct
-            wrap<E,false,false>
+            wrap<E,false>
                 {
                 class
                 type:
@@ -188,9 +188,16 @@ boost
                 };
             template <class E>
             struct
-            wrap<E,true,false>
+            wrap<E,true>
                 {
                 typedef typename class_dispatch<E>::type type;
+                };
+            template <class E,bool ErrorTypeTooBig=(sizeof(typename wrap<E>::type)>sizeof_max_error)> struct final_type;
+            template <class E>
+            struct
+            final_type<E,false>
+                {
+                typedef typename wrap<E>::type type;
                 };
             ///////////////////////////////
             template <class T>
@@ -227,10 +234,10 @@ boost
                 error_base * px_;
                 mover_t * mover_;
                 template <class E>
-                typename wrap<E>::type *
+                typename final_type<E>::type *
                 init( E && e ) noexcept
                     {
-                    typedef typename wrap<E>::type T;
+                    typedef typename final_type<E>::type T;
                     T * w = new (&storage_) T(std::move(e));
                     px_ = w;
                     mover_ = &move_<T>;

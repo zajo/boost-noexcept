@@ -82,11 +82,11 @@ boost
         noexcept_detail
             {
             template <class E>
-            typename wrap<E>::type *
+            typename final_type<E>::type *
             current_error_holder::
             init( E && e ) noexcept
                 {
-                typedef typename wrap<E>::type T;
+                typedef typename final_type<E>::type T;
                 ensure_empty();
                 T * w = new (&storage_) T(std::move(e));
                 px_ = w;
