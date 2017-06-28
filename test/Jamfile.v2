@@ -56,4 +56,4 @@ compile ../examples/c_api_example.cpp ;
 compile ../examples/FILE_ptr_example.cpp ;
 compile ../examples/FILE_ptr_throw_example.cpp ;
 compile ../examples/ifstream_example.cpp ;
-compile ../examples/lua_example.cpp ;
+# compile ../examples/lua_example.cpp ;

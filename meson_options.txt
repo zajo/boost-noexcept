@@ -1,0 +1,4 @@
+option('tls', type : 'combo', choices : ['std', 'boost', 'static'], value : 'std')
+option('throw', type : 'combo', choices : ['std', 'boost', 'terminate'], value : 'boost')
+option('exception_info', type : 'boolean', value : 'true')
+option('rtti', type : 'combo', choices : ['off', 'boost_config'], value : 'boost_config')

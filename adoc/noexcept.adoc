@@ -799,11 +799,9 @@ All assertions in Noexcept use this macro; if not `#defined`, Noexcept header fi
 ***
 
 ----
-BOOST_NOEXCEPT_USE_STD_THREAD_LOCAL
+BOOST_NOEXCEPT_USE_BOOST_TSS
 ----
-If `#defined`, Noexcept uses the {CPP} standard `thread_local` keyword for static thread-local storage, otherwise it uses link:http://www.boost.org/doc/libs/release/doc/html/thread/thread_local_storage.html[`boost::thread_specific_ptr`].
-
-NOTE: At the time of this writing, the standard `thread_local` is not yet available on some platforms or may not be used with non-trivial types.
+By default, Noexcept uses the standard `thread_local` macro for thread-local storage. If `BOOST_NOEXCEPT_USE_BOOST_TSS` is `#defined`, Noexcept uses link:http://www.boost.org/doc/libs/release/doc/html/thread/thread_local_storage.html[`boost::thread_specific_ptr`] instead.
 
 ***
 

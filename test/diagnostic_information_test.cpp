@@ -32,7 +32,8 @@ f2() noexcept
         return r.get();
     else
         {
-        (*r.catch_<boost::exception>()) << answer(42);
+        if( auto xi=r.catch_<boost::exception>() )
+            *xi << answer(42);
         return r.throw_();
         }
     }

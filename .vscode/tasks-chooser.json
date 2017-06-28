@@ -2,13 +2,6 @@
 	"selectDescription": "Select build setting",
 	"items": [
 		{
-			"displayName": "bad_alloc_test",
-			"description": "Unit test",
-			"isBuildCommand": "true",
-			"command": "sh",
-			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest bad_alloc_test" ]
-		},
-		{
 			"displayName": "check_test",
 			"description": "Unit test",
 			"isBuildCommand": "true",
@@ -104,7 +97,7 @@
 			"description": "Unit test",
 			"isBuildCommand": "true",
 			"command": "sh",
-			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest" ]
+			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest && cd ${workspaceRoot}/bld/boost_tss && mesontest && cd ${workspaceRoot}/bld/minimal && mesontest" ]
 		}
 	],
 	"baseItem": {
