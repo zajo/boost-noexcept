@@ -38,16 +38,17 @@ test_type00:
 struct
 test_type01:
     test_base,
-    boost::noexcept_::exception_info
+    std::exception
     {
     test_type01( std::weak_ptr<void> & track ) noexcept: test_base(track) { }
     test_type01( test_type01 const & ) = default;
     test_type01( test_type01 && ) = default;
     };
+#ifndef BOOST_NOEXCEPT_NO_EXCEPTION_INFO
 struct
 test_type10:
     test_base,
-    std::exception
+    boost::noexcept_::exception_info
     {
     test_type10( std::weak_ptr<void> & track ) noexcept: test_base(track) { }
     test_type10( test_type10 const & ) = default;
@@ -63,6 +64,7 @@ test_type11:
     test_type11( test_type11 const & ) = default;
     test_type11( test_type11 && ) = default;
     };
+#endif
 template <class T>
 bool
 check( error_base * eb, bool dynamic ) noexcept
@@ -71,9 +73,10 @@ check( error_base * eb, bool dynamic ) noexcept
         eb &&
         eb->get_std_exception() &&
         dynamic_cast<error_base *>(eb->get_std_exception())==eb &&
-        eb->get_exception_info() &&
-#ifndef BOOST_NOEXCEPT_NO_EXCEPTION_INFO
-        dynamic_cast<error_base *>(eb->get_exception_info())==eb &&
+#ifdef BOOST_NOEXCEPT_NO_EXCEPTION_INFO
+        !eb->get_exception_info() &&
+#else
+        eb->get_exception_info() && dynamic_cast<error_base *>(eb->get_exception_info())==eb &&
 #endif
         eb->get_obj(&tid_<T const>) &&
         (!dynamic || dynamic_cast<std::exception *>(static_cast<test_base *>(eb->get_obj(&tid_<T const>)))==eb->get_std_exception());
@@ -183,6 +186,7 @@ test_throw_exception()
         {
         BOOST_TEST(check<T>(dynamic_cast<error_base *>(&e),true));
         }
+#ifndef BOOST_NOEXCEPT_NO_EXCEPTION_INFO
     try
         {
         e.throw_exception();
@@ -190,10 +194,9 @@ test_throw_exception()
         }
     catch( boost::noexcept_::exception_info & e )
         {
-#ifndef BOOST_NOEXCEPT_NO_EXCEPTION_INFO
         BOOST_TEST(check<T>(dynamic_cast<error_base *>(&e),true));
-#endif
         }
+#endif
     }
 template <>
 void
@@ -215,18 +218,24 @@ main()
     {
     test_lifetime<test_type00>();
     test_lifetime<test_type01>();
+#ifndef BOOST_NOEXCEPT_NO_EXCEPTION_INFO
     test_lifetime<test_type10>();
     test_lifetime<test_type11>();
+#endif
     test_lifetime<int>();
     test_throw_exception<test_type00>();
     test_throw_exception<test_type01>();
+#ifndef BOOST_NOEXCEPT_NO_EXCEPTION_INFO
     test_throw_exception<test_type10>();
     test_throw_exception<test_type11>();
+#endif
     test_throw_exception<int>();
     test_ceh<test_type00>();
     test_ceh<test_type01>();
+#ifndef BOOST_NOEXCEPT_NO_EXCEPTION_INFO
     test_ceh<test_type10>();
     test_ceh<test_type11>();
+#endif
     test_ceh<int>();
     return boost::report_errors();
     }

@@ -7,6 +7,7 @@
 #define UUID_5872130C482B11E7B84F4C607F4E887A
 
 #include <boost/noexcept/noexcept_detail/ceh.hpp>
+#include <boost/noexcept/noexcept_detail/error.hpp>
 
 namespace
 boost

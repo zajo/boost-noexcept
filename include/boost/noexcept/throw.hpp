@@ -82,33 +82,22 @@ boost
         noexcept_detail
             {
             template <class E>
-            typename final_type<E>::type *
-            current_error_holder::
-            init( E && e ) noexcept
-                {
-                typedef typename final_type<E>::type T;
-                ensure_empty();
-                T * w = new (&storage_) T(std::move(e));
-                px_ = w;
-                mover_ = &move_<T>;
-                return w;
-                }
-            template <class E>
             void
             current_error_holder::
             put( E && e ) noexcept
                 {
-                (void) init(std::move(e));
+                ensure_empty();
+                px_ = init_error(std::move(e),mover_,&storage_);
                 }
             template <class E>
             void
             current_error_holder::
             put_with_location( E && e, char const * file, int line, char const * function ) noexcept
                 {
-                auto w=init(std::move(e));
-#ifdef BOOST_NOEXCEPT_NO_EXCEPTION_INFO
-                (void) w;
-#else
+                ensure_empty();
+                auto w=init_error(std::move(e),mover_,&storage_);
+                px_=w;
+#ifndef BOOST_NOEXCEPT_NO_EXCEPTION_INFO
                 using namespace ::boost::exception_detail;
                 set_info(*w,throw_file(file));
                 set_info(*w,throw_line(line));

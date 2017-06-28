@@ -6,7 +6,7 @@
 #ifndef UUID_C95230D44A3311E781E9B0B2AD730A1C
 #define UUID_C95230D44A3311E781E9B0B2AD730A1C
 
-#include <boost/noexcept/noexcept_detail/error.hpp>
+#include <boost/noexcept/noexcept_detail/eh.hpp>
 #include <boost/noexcept/noexcept_config/thread_local.hpp>
 
 namespace
@@ -18,6 +18,7 @@ boost
         namespace
         noexcept_detail
             {
+            class error;
             class
             handler_base
                 {
@@ -45,8 +46,6 @@ boost
                     if( !empty() )
                         std::terminate();
                     }
-                template <class E>
-                typename final_type<E>::type * init( E && ) noexcept;
                 public:
                 constexpr current_error_holder() noexcept:
                     storage_(),
