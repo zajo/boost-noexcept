@@ -59,17 +59,17 @@ boost
             explicit
             throw_( E && e ) noexcept
                 {
-                noexcept_detail::ceh.put(std::move(e));
+                noexcept_detail::ceh().put(std::move(e));
                 }
             template <class E>
             explicit
             throw_( E && e, char const * file, int line, char const * function ) noexcept
                 {
-                noexcept_detail::ceh.put_with_location(std::move(e),file,line,function);
+                noexcept_detail::ceh().put_with_location(std::move(e),file,line,function);
                 }
             throw_() noexcept
                 {
-                noexcept_detail::ceh.throw_();
+                noexcept_detail::ceh().throw_();
                 }
             template <class R>
             operator R() noexcept
@@ -82,26 +82,33 @@ boost
         noexcept_detail
             {
             template <class E>
-            void
+            typename wrap<E>::type *
             current_error_holder::
-            put( E && e ) noexcept
-                {
-                typedef typename wrap<E>::type T;
-                ensure_empty();
-                px_ = new (&storage_) T(std::move(e));
-                mover_ = &move_<T>;
-                }
-            template <class E>
-            void
-            current_error_holder::
-            put_with_location( E && e, char const * file, int line, char const * function ) noexcept
+            init( E && e ) noexcept
                 {
                 typedef typename wrap<E>::type T;
                 ensure_empty();
                 T * w = new (&storage_) T(std::move(e));
                 px_ = w;
                 mover_ = &move_<T>;
-#ifndef BOOST_NOEXCEPT_NO_EXCEPTION_INFO
+                return w;
+                }
+            template <class E>
+            void
+            current_error_holder::
+            put( E && e ) noexcept
+                {
+                (void) init(std::move(e));
+                }
+            template <class E>
+            void
+            current_error_holder::
+            put_with_location( E && e, char const * file, int line, char const * function ) noexcept
+                {
+                auto w=init(std::move(e));
+#ifdef BOOST_NOEXCEPT_NO_EXCEPTION_INFO
+                (void) w;
+#else
                 using namespace ::boost::exception_detail;
                 set_info(*w,throw_file(file));
                 set_info(*w,throw_line(line));

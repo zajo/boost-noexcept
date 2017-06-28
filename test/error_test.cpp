@@ -146,16 +146,16 @@ void
 test_ceh() noexcept
     {
     std::weak_ptr<void> tr;
-    ceh.put(T(tr));
+    ceh().put(T(tr));
     BOOST_TEST(tr.lock().use_count()==2);
-    BOOST_TEST(ceh.extract().get<T>()!=0);
+    BOOST_TEST(ceh().extract().get<T>()!=0);
     }
 template <>
 void
 test_ceh<int>() noexcept
     {
-    ceh.put(42);
-    BOOST_TEST(*ceh.extract().get<int>()==42);
+    ceh().put(42);
+    BOOST_TEST(*ceh().extract().get<int>()==42);
     }
 template <class T>
 void

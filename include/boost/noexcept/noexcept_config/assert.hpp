@@ -7,8 +7,8 @@
 #define UUID_C675838848D611E7BF4E8FCF7E4E887A
 
 #ifndef BOOST_NOEXCEPT_ASSERT
-#include <boost/assert.hpp>
-#define BOOST_NOEXCEPT_ASSERT BOOST_ASSERT
+#   include <boost/assert.hpp>
+#   define BOOST_NOEXCEPT_ASSERT BOOST_ASSERT
 #endif
 
 #endif

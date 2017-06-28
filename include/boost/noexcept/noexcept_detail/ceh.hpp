@@ -18,12 +18,6 @@ boost
         namespace
         noexcept_detail
             {
-            template <class T>
-            T *
-            new_nothrow_move( T && x ) noexcept
-                {
-                return new (std::nothrow) T(std::move(x));
-                }
             class
             handler_base
                 {
@@ -51,6 +45,8 @@ boost
                     if( !empty() )
                         std::terminate();
                     }
+                template <class E>
+                typename wrap<E>::type * init( E && ) noexcept;
                 public:
                 constexpr current_error_holder() noexcept:
                     storage_(),
@@ -89,13 +85,18 @@ boost
                 void set( error && ) noexcept;
                 void set_current_handler( handler_base const * ) noexcept;
                 };
-            thread_local current_error_holder ceh;
+            inline
+            current_error_holder &
+            ceh()
+                {
+                return get_tl_object<current_error_holder>();
+                }
             }
         inline
         bool
         has_current_error() noexcept
             {
-            return !noexcept_detail::ceh.empty();
+            return !noexcept_detail::ceh().empty();
             }
         }
     }

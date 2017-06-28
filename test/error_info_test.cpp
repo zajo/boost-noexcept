@@ -36,7 +36,6 @@ main( int argc, char const * argv[ ] )
         BOOST_TEST(false);
     else
         {
-        my_error & err=*r.catch_<my_error>();
         auto & info=*r.catch_<boost::exception>();
         BOOST_TEST(boost::get_error_info<answer>(info) && *boost::get_error_info<answer>(info)==42);
         }

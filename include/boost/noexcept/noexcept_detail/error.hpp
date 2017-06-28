@@ -208,6 +208,9 @@ boost
                     dst_mvr=src_mvr;
                     src_mvr(dst,src);
                     dst_px = reinterpret_cast<error_base *>(reinterpret_cast<unsigned char *>(dst) + (reinterpret_cast<unsigned char const *>(src_px) - reinterpret_cast<unsigned char *>(src)));
+#ifndef BOOST_NOEXCEPT_NO_RTTI
+                    BOOST_NOEXCEPT_ASSERT(typeid(*dst_px)==typeid(*src_px));
+#endif
                     src_px->~error_base();
                     src_px=0;
                     }
@@ -244,7 +247,7 @@ boost
                 explicit
                 error( E && e, char const * file, int line, char const * function ) noexcept
                     {
-                    typename wrap<E>::type * w=init(std::move(e));
+                    auto w=init(std::move(e));
 #ifdef BOOST_NOEXCEPT_NO_EXCEPTION_INFO
                     (void) w;
 #else

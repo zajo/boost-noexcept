@@ -7,12 +7,12 @@
 #define UUID_EB80EE1449A411E7879E1EF67F4E887A
 
 #ifndef BOOST_NOEXCEPT_USE_STD_THREAD_LOCAL
-#include <boost/config.hpp>
-#ifdef BOOST_NO_THREADS
-#define BOOST_NOEXCEPT_NO_THREADS
-#else
-#include <boost/thread/tss.hpp>
-#endif
+#   include <boost/config.hpp>
+#   ifdef BOOST_NO_THREADS
+#       define BOOST_NOEXCEPT_NO_THREADS
+#   else
+#       include <boost/thread/tss.hpp>
+#   endif
 #endif
 
 namespace

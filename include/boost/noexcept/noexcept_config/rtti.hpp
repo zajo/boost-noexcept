@@ -7,10 +7,13 @@
 #define UUID_55A8454C593311E796DF212ECB2E2FD9
 
 #ifndef BOOST_NOEXCEPT_NO_RTTI
-#include <boost/config.hpp>
-#ifdef BOOST_NO_RTTI
-#define BOOST_NOEXCEPT_NO_RTTI
-#endif
+#   include <boost/config.hpp>
+#   ifdef BOOST_NO_RTTI
+#       define BOOST_NOEXCEPT_NO_RTTI
+#   endif
+#   ifndef BOOST_NOEXCEPT_NO_RTTI
+#       include <typeinfo>
+#   endif
 #endif
 
 #endif
