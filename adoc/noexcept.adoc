@@ -3,6 +3,7 @@
 :source-highlighter: coderay
 = Noexcept
 Lightweight error handling without exceptions for C++11
+:toclevels: 3
 :toc: left
 :toc-title:
 
@@ -129,16 +130,22 @@ include::{sourcedir}/examples/c_api_example.cpp[]
 
 == Synopsis
 
+=== boost/noexcept.hpp
+
 include::{sourcedir}/adoc/synopses/noexcept.hpp.adoc[]
 
+=== boost/noexcept/throw.hpp
+
 include::{sourcedir}/adoc/synopses/throw.hpp.adoc[]
+
+=== boost/noexcept/try.hpp
 
 include::{sourcedir}/adoc/synopses/try.hpp.adoc[]
 
 == Reference
 
 [[throw_]]
-=== `throw_`: reporting errors
+=== Report: `throw_`
 [[throw_return]]
 
 include::{sourcedir}/adoc/synopses/throw.hpp.adoc[]
@@ -165,6 +172,10 @@ The `throw_return<T>` template may be specialized to specify the value to be ret
 
 The `throw_` class has the following members:
 
+***
+
+[[throw_ctor]]
+==== throw_ constructors
 [source,c++]
 ----
 template <class E>
@@ -181,18 +192,18 @@ Preconditions: :: `!<<has_current_error,has_current_error>>()`
 Effects: :: `e` becomes the current error for the calling thread. If `file`, `line` and `function` are specified, that information is recorded for diagnostic purposes (use with the `THROW_` macro).
 Postconditions: :: `has_current_error()`
 
-***
-
-[[throw_ctor]]
 [source,c++]
 ----
 throw_() noexcept;
 ----
 Effects: :: None: the default constructor is used to continue propagating the current error.
 
+NOTE: This is different from the `<<result_throw_,throw_>>` member function of `result<T>`, which is used in return expressions to propagate the error stored in the `result` object, rather than the current error.
+
 ***
 
-[[throw_operator_R]]
+[[throw_operator_T]]
+==== throw_::operator T()
 [source,c++]
 ----
 template <class T>
@@ -204,6 +215,7 @@ Returns: :: `throw_return<T>::value()`.
 ***
 
 [[has_current_error]]
+==== has_current_error()
 [source,c++]
 ----
 bool has_current_error() noexcept;
@@ -228,7 +240,7 @@ These macros are designed to be used right after the opening `{` of a function t
 {blank} +
 
 [[try_]]
-===  `try_`/`catch_`: handling errors
+===  Handle: `try_`/`catch_`
 
 include::{sourcedir}/adoc/synopses/try.hpp.adoc[]
 
@@ -250,7 +262,10 @@ if( auto r=try_(f()) ) {
 
 The `result` template defines the following public members:
 
+***
+
 [[result_dtor]]
+==== result<T> destructor
 [source,c++]
 ----
 ~result() noexcept;
@@ -264,6 +279,7 @@ The `result` template defines the following public members:
 ***
 
 [[result_has_error]]
+==== result<T>::has_error()
 [source,c++]
 ----
 bool has_error() const noexcept;
@@ -273,6 +289,7 @@ Returns: :: `true` if `*this` contains an error object, `false` if it contains a
 ***
 
 [[result_has_unhandled_error]]
+==== result<T>::has_unhandled_error()
 [source,c++]
 ----
 bool has_unhandled_error() const noexcept;
@@ -284,6 +301,7 @@ NOTE: The error contained in a `result` is marked as handled when `<<catch_,catc
 ***
 
 [[result_operator_bool]]
+==== result<T>::operator bool()
 [source,c++]
 ----
 explicit operator bool() const noexcept;
@@ -293,6 +311,7 @@ Returns: :: Equivalent to `return !<<result_has_error,has_error>>()`.
 ***
 
 [[catch_]]
+==== result<T>::catch_()
 [source,c++]
 ----
 template <class E=std::exception>
@@ -305,7 +324,30 @@ NOTE: `catch_<>` (using the default for `E`) serves similar function to `catch(p
 
 ***
 
+[[result_throw_]]
+==== result<T>::throw_()
+[source,c++]
+----
+<unspecified_return_type> throw_() noexcept;
+----
+Preconditions: :: `<<result_has_error,has_error>>`().
+Effects: :: The error object stored into `*this` becomes the current error for the calling thread again.
+Returns: :: An object of unspecified type which converts implicitly to any type for use in `return` expressions. Example usage:
+
+[source,c++]
+----
+if( auto r=try_(f()) ) {
+    //success, use r.get()
+} else {
+    //possibly handle some errors, then:
+    return r.throw_(); //propagate the error object up the call chain
+}
+----
+
+***
+
 [[result_throw_exception]]
+==== result<T>::throw_exception()
 [source,c++]
 ----
 void throw_exception();
@@ -317,6 +359,7 @@ Effects: :: Throws the error object as a {CPP} exception.
 ***
 
 [[result_get]]
+==== result<T>::get()
 [source,c++]
 ----
 //Not available in result<void>:
@@ -328,6 +371,7 @@ Effects: :: If `!<<result_has_error,has_error>>()`, `get()` returns a reference 
 ***
 
 [[result_try_]]
+==== try_()
 [source,c++]
 ----
 template <class T>
@@ -406,7 +450,7 @@ int count_words_in_file( FILE * f ) noexcept {
     if( auto r = try_( read_file(f) ) )
         return count_words( r.get() );
     else
-        return throw_();
+        return r.throw_();
 }
 ----
 This is not too bad: at least errors are pushed out of the way, and we don't have to worry about how to propagate all possible errors up the call chain. Still, requiring users to check for errors every time they call `read_file` is prone to errors -- and in this case it is particularly annoying, since `count_words` and `read_file` fit so well together.
@@ -640,7 +684,7 @@ bool process_file(char const * name) noexcept {
         } else if( auto err=r.catch_<boost::exception>() ) {
             //Augment any passing error:
             (*err) << xi_file_name(name);
-            return throw_();
+            return r.throw_();
         }
 
     } else {
@@ -855,7 +899,7 @@ The correct code would ensure that at the time `f2()` is called there is no curr
      auto r2=f2(); //okay for f2 to fail (f1 didn't)
      ....
  } else {
-     return throw_(); //let the caller deal with failures
+     return r1.throw_(); //let the caller deal with failures
  }
 +
 or by capturing `f1` failures using `try_`:
@@ -872,7 +916,7 @@ Does this mean that I should always use `try_`?:: No, only use `try_` if you wan
  if( auto r=f() ) {
      //Success -- use r
  } else {
-     return throw_(); //Something went wrong
+     return r.throw_(); //Something went wrong
  }
 +
 The above assumes that `r` converts to `bool` to indicate success or failure (there are many types than can be used this way). If that is not the case, ideally you would still be able to inspect the returned value to detect failures. If that is also not possible, use `has_current_error()`.

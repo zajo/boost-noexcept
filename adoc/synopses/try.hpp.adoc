@@ -21,6 +21,8 @@ namespace boost { namespace noexcept_ {
         template <class E=std::exception>
         E * catch_() noexcept;
 
+        <unspecified_return_type> throw_() noexcept;
+
         void throw_exception();
 
         T const & get() const;
