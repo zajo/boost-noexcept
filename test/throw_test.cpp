@@ -45,7 +45,7 @@ f3() noexcept
     {
     auto r=try_(f2());
     BOOST_TEST(!r);
-    return throw_();
+    return r.throw_();
     }
 int
 f4() noexcept
@@ -96,7 +96,7 @@ rethrow_fn() noexcept
     BOOST_TEST(!r);
     BOOST_TEST(!has_current_error());
     BOOST_TEST(r.catch_<>()!=0);
-    return throw_();
+    return r.throw_();
     }
 void
 rethrow_test() noexcept

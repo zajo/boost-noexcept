@@ -26,7 +26,7 @@ f2() noexcept
     else
         {
         (*r.catch_<boost::exception>()) << answer(42);
-        return throw_();
+        return r.throw_();
         }
     }
 int

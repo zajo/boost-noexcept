@@ -20,11 +20,22 @@ boost
         template <class T> result<T> try_( T && ) noexcept;
         template <class T>
         class
-        result:
-            public noexcept_detail::handler_base
+        result
             {
             result( result const & )=delete;
             result & operator=( result const & )=delete;
+            class
+            pthrow_
+                {
+                pthrow_( pthrow_ const & )=delete;
+                pthrow_ & operator=( pthrow_ const & )=delete;
+                public:
+                template <class R>
+                operator R() noexcept
+                    {
+                    return throw_return<R>::value();
+                    }
+                };
             protected:
             typedef boost::noexcept_::noexcept_detail::error error;
             private:
@@ -41,14 +52,7 @@ boost
                 wh_unhandled_error,
                 wh_error
                 };
-            mutable what_type what_;
-            void
-            unhandle() const noexcept
-                {
-                BOOST_NOEXCEPT_ASSERT(has_error());
-                noexcept_detail::ceh().set(std::move(err_));
-                what_=wh_error;
-                }
+            what_type what_;
             protected:
             explicit
             result( T && val ) noexcept:
@@ -95,7 +99,6 @@ boost
                 }
             explicit operator bool() const noexcept
                 {
-                noexcept_detail::ceh().set_current_handler(this);
                 return what_==wh_value;
                 }
             bool
@@ -119,6 +122,14 @@ boost
                         return e;
                         }
                 return 0;
+                }
+            pthrow_ &
+            throw_() noexcept
+                {
+                BOOST_NOEXCEPT_ASSERT(has_error());
+                noexcept_detail::ceh().set(std::move(err_));
+                what_=wh_error;
+                return *reinterpret_cast<pthrow_ *>(this);
                 }
             BOOST_NOEXCEPT_NORETURN
             void
@@ -190,12 +201,6 @@ boost
         noexcept_detail
             {
             inline
-            handler_base::
-            ~handler_base() noexcept
-                {
-                (void) noexcept_detail::ceh().set_current_handler(0);
-                }
-            inline
             error
             current_error_holder::
             extract() noexcept
@@ -209,13 +214,6 @@ boost
                 {
                 ensure_empty();
                 e.move_to(mover_,&storage_,px_);
-                }
-            inline
-            void
-            current_error_holder::
-            set_current_handler( handler_base const * h ) noexcept
-                {
-                current_handler_=h;
                 }
             }
         }

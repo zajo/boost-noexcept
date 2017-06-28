@@ -72,6 +72,13 @@
 			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest result_test" ]
 		},
 		{
+			"displayName": "result_mt_test",
+			"description": "Unit test",
+			"isBuildCommand": "true",
+			"command": "sh",
+			"args": [ "-c", "cd ${workspaceRoot}/bld/debug && mesontest result_mt_test" ]
+		},
+		{
 			"displayName": "throw_exception_test",
 			"description": "Unit test",
 			"isBuildCommand": "true",

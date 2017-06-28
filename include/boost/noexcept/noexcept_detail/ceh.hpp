@@ -18,15 +18,20 @@ boost
         namespace
         noexcept_detail
             {
-            class error;
-            class
-            handler_base
+            template <class R,bool IsIntegral=std::is_integral<R>::value> struct default_throw_return;
+            template <class R>
+            struct
+            default_throw_return<R,true>
                 {
-                public:
-                virtual void unhandle() const noexcept=0;
-                protected:
-                ~handler_base() noexcept;
+                static R value() noexcept { return static_cast<R>(-1); }
                 };
+            template <class R>
+            struct
+            default_throw_return<R,false>
+                {
+                static R value() noexcept { return R(); }
+                };
+            class error;
             class
             current_error_holder
                 {
@@ -36,9 +41,8 @@ boost
                 current_error_holder & operator=( current_error_holder const & )=delete;
                 current_error_holder & operator=( current_error_holder && )=delete;
                 error_storage storage_;
-                error_base * px_;
                 mover_t * mover_;
-                handler_base const * current_handler_;
+                error_base * px_;
                 void
                 ensure_empty() noexcept
                     {
@@ -49,9 +53,8 @@ boost
                 public:
                 constexpr current_error_holder() noexcept:
                     storage_(),
-                    px_(0),
                     mover_(0),
-                    current_handler_(0)
+                    px_(0)
                     {
                     }
                 ~current_error_holder() noexcept
@@ -78,11 +81,9 @@ boost
                 //defined in throw.hpp:
                 template <class E> void put( E && ) noexcept;
                 template <class E> void put_with_location( E &&, char const * file, int line, char const * function ) noexcept;
-                void throw_() noexcept;
                 //defined in try.hpp:
                 error extract() noexcept;
                 void set( error && ) noexcept;
-                void set_current_handler( handler_base const * ) noexcept;
                 };
             inline
             current_error_holder &
@@ -97,6 +98,17 @@ boost
             {
             return !noexcept_detail::ceh().empty();
             }
+        template <class R>
+        struct
+        throw_return: noexcept_detail::default_throw_return<R>
+            {
+            };
+        template <>
+        struct
+        throw_return<bool>
+            {
+            static bool value() noexcept { return false; }
+            };
         }
     }
 

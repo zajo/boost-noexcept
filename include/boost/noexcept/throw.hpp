@@ -21,34 +21,6 @@ boost
     namespace
     noexcept_
         {
-        namespace
-        noexcept_detail
-            {
-            template <class R,bool IsIntegral=std::is_integral<R>::value> struct default_throw_return;
-            template <class R>
-            struct
-            default_throw_return<R,true>
-                {
-                static R value() noexcept { return static_cast<R>(-1); }
-                };
-            template <class R>
-            struct
-            default_throw_return<R,false>
-                {
-                static R value() noexcept { return R(); }
-                };
-            }
-        template <class R>
-        struct
-        throw_return: noexcept_detail::default_throw_return<R>
-            {
-            };
-        template <>
-        struct
-        throw_return<bool>
-            {
-            static bool value() noexcept { return false; }
-            };
         class
         throw_
             {
@@ -69,7 +41,7 @@ boost
                 }
             throw_() noexcept
                 {
-                noexcept_detail::ceh().throw_();
+                BOOST_NOEXCEPT_ASSERT(has_current_error());
                 }
             template <class R>
             operator R() noexcept
@@ -103,17 +75,6 @@ boost
                 set_info(*w,throw_line(line));
                 set_info(*w,throw_function(function));
 #endif
-                }
-            inline
-            void
-            current_error_holder::
-            throw_() noexcept
-                {
-                if( empty() )
-                    {
-                    BOOST_NOEXCEPT_ASSERT(current_handler_!=0 && "throw_() called without a catch_!");
-                    current_handler_->unhandle();
-                    }
                 }
             }
         }

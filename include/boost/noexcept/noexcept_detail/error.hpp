@@ -17,7 +17,6 @@ boost
         namespace
         noexcept_detail
             {
-            ///////////////////////////////
             class
             error
                 {
