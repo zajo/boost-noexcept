@@ -59,6 +59,8 @@ When a failure is detected, the error object is created in thread-local storage 
 
 NOTE: Noexcept does define a `<<try_,result<T> >>` template, which can be used to capture the result of a function call (value-or-error) in case its consumption must be postponed, for example if it has to be transported to a different thread; see <<programming_techniques,Programming techniques and guidelines>>.
 
+Further rationale for using TLS for transporting error objects is that errors are semantically very different from successful results. In a typical program, there may be very many results of different types produced, transformed, processed, used in different computations and algorithms, passed up and down the call chain. In contrast, the path taken by an error object is much simpler -- and it is (mostly, sometimes even exclusively) of interest to only two contexts: the function that detects and reports the error, and the function which recognizes it and is able to handle it. For that reason, it makes sense to push errors to the side, so they are less intrusive yet still available for access if needed.
+
 [[guarantee]]
 == No error gets ignored guarantee
 
@@ -880,7 +882,7 @@ This second evolution of Noexcept incorporates valuable positive and negative fe
 == Q&A
 
 [qanda]
-Does Noexcept allocate memory dynamically?:: Generally no, except for very large objects passed to `throw_`. In addition, if using `boost::thread_specific_ptr` as the TLS provider (see <<configuration,Macros and configuration>>), it will perform a single allocation only the very first time `throw_` is used in a given thread.
+Does Noexcept allocate memory dynamically?:: No.
 
 Does Noexcept require RTTI?:: No.
 
@@ -943,11 +945,11 @@ https://github.com/zajo/boost-noexcept
 
 Noexcept is a header-only library and requires no building or installation.
 
-== Building the unit tests
+== Building the unit tests and the examples
 
-The unit tests can be build within the Boost framework: clone Noexcept under the `libs` subdirectory in your boost installation, then `cd` into `noexcept/test` and execute `b2` as usual.
+The unit tests and the examples can be built within the Boost framework: clone Noexcept under the `libs` subdirectory in your boost installation, then `cd` into `noexcept/test` and execute `b2` as usual.
 
-Alternatively, the unit tests can be built using link:http://mesonbuild.com[Meson]. In this case, both Boost and Lua (needed for one of the examples) will be downloaded automatically under the `subprojects` directory. Use `mesonconf` to select the build configuration (multiple build options are available).
+Alternatively, they can be built using link:http://mesonbuild.com[Meson]. In this case, both Boost and Lua (needed for one of the examples) will be downloaded automatically under the `subprojects` directory. Use `mesonconf` to select the build configuration (multiple build options are available).
 
 {empty} +
 
