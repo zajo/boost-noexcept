@@ -586,7 +586,7 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#qanda">Q&amp;A</a></li>
 <li><a href="#_download">Download</a></li>
 <li><a href="#_building_and_installation">Building and installation</a></li>
-<li><a href="#_building_the_unit_tests">Building the unit tests</a></li>
+<li><a href="#_building_the_unit_tests_and_the_examples">Building the unit tests and the examples</a></li>
 </ul>
 </div>
 </div>
@@ -726,6 +726,9 @@ Noexcept does define a <code><a href="#try_">result&lt;T&gt;</a></code> template
 </td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>Further rationale for using TLS for transporting error objects is that errors are semantically very different from successful results. In a typical program, there may be very many results of different types produced, transformed, processed, used in different computations and algorithms, passed up and down the call chain. In contrast, the path taken by an error object is much simpler&#8201;&#8212;&#8201;and it is (mostly, sometimes even exclusively) of interest to only two contexts: the function that detects and reports the error, and the function which recognizes it and is able to handle it. For that reason, it makes sense to push errors to the side, so they are less intrusive yet still available for access if needed.</p>
 </div>
 </div>
 </div>
@@ -2333,7 +2336,7 @@ When calling a function <code>f</code> which reports errors using Noexcept, the 
 <ol>
 <li>
 <p><em>Does Noexcept allocate memory dynamically?</em></p>
-<p>Generally no, except for very large objects passed to <code>throw_</code>. In addition, if using <code>boost::thread_specific_ptr</code> as the TLS provider (see <a href="#configuration">Macros and configuration</a>), it will perform a single allocation only the very first time <code>throw_</code> is used in a given thread.</p>
+<p>No.</p>
 </li>
 <li>
 <p><em>Does Noexcept require RTTI?</em></p>
@@ -2464,13 +2467,13 @@ If control is entering a scope where exception handling is enabled, you can conv
 </div>
 </div>
 <div class="sect1">
-<h2 id="_building_the_unit_tests">Building the unit tests</h2>
+<h2 id="_building_the_unit_tests_and_the_examples">Building the unit tests and the examples</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The unit tests can be build within the Boost framework: clone Noexcept under the <code>libs</code> subdirectory in your boost installation, then <code>cd</code> into <code>noexcept/test</code> and execute <code>b2</code> as usual.</p>
+<p>The unit tests and the examples can be built within the Boost framework: clone Noexcept under the <code>libs</code> subdirectory in your boost installation, then <code>cd</code> into <code>noexcept/test</code> and execute <code>b2</code> as usual.</p>
 </div>
 <div class="paragraph">
-<p>Alternatively, the unit tests can be built using <a href="http://mesonbuild.com">Meson</a>. In this case, both Boost and Lua (needed for one of the examples) will be downloaded automatically under the <code>subprojects</code> directory. Use <code>mesonconf</code> to select the build configuration (multiple build options are available).</p>
+<p>Alternatively, they can be built using <a href="http://mesonbuild.com">Meson</a>. In this case, both Boost and Lua (needed for one of the examples) will be downloaded automatically under the <code>subprojects</code> directory. Use <code>mesonconf</code> to select the build configuration (multiple build options are available).</p>
 </div>
 <div class="paragraph">
 <p><br></p>
