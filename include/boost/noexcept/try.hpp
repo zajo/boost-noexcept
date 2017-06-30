@@ -62,8 +62,8 @@ boost
                 BOOST_NOEXCEPT_ASSERT(!has_current_error());
                 }
             explicit
-            result() noexcept:
-                err_(noexcept_detail::ceh().extract()),
+            result( noexcept_detail::current_error_holder & ceh ) noexcept:
+                err_(ceh.extract()),
                 what_(wh_unhandled_error)
                 {
                 }
@@ -116,6 +116,7 @@ boost
             catch_() noexcept
                 {
                 if( has_error() )
+                
                     if( E * e=err_.get<E>() )
                         {
                         what_=wh_error;
@@ -160,10 +161,11 @@ boost
         result<T>
         try_( T && x ) noexcept
             {
-            if( has_current_error() )
-                return result<T>();
-            else
+            noexcept_detail::current_error_holder & ceh=noexcept_detail::ceh();
+            if( ceh.empty() )
                 return result<T>(std::move(x));
+            else
+                return result<T>(ceh);
             }
         ///////////////////////////////////
         result<void> current_error() noexcept;
@@ -181,7 +183,8 @@ boost
                 base(std::move(x))
                 {
                 }
-            result()
+            result( noexcept_detail::current_error_holder & ceh ):
+                base(ceh)
                 {
                 }
             public:
@@ -191,10 +194,11 @@ boost
         result<void>
         current_error() noexcept
             {
-            if( has_current_error() )
-                return result<void>();
-            else
+            noexcept_detail::current_error_holder & ceh=noexcept_detail::ceh();
+            if( ceh.empty() )
                 return result<void>(true);
+            else
+                return result<void>(ceh);
             }
         ///////////////////////////////////
         namespace
