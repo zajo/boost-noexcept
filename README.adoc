@@ -838,39 +838,20 @@ While Noexcept is not coupled with `boost::error_info`, by default it is coupled
 
 {empty} +
 
-== Comparing Noexcept to other approaches to handling errors
+[[alternatives]]
+== Alternatives to Noexcept
 
-=== Comparison to `errno`
+Besides Noexcept, there are multiple other {CPP} libraries and proposals for solving the problem of error reporting without using exceptions:
 
-Like Noexcept, `errno` uses thread-local storage and so it is not unreasonable to draw parallels between the two.
+* link:https://github.com/viboes/std-make/blob/master/doc/proposal/expected/d0323r2.md[D0323R2] by Vicente J. Botet Escriba proposes a class template `expected<T,E>`, designed to be used as a return type in functions that could fail, the general idea being that in case of success the function returns a result of type `T`, or else it returns a reason for the failure, of type `E`.
 
-Of course the biggest difference is that Noexcept does not limit the error object to a simple `int` (although it does support `int` error objects.)
+* link:https://github.com/pdimov/variant2[variant2] by Peter Dimov is a never-valueless implementation of `std::variant` and an extended version of `expected<T,E>`. The class `boost::variant2::expected<T,E...>` represents the return type of an operation that may potentially fail. It contains either the expected result of type `T`, or a reason for the failure, of one of the error types in `E...` (internally, this is stored as `variant<T,E...>`).
 
-Another critical difference is that Noexcept will not permit the error object to be overwritten (and the failure it represents ignored) by a new error object. At the same time, it provides mechanisms to organically deal with multiple active errors.
+* link:https://ned14.github.io/outcome/[Outcome] by Niall Douglas recently underwent a formal Boost review. Unlike `expected<T,E>` and `expected<T,E...>`, in `outcome<T>` the error is either of type `std::error_code` or an exception object, transported as a `std::exception_ptr`. The motivation for this more restrictive interface is to force the user to "be a good citizen" and communicate `noexcept` failures in terms of `std::error_code`, in order to facilitate interoperability between different libraries (with the added ability to capture exceptions in case some lower level library throws).
 
-=== Comparison to C++ exception handling
+* link:http://open-std.org/JTC1/SC22/WG21/docs/papers/2016/p0262r1.html[P0262] by Lawrence Crowl and Chris Mysen proposes a control helper called `status_value<Status,Value>`, which differs from all of the above libraries in that the returning function is expected to always provide a status _and_ a value. This can be useful to communicate conditions which did not lead to a failure but are still likely to be of interest to the caller.
 
-Like Noexcept (and like `errno`), {CPP} exceptions are associated with the current thread (even though they might or might not use thread-local storage), and so it is not unreasonable to draw parallels between Noexcept and C++ exceptions.
-
-Another similarity is that when using exception handling, function return values are not burdened with transporting error objects, just like when using Noexcept.
-
-The main difference is that when a function throws an exception, control is not returned to the calling function; instead the runtime will first find an appropriate `catch` statement up the call chain, then unwind the call stack to that point (executing destructors) and transfer control there via `longjmp`.
-
-In contrast, when a function reports an error using Noexcept, it always returns to its immediate caller (using the `throw_return` template to deduce the return value). Because of this, Noexcept can be used in environments that are not exception-safe.
-
-NOTE: When calling a function `f` which reports errors using Noexcept, the caller can seamlessly convert them to {CPP} exceptions by `try_(f()).get()`, which in case of success returns the value returned from `f`, otherwise throws the Noexcept error as a {CPP} exception.
-
-=== Comparison to Boost Exception
-
-Boost Exception is the error handling library in Boost, which uses {CPP} exceptions and therefore requires exception-safe environment.
-
-However, parts of Boost Exception do not require exception handling, for example it can be used to augment active error objects with arbitrary data. As described in <<programming_techniques,Programming techniques and guidelines>>, Noexcept is designed to be compatible with Boost Exception without being coupled with it.
-
-=== Comparison to Outcome
-
-link:https://ned14.github.io/outcome/[Outcome] is another error handling library (which recently underwent a formal Boost review). It is similar to Noexcept in that it does not use exceptions, but it takes an alternative design approach.
-
-The main difference is that Outcome transports errors up the call chain one level at a time: functions are required to return `outcome<T>` which can store a value in case of success -- and there are several possibilities for transporting different error objects in case of a failure. In contrast, Noexcept does not impose a special return type; see <<design_rationale,Design rationale>>.
+The motivation behind Noexcept is explained in <<design_rationale,Design rationale>>.
 
 == Acknowledgements
 
