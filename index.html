@@ -574,14 +574,7 @@ table.CodeRay td.code>pre{padding:0}
 </ul>
 </li>
 <li><a href="#configuration">Macros and configuration</a></li>
-<li><a href="#_comparing_noexcept_to_other_approaches_to_handling_errors">Comparing Noexcept to other approaches to handling errors</a>
-<ul class="sectlevel2">
-<li><a href="#_comparison_to_code_errno_code">Comparison to <code>errno</code></a></li>
-<li><a href="#_comparison_to_c_exception_handling">Comparison to C++ exception handling</a></li>
-<li><a href="#_comparison_to_boost_exception">Comparison to Boost Exception</a></li>
-<li><a href="#_comparison_to_outcome">Comparison to Outcome</a></li>
-</ul>
-</li>
+<li><a href="#alternatives">Alternatives to Noexcept</a></li>
 <li><a href="#_acknowledgements">Acknowledgements</a></li>
 <li><a href="#qanda">Q&amp;A</a></li>
 <li><a href="#_download">Download</a></li>
@@ -2257,64 +2250,29 @@ std::generate_n( std::inserter(fut,fut.end()), <span class="integer">100</span>,
 </div>
 </div>
 <div class="sect1">
-<h2 id="_comparing_noexcept_to_other_approaches_to_handling_errors">Comparing Noexcept to other approaches to handling errors</h2>
+<h2 id="alternatives">Alternatives to Noexcept</h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="_comparison_to_code_errno_code">Comparison to <code>errno</code></h3>
 <div class="paragraph">
-<p>Like Noexcept, <code>errno</code> uses thread-local storage and so it is not unreasonable to draw parallels between the two.</p>
+<p>Besides Noexcept, there are multiple other C++ libraries and proposals for solving the problem of error reporting without using exceptions:</p>
 </div>
-<div class="paragraph">
-<p>Of course the biggest difference is that Noexcept does not limit the error object to a simple <code>int</code> (although it does support <code>int</code> error objects.)</p>
-</div>
-<div class="paragraph">
-<p>Another critical difference is that Noexcept will not permit the error object to be overwritten (and the failure it represents ignored) by a new error object. At the same time, it provides mechanisms to organically deal with multiple active errors.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_comparison_to_c_exception_handling">Comparison to C++ exception handling</h3>
-<div class="paragraph">
-<p>Like Noexcept (and like <code>errno</code>), C++ exceptions are associated with the current thread (even though they might or might not use thread-local storage), and so it is not unreasonable to draw parallels between Noexcept and C++ exceptions.</p>
-</div>
-<div class="paragraph">
-<p>Another similarity is that when using exception handling, function return values are not burdened with transporting error objects, just like when using Noexcept.</p>
-</div>
-<div class="paragraph">
-<p>The main difference is that when a function throws an exception, control is not returned to the calling function; instead the runtime will first find an appropriate <code>catch</code> statement up the call chain, then unwind the call stack to that point (executing destructors) and transfer control there via <code>longjmp</code>.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/viboes/std-make/blob/master/doc/proposal/expected/d0323r2.md">D0323R2</a> by Vicente J. Botet Escriba proposes a class template <code>expected&lt;T,E&gt;</code>, designed to be used as a return type in functions that could fail, the general idea being that in case of success the function returns a result of type <code>T</code>, or else it returns a reason for the failure, of type <code>E</code>.</p>
+</li>
+<li>
+<p><a href="https://github.com/pdimov/variant2">variant2</a> by Peter Dimov is a never-valueless implementation of <code>std::variant</code> and an extended version of <code>expected&lt;T,E&gt;</code>. The class <code>boost::variant2::expected&lt;T,E&#8230;&#8203;&gt;</code> represents the return type of an operation that may potentially fail. It contains either the expected result of type <code>T</code>, or a reason for the failure, of one of the error types in <code>E&#8230;&#8203;</code> (internally, this is stored as <code>variant&lt;T,E&#8230;&#8203;&gt;</code>).</p>
+</li>
+<li>
+<p><a href="https://ned14.github.io/outcome/">Outcome</a> by Niall Douglas recently underwent a formal Boost review. Unlike <code>expected&lt;T,E&gt;</code> and <code>expected&lt;T,E&#8230;&#8203;&gt;</code>, in <code>outcome&lt;T&gt;</code> the error is either of type <code>std::error_code</code> or an exception object, transported as a <code>std::exception_ptr</code>. The motivation for this more restrictive interface is to force the user to "be a good citizen" and communicate <code>noexcept</code> failures in terms of <code>std::error_code</code>, in order to facilitate interoperability between different libraries (with the added ability to capture exceptions in case some lower level library throws).</p>
+</li>
+<li>
+<p><a href="http://open-std.org/JTC1/SC22/WG21/docs/papers/2016/p0262r1.html">P0262</a> by Lawrence Crowl and Chris Mysen proposes a control helper called <code>status_value&lt;Status,Value&gt;</code>, which differs from all of the above libraries in that the returning function is expected to always provide a status <em>and</em> a value. This can be useful to communicate conditions which did not lead to a failure but are still likely to be of interest to the caller.</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>In contrast, when a function reports an error using Noexcept, it always returns to its immediate caller (using the <code>throw_return</code> template to deduce the return value). Because of this, Noexcept can be used in environments that are not exception-safe.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-When calling a function <code>f</code> which reports errors using Noexcept, the caller can seamlessly convert them to C++ exceptions by <code>try_(f()).get()</code>, which in case of success returns the value returned from <code>f</code>, otherwise throws the Noexcept error as a C++ exception.
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_comparison_to_boost_exception">Comparison to Boost Exception</h3>
-<div class="paragraph">
-<p>Boost Exception is the error handling library in Boost, which uses C++ exceptions and therefore requires exception-safe environment.</p>
-</div>
-<div class="paragraph">
-<p>However, parts of Boost Exception do not require exception handling, for example it can be used to augment active error objects with arbitrary data. As described in <a href="#programming_techniques">Programming techniques and guidelines</a>, Noexcept is designed to be compatible with Boost Exception without being coupled with it.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_comparison_to_outcome">Comparison to Outcome</h3>
-<div class="paragraph">
-<p><a href="https://ned14.github.io/outcome/">Outcome</a> is another error handling library (which recently underwent a formal Boost review). It is similar to Noexcept in that it does not use exceptions, but it takes an alternative design approach.</p>
-</div>
-<div class="paragraph">
-<p>The main difference is that Outcome transports errors up the call chain one level at a time: functions are required to return <code>outcome&lt;T&gt;</code> which can store a value in case of success&#8201;&#8212;&#8201;and there are several possibilities for transporting different error objects in case of a failure. In contrast, Noexcept does not impose a special return type; see <a href="#design_rationale">Design rationale</a>.</p>
-</div>
+<p>The motivation behind Noexcept is explained in <a href="#design_rationale">Design rationale</a>.</p>
 </div>
 </div>
 </div>
