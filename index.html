@@ -2295,7 +2295,7 @@ std::generate_n( std::inserter(fut,fut.end()), <span class="integer">100</span>,
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-top"></th>
+<th class="tableblock halign-left valign-middle"></th>
 <th class="tableblock halign-center valign-middle">1</th>
 <th class="tableblock halign-center valign-middle">2</th>
 <th class="tableblock halign-center valign-middle">3</th>
@@ -2305,7 +2305,7 @@ std::generate_n( std::inserter(fut,fut.end()), <span class="integer">100</span>,
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Requires specific return type in functions that could potentially fail</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Requires specific return type in functions that could potentially fail</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock"><a href="#example_FILE">no</a></p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">yes</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">yes</p></td>
@@ -2313,15 +2313,15 @@ std::generate_n( std::inserter(fut,fut.end()), <span class="integer">100</span>,
 <td class="tableblock halign-center valign-middle"><p class="tableblock">yes</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Functions must enumerate the possible failures</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Functions must enumerate the possible error types</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">no</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">yes</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">yes</p></td>
-<td class="tableblock halign-center valign-middle"><p class="tableblock">no</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">not possible</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">yes</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>std::error_code</code> supported</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><code>std::error_code</code> supported</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock"><a href="#example_FILE">yes</a></p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">yes</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">yes</p></td>
@@ -2329,7 +2329,7 @@ std::generate_n( std::inserter(fut,fut.end()), <span class="integer">100</span>,
 <td class="tableblock halign-center valign-middle"><p class="tableblock">yes</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">User-defined error types supported</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">User-defined error types supported</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock"><a href="#example_lua">yes</a></p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">yes</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">yes</p></td>
@@ -2337,7 +2337,7 @@ std::generate_n( std::inserter(fut,fut.end()), <span class="integer">100</span>,
 <td class="tableblock halign-center valign-middle"><p class="tableblock">yes</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Errors may be reported from C callbacks</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Errors may be reported from C callbacks</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock"><a href="#example_lua">yes</a></p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">no</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">no</p></td>
@@ -2345,7 +2345,7 @@ std::generate_n( std::inserter(fut,fut.end()), <span class="integer">100</span>,
 <td class="tableblock halign-center valign-middle"><p class="tableblock">no</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Reported errors may cross programming language boundaries</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Reported errors may cross programming language boundaries</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock"><a href="#example_lua">yes</a></p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">no</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">no</p></td>
@@ -2353,7 +2353,7 @@ std::generate_n( std::inserter(fut,fut.end()), <span class="integer">100</span>,
 <td class="tableblock halign-center valign-middle"><p class="tableblock">no</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Errors may be moved to a different thread</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Errors may be moved to a different thread</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock"><a href="#example_thread">yes</a></p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">yes</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">yes</p></td>
@@ -2361,7 +2361,7 @@ std::generate_n( std::inserter(fut,fut.end()), <span class="integer">100</span>,
 <td class="tableblock halign-center valign-middle"><p class="tableblock">yes</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Strict value-or-error semantics</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Strict value-or-error semantics</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock"><a href="#example_optional">optional</a></p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">yes</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">yes</p></td>
