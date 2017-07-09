@@ -1,6 +1,7 @@
 :last-update-label!:
 :sourcedir: .
 :source-highlighter: coderay
+:icons: font
 = Noexcept
 Lightweight error handling without exceptions for C++11
 :toclevels: 3
@@ -17,7 +18,7 @@ Noexcept is small and efficient {CPP}11 error-handling library which does not us
 * Error-neutral contexts can forward to the caller any error condition detected in lower level functions, without touching the error object.
 * Error-handling contexts may selectively handle some errors but remain neutral to others.
 
-Because Noexcept is not intrusive to function return types, it is able to propagate failures even across third-party code which may not be able to use specific sophisticated error-reporting types. This makes Noexcept easily deployable even in tricky use cases where a more intrusive error handling mechanism could not be used:
+Because Noexcept is not intrusive to function return types, it is able to propagate failures even across third-party code which may not be able to use specific sophisticated error-reporting types. This makes Noexcept deployable even in tricky use cases where a more intrusive error handling mechanism could not be used:
 
 * When errors are reported from a C-style callback, or
 * from a {CPP} virtual function override when deriving from a third-party base type.
@@ -51,15 +52,13 @@ In addition, such design would lead to problems specific to C and {CPP}:
 * It is intrusive, so it couldn't be used in many practical cases, for example when reporting errors from a C callback.
 * {CPP} programmers do not even agree on what string type they should use, so interoperability between the different parts of a large program is going to be a problem.
 
-NOTE: Because translation between different error reporting mechanisms in large programs is both imperfect and prone to errors (and because error handling code is very difficult to test), such traslation should be kept to the absolute minimum. Ideally, the same object created when the error is first reported should reach the error handling code intact.
-
 For these reasons, Noexcept does not define a special return type. Programmers may use any type whatsoever, the only requirement is that it provides a special state -- a value that can be returned in case of a failure. As a bonus, this virtually eliminates the chance of Noexcept impacting the performance of passing values up the call chain.
 
 When a failure is detected, the error object is created in thread-local storage rather than passed up one level at a time. It is destroyed when control reaches an error-handling function that recognizes it and recovers from the failure.
 
-NOTE: Noexcept does define a `<<try_,result<T> >>` template, which can be used to capture the result of a function call (value-or-error) in case its consumption must be postponed, for example if it has to be transported to a different thread; see <<programming_techniques,Programming techniques and guidelines>>.
-
 Further rationale for using TLS for transporting error objects is that errors are semantically very different from successful results. In a typical program, there may be very many results of different types produced, transformed, processed, used in different computations and algorithms, passed up and down the call chain. In contrast, the path taken by an error object is much simpler -- and it is (mostly, sometimes even exclusively) of interest to only two contexts: the function that detects and reports the error, and the function which recognizes it and is able to handle it. For that reason, it makes sense to push errors to the side, so they are less intrusive yet still available for access if needed.
+
+NOTE: For a comparison between various error-reporting libraries and proposals, see <<alternatives,Noexcept alternatives>>.
 
 [[guarantee]]
 == No error gets ignored guarantee
@@ -68,6 +67,7 @@ Noexcept will never ignore an error once it is reported. The handling of any giv
 
 == Crash course
 
+[[example_FILE]]
 === Handling `FILE` errors
 
 [source,c++]
@@ -83,6 +83,7 @@ WARNING: If unhandled errors remain at the time the current thread terminates, N
 
 ***
 
+[[example_ifstream]]
 === Handling `std::ifstream` errors
 
 This program shows how to use Noexcept with `std::ifstream`, and demonstrates the use of `BOOST_NOEXCEPT_CHECK` in error-neutral functions (see <<programming_techniques,Programming techniques and guidelines>> for details).
@@ -100,6 +101,7 @@ include::{sourcedir}/examples/ifstream_example.cpp[]
 
 ***
 
+[[example_lua]]
 === Propagating errors across Lua functions
 
 This program demonstrates that errors reported by Noexcept survive intact across API and even programming language boundaries. From {CPP}, it calls a link:http://www.lua.org/[Lua] function, which calls back a {CPP} function. If the callback {CPP} function fails, the error is propagated all the way to `main()` where it is handled.
@@ -116,6 +118,7 @@ include::{sourcedir}/examples/lua_example.cpp[]
 
 ***
 
+[[example_optional]]
 === Using `optional<>` as a return type
 
 This program demonstrates that Noexcept is compatible with `optional<>`, which is handy when we need a return value with an explicit empty state.
@@ -739,6 +742,7 @@ NOTE: `boost::error_info` does not require exception handling. Noexcept is not c
 
 ***
 
+[[example_threads]]
 === Passing "value-or-error" between threads using `result<T>`
 
 The usual Noexcept error handling semantics (<<throw_,throw_>>, <<try_,try_>>, <<catch_,catch_>>) are a poor match for use cases where the value (or the error) can not be consumed immediately, for example when it is produced asynchronously in a worker thread, or when values are temporarily stored into a queue for later consumption, in which case the queue must have the ability to hold multiple outstanding errors.
@@ -851,7 +855,75 @@ Besides Noexcept, there are multiple other {CPP} libraries and proposals for sol
 
 * link:http://open-std.org/JTC1/SC22/WG21/docs/papers/2016/p0262r1.html[P0262] by Lawrence Crowl and Chris Mysen proposes a control helper called `status_value<Status,Value>`, which differs from all of the above libraries in that the returning function is expected to always provide a status _and_ a value. This can be useful to communicate conditions which did not lead to a failure but are still likely to be of interest to the caller.
 
-The motivation behind Noexcept is explained in <<design_rationale,Design rationale>>.
+The following table summarizes the key differences between the different error handling libraries; see <<design_rationale,Design rationale>> to understand the motivation for the Noexcept design:
+
+.Comparison between error handling libraries
+[cols="6,^.^2,^.^2,^.^2,^.^2,^.^2"]
+|===
+| |1|2|3|4|5
+
+| Requires specific return type in functions that could potentially fail
+| <<example_FILE,no>>
+| yes
+| yes
+| yes
+| yes
+
+| Functions must enumerate the possible failures
+| no
+| yes
+| yes
+| no
+| yes
+
+| `std::error_code` supported
+| <<example_FILE,yes>>
+| yes
+| yes
+| yes
+| yes
+
+| User-defined error types supported
+| <<example_lua,yes>>
+| yes
+| yes
+| yes (dynamic allocation)
+| yes
+
+| Errors may be reported from C callbacks
+| <<example_lua,yes>>
+| no
+| no
+| no
+| no
+
+| Reported errors may cross programming language boundaries
+| <<example_lua,yes>>
+| no
+| no
+| no
+| no
+
+| Errors may be moved to a different thread
+| <<example_thread,yes>>
+| yes
+| yes
+| yes
+| yes
+
+| Strict value-or-error semantics
+| <<example_optional,optional>>
+| yes
+| yes
+| no
+| no
+
+|===
+<1> Noexcept
+<2> `expected<T,E>`
+<3> `expected<T,E...>`
+<4> `outcome<T>`
+<5> `status_value<Status,Value>`
 
 == Acknowledgements
 
