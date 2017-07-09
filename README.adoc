@@ -1,5 +1,5 @@
-:last-update-label!:
 :sourcedir: .
+:last-update-label!:
 :source-highlighter: coderay
 :icons: font
 = Noexcept
@@ -58,7 +58,7 @@ When a failure is detected, the error object is created in thread-local storage 
 
 Further rationale for using TLS for transporting error objects is that errors are semantically very different from successful results. In a typical program, there may be very many results of different types produced, transformed, processed, used in different computations and algorithms, passed up and down the call chain. In contrast, the path taken by an error object is much simpler -- and it is (mostly, sometimes even exclusively) of interest to only two contexts: the function that detects and reports the error, and the function which recognizes it and is able to handle it. For that reason, it makes sense to push errors to the side, so they are less intrusive yet still available for access if needed.
 
-NOTE: For a comparison between various error-reporting libraries and proposals, see <<alternatives,Noexcept alternatives>>.
+NOTE: For a comparison between various error-reporting libraries and proposals, see <<alternatives,Alternatives to Noexcept>>.
 
 [[guarantee]]
 == No error gets ignored guarantee
@@ -919,11 +919,13 @@ The following table summarizes the key differences between the different error h
 | no
 
 |===
-<1> Noexcept
-<2> `expected<T,E>`
-<3> `expected<T,E...>`
-<4> `outcome<T>`
-<5> `status_value<Status,Value>`
+Legend:
+
+. Noexcept
+. `expected<T,E>`
+. `expected<T,E...>`
+. `outcome<T>`
+. `status_value<Status,Value>`
 
 == Acknowledgements
 
