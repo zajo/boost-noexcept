@@ -858,7 +858,7 @@ Besides Noexcept, there are multiple other {CPP} libraries and proposals for sol
 The following table summarizes the key differences between the different error handling libraries; see <<design_rationale,Design rationale>> to understand the motivation for the Noexcept design:
 
 .Comparison between error handling libraries
-[cols="6,^.^2,^.^2,^.^2,^.^2,^.^2"]
+[cols="<.^6,^.^2,^.^2,^.^2,^.^2,^.^2"]
 |===
 | |1|2|3|4|5
 
@@ -869,11 +869,11 @@ The following table summarizes the key differences between the different error h
 | yes
 | yes
 
-| Functions must enumerate the possible failures
+| Functions must enumerate the possible error types
 | no
 | yes
 | yes
-| no
+| not possible
 | yes
 
 | `std::error_code` supported
