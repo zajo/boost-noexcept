@@ -660,7 +660,7 @@ Noexcept is not part of Boost.
 <h2 id="design_rationale">Design rationale</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Functions which could fail (except if they use exception handling) must communicate the failure directly to the caller&#8201;&#8212;&#8201;but they also need to be able to return a value in case of success.</p>
+<p><code>noexcept</code> functions which could potentially fail must communicate the failure directly to the caller&#8201;&#8212;&#8201;but they also need to be able to return a value in case of success.</p>
 </div>
 <div class="paragraph">
 <p>This naturally leads designers of error-handling libraries to creating a special return type capable of transporting any value or any error, with two design goals:</p>
@@ -2317,7 +2317,7 @@ std::generate_n( std::inserter(fut,fut.end()), <span class="integer">100</span>,
 <td class="tableblock halign-center valign-middle"><p class="tableblock">no</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">yes</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">yes</p></td>
-<td class="tableblock halign-center valign-middle"><p class="tableblock">not possible</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">no choice</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">yes</p></td>
 </tr>
 <tr>
