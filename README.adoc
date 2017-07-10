@@ -38,7 +38,7 @@ Please use the link:https://lists.boost.org/mailman/listinfo.cgi/boost[Boost Dev
 [[design_rationale]]
 == Design rationale
 
-Functions which could fail (except if they use exception handling) must communicate the failure directly to the caller -- but they also need to be able to return a value in case of success.
+`noexcept` functions which could potentially fail must communicate the failure directly to the caller -- but they also need to be able to return a value in case of success.
 
 This naturally leads designers of error-handling libraries to creating a special return type capable of transporting any value or any error, with two design goals:
 
@@ -873,7 +873,7 @@ The following table summarizes the key differences between the different error h
 | no
 | yes
 | yes
-| not possible
+| no choice
 | yes
 
 | `std::error_code` supported
