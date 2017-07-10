@@ -905,7 +905,7 @@ The following table summarizes the key differences between the different error h
 | no
 
 | Errors may be moved to a different thread
-| <<example_thread,yes>>
+| <<example_threads,yes>>
 | yes
 | yes
 | yes
