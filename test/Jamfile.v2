@@ -11,7 +11,7 @@ project
         <link>static
         <source>/boost/thread
         <cxxflags>-std=c++11
-        <cxxflags>-DBOOST_NOEXCEPT_THROW_EXCEPTION(x)=throw(x)
+#        <cxxflags>-DBOOST_NOEXCEPT_THROW_EXCEPTION(x)=throw(x)
     ;
 
 rule
