@@ -12,7 +12,6 @@ project
         <source>/boost/thread
         <cxxflags>-std=c++11
         <toolset>gcc:<linkflags>-pthread
-        <toolset>gcc:<cxxflags>-std=c++11
 #        <cxxflags>-DBOOST_NOEXCEPT_THROW_EXCEPTION(x)=throw(x)
     ;
 
