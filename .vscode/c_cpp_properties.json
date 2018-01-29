@@ -36,7 +36,11 @@
             "includePath": [
                 "/usr/include",
                 "/usr/local/include",
-                "${workspaceRoot}"
+                "${workspaceRoot}",
+                "${workspaceRoot}/include",
+                "${workspaceRoot}/../..",
+                "/usr/include/c++/7",
+                "/usr/include/x86_64-linux-gnu/c++/7"
             ],
             "defines": [],
             "intelliSenseMode": "clang-x64",
@@ -44,7 +48,9 @@
                 "path": [
                     "/usr/include",
                     "/usr/local/include",
-                    "${workspaceRoot}"
+                    "${workspaceRoot}",
+                    "${workspaceRoot}/include",
+                    "${workspaceRoot}/../.."
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""

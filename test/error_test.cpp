@@ -7,6 +7,7 @@
 #include <boost/noexcept/try.hpp>
 #include <boost/core/lightweight_test.hpp>
 #include <string>
+#include <memory>
 
 using namespace boost::noexcept_::noexcept_detail;
 
