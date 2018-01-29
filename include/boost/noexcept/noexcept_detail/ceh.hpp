@@ -79,7 +79,8 @@ boost
             current_error_holder &
             ceh() noexcept
                 {
-                return get_tl_object<current_error_holder>();
+                BOOST_NOEXCEPT_THREAD_LOCAL(current_error_holder,errh);
+                return errh;
                 }
             }
         inline

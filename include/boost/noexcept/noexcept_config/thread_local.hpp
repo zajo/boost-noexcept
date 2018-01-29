@@ -6,47 +6,14 @@
 #ifndef UUID_EB80EE1449A411E7879E1EF67F4E887A
 #define UUID_EB80EE1449A411E7879E1EF67F4E887A
 
-#ifdef BOOST_NOEXCEPT_USE_BOOST_TSS
-#   include <boost/config.hpp>
-#   ifdef BOOST_NO_THREADS
-#       define BOOST_NOEXCEPT_NO_THREADS
-#   else
-#       include <boost/thread/tss.hpp>
-#   endif
+#ifdef BOOST_NOEXCEPT_DISABLE_THREADS
+#define BOOST_NOEXCEPT_THREAD_LOCAL_
+#else
+#define BOOST_NOEXCEPT_THREAD_LOCAL_ thread_local
 #endif
 
-namespace
-boost
-    {
-    namespace
-    noexcept_
-        {
-        namespace
-        noexcept_detail
-            {
-            template <class T>
-            T &
-            get_tl_object()
-                {
-#if defined(BOOST_NOEXCEPT_NO_THREADS)
-                static T x;
-                return x;
-#elif defined(BOOST_NOEXCEPT_USE_BOOST_TSS)
-                static boost::thread_specific_ptr<T> x;
-                if( T * p=x.get() )
-                    return *p;
-                else
-                    {
-                    x.reset(new T());
-                    return *x;;
-                    }
-#else
-                static thread_local T x;
-                return x;
+#ifndef BOOST_NOEXCEPT_THREAD_LOCAL
+#define BOOST_NOEXCEPT_THREAD_LOCAL(type,object) static BOOST_NOEXCEPT_THREAD_LOCAL_ type object
 #endif
-                }
-            }
-        }
-    }
 
 #endif
