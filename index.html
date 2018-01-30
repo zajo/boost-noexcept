@@ -2208,20 +2208,36 @@ std::generate_n( std::inserter(fut,fut.end()), <span class="integer">100</span>,
 <hr>
 <div class="listingblock">
 <div class="content">
-<pre>BOOST_NOEXCEPT_USE_BOOST_TSS</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>By default, Noexcept uses the standard <code>thread_local</code> macro for thread-local storage. If <code>BOOST_NOEXCEPT_USE_BOOST_TSS</code> is <code>#defined</code>, Noexcept uses <a href="http://www.boost.org/doc/libs/release/doc/html/thread/thread_local_storage.html"><code>boost::thread_specific_ptr</code></a> instead.</p>
-</div>
-<hr>
-<div class="listingblock">
-<div class="content">
 <pre>BOOST_NOEXCEPT_NO_THREADS</pre>
 </div>
 </div>
 <div class="paragraph">
 <p>If <code>#defined</code>, Noexcept assumes that static storage is equivalent to thread-local storage.</p>
+</div>
+<div class="paragraph">
+<p>If <code>BOOST_NOEXCEPT_NO_THREADS</code> is not explicitly <code>#defined</code>, thread-safety depends on <code>BOOST_NO_THREADS</code>.</p>
+</div>
+<hr>
+<div class="listingblock">
+<div class="content">
+<pre>BOOST_NOEXCEPT_THREAD_LOCAL(type,object)</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This macro is used to define objects with static thread-local storage; if not <code>#defined</code>, Noexcept header files <code>#define</code> it as:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="preprocessor">#define</span> BOOST_NOEXCEPT_THREAD_LOCAL(type,object) <span class="directive">static</span> thread_local type object</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or, under <code>BOOST_NOEXCEPT_NO_THREADS</code>, as:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="preprocessor">#define</span> BOOST_NOEXCEPT_THREAD_LOCAL(type,object) <span class="directive">static</span> type object</code></pre>
+</div>
 </div>
 <hr>
 <div class="listingblock">
@@ -2333,7 +2349,7 @@ std::generate_n( std::inserter(fut,fut.end()), <span class="integer">100</span>,
 <td class="tableblock halign-center valign-middle"><p class="tableblock"><a href="#example_lua">yes</a></p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">yes</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">yes</p></td>
-<td class="tableblock halign-center valign-middle"><p class="tableblock">yes</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">yes (dynamic allocation)</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">yes</p></td>
 </tr>
 <tr>
@@ -2365,7 +2381,7 @@ std::generate_n( std::inserter(fut,fut.end()), <span class="integer">100</span>,
 <td class="tableblock halign-center valign-middle"><p class="tableblock"><a href="#example_optional">optional</a></p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">yes</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">yes</p></td>
-<td class="tableblock halign-center valign-middle"><p class="tableblock">optional</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">no</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">no</p></td>
 </tr>
 </tbody>
@@ -2385,7 +2401,7 @@ std::generate_n( std::inserter(fut,fut.end()), <span class="integer">100</span>,
 <p><code>expected&lt;T,E&#8230;&#8203;&gt;</code></p>
 </li>
 <li>
-<p><code>outcome&lt;T&gt;</code> (desgn not settled at the time of this writing).</p>
+<p><code>outcome&lt;T&gt;</code></p>
 </li>
 <li>
 <p><code>status_value&lt;Status,Value&gt;</code></p>
