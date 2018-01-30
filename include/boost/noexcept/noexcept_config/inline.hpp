@@ -4,23 +4,23 @@
 //file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef BOOST_NOEXCEPT_INLINE_FORCEINLINE
-#	if defined(_MSC_VER)
-#		define BOOST_NOEXCEPT_INLINE_FORCEINLINE __forceinline
-#	elif (defined(__GNUC__) && __GNUC__>3) || defined(__SNC__)
-#		define BOOST_NOEXCEPT_INLINE_FORCEINLINE inline __attribute__ ((always_inline))
-#	else
-#		define BOOST_NOEXCEPT_INLINE_FORCEINLINE inline
-#	endif
+#   if defined(_MSC_VER)
+#       define BOOST_NOEXCEPT_INLINE_FORCEINLINE __forceinline
+#   elif (defined(__GNUC__) && __GNUC__>3) || defined(__SNC__)
+#       define BOOST_NOEXCEPT_INLINE_FORCEINLINE inline __attribute__ ((always_inline))
+#   else
+#       define BOOST_NOEXCEPT_INLINE_FORCEINLINE inline
+#   endif
 #endif
 
 #ifndef BOOST_NOEXCEPT_INLINE_NOINLINE
-#	if defined(_MSC_VER)
-#		define BOOST_NOEXCEPT_INLINE_NOINLINE __declspec(noinline)
-#	elif (defined(__GNUC__) && __GNUC__>3) || defined(__SNC__)
-#		define BOOST_NOEXCEPT_INLINE_NOINLINE inline __attribute__ ((noinline))
-#	else
-#		define BOOST_NOEXCEPT_INLINE_NOINLINE inline
-#	endif
+#   if defined(_MSC_VER)
+#       define BOOST_NOEXCEPT_INLINE_NOINLINE __declspec(noinline)
+#   elif (defined(__GNUC__) && __GNUC__>3) || defined(__SNC__)
+#       define BOOST_NOEXCEPT_INLINE_NOINLINE inline __attribute__ ((noinline))
+#   else
+#       define BOOST_NOEXCEPT_INLINE_NOINLINE inline
+#   endif
 #endif
 
 #ifndef BOOST_NOEXCEPT_INLINE

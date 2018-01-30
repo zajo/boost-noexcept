@@ -79,14 +79,14 @@ template <class E>
 BOOST_NOEXCEPT_INLINE_FORCEINLINE
 E construct_error()
 {
-	return E();
+    return E();
 }
 
 template <>
 BOOST_NOEXCEPT_INLINE_FORCEINLINE
 std::error_code construct_error<std::error_code>()
 {
-	return std::error_code{42,std::system_category()};
+    return std::error_code{42,std::system_category()};
 }
 
 template <class T,class Error>
@@ -94,9 +94,9 @@ BOOST_NOEXCEPT_INLINE_FORCEINLINE
 T return_error( Error && e )
 {
 #ifdef BOOST_NO_EXCEPTIONS
-	return noexcept_::throw_(e);
+    return noexcept_::throw_(e);
 #else
-	throw e;
+    throw e;
 #endif
 }
 
@@ -140,13 +140,13 @@ void test_case( int success_percentage, int count )
             (void) r.template catch_<ErrorType>();
 #else
     for( int i=0; i!=count; ++i )
-		try
-		{
-        	benchmark<ValueType,ErrorType,Depth>::test_function(success_percentage);
-		}
-	catch( ErrorType & )
-		{
-		}
+        try
+        {
+            benchmark<ValueType,ErrorType,Depth>::test_function(success_percentage);
+        }
+    catch( ErrorType & )
+        {
+        }
 #endif
 
     auto end = std::chrono::steady_clock::now();
@@ -164,9 +164,9 @@ void test_case( int success_percentage, int count )
 int main( int argc, char const * argv[ ] )
 {
 #ifdef BOOST_NO_EXCEPTIONS
-	std::cout << "Using Noexcept" << std::endl;
+    std::cout << "Using Noexcept" << std::endl;
 #else
-	std::cout << "Using C++ exception handling" << std::endl;
+    std::cout << "Using C++ exception handling" << std::endl;
 #endif
 
     std::cout << std::endl;
