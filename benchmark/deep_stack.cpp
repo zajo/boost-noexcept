@@ -35,7 +35,6 @@
 #include <boost/config.hpp>
 #include <chrono>
 #include <string>
-#include <system_error>
 #include <iostream>
 #include <stdlib.h>
 
@@ -45,17 +44,7 @@
 
 namespace noexcept_ = boost::noexcept_;
 
-/////////////////////////////////////////////
-
-#ifdef BOOST_NO_EXCEPTIONS
-namespace boost
-{
-    void throw_exception( std::exception const & )
-    {
-        std::abort();
-    }
-}
-#endif
+struct my_error: std::exception { };
 
 /////////////////////////////////////////////
 
@@ -75,51 +64,28 @@ std::string compute_value<std::string>()
 
 /////////////////////////////////////////////
 
-template <class E>
-BOOST_NOEXCEPT_INLINE_FORCEINLINE
-E construct_error()
-{
-    return E();
-}
-
-template <>
-BOOST_NOEXCEPT_INLINE_FORCEINLINE
-std::error_code construct_error<std::error_code>()
-{
-    return std::error_code{42,std::system_category()};
-}
-
-template <class T,class Error>
-BOOST_NOEXCEPT_INLINE_FORCEINLINE
-T return_error( Error && e )
-{
-#ifdef BOOST_NO_EXCEPTIONS
-    return noexcept_::throw_(e);
-#else
-    throw e;
-#endif
-}
-
-/////////////////////////////////////////////
-
-template <class ValueType, class ErrorType, int Depth>
+template <int Depth,class ErrorType, class ValueType>
 struct benchmark
 {
     static BENCHMARK_INLINE
     ValueType test_function( int success_percentage  )
     {
-        return benchmark<ValueType,ErrorType,Depth-1>::test_function(success_percentage);
+        return benchmark<Depth-1,ErrorType,ValueType>::test_function(success_percentage);
     }
 };
 
-template <class ValueType, class ErrorType>
-struct benchmark<ValueType,ErrorType,0>
+template <class ErrorType, class ValueType>
+struct benchmark<0,ErrorType,ValueType>
 {
     static BENCHMARK_INLINE
     ValueType test_function( int success_percentage  )
     {
         if( (rand()%100) > success_percentage )
-            return return_error<ValueType>(construct_error<ErrorType>());
+#ifdef BOOST_NO_EXCEPTIONS
+            return noexcept_::throw_(ErrorType());
+#else
+            throw ErrorType();
+#endif
         else
             return compute_value<ValueType>();
     }
@@ -127,14 +93,14 @@ struct benchmark<ValueType,ErrorType,0>
 
 /////////////////////////////////////////////
 
-template <class ValueType, class ErrorType, int Depth>
+template <int Depth,class ErrorType, class ValueType>
 void test_case( int success_percentage, int count )
 {
     auto start = std::chrono::steady_clock::now();
 
 #ifdef BOOST_NO_EXCEPTIONS
     for( int i=0; i!=count; ++i )
-        if( auto r = noexcept_::try_(benchmark<ValueType,ErrorType,Depth>::test_function(success_percentage)) )
+        if( auto r = noexcept_::try_(benchmark<Depth,ErrorType,ValueType>::test_function(success_percentage)) )
             ;
         else
             (void) r.template catch_<ErrorType>();
@@ -142,7 +108,7 @@ void test_case( int success_percentage, int count )
     for( int i=0; i!=count; ++i )
         try
         {
-            benchmark<ValueType,ErrorType,Depth>::test_function(success_percentage);
+            benchmark<Depth,ErrorType,ValueType>::test_function(success_percentage);
         }
         catch( ErrorType & )
         {
@@ -161,6 +127,16 @@ void test_case( int success_percentage, int count )
 
 /////////////////////////////////////////////
 
+#ifdef BOOST_NO_EXCEPTIONS
+namespace boost
+{
+    void throw_exception( std::exception const & )
+    {
+        std::abort();
+    }
+}
+#endif
+
 int main( int argc, char const * argv[ ] )
 {
 #ifdef BOOST_NO_EXCEPTIONS
@@ -170,28 +146,20 @@ int main( int argc, char const * argv[ ] )
 #endif
 
     std::cout << std::endl;
-    srand(0); test_case<int,int,50>(10,100000);
-    srand(0); test_case<int,std::error_code,50>(10,100000);
-    srand(0); test_case<std::string,int,50>(10,100000);
-    srand(0); test_case<std::string,std::error_code,50>(10,100000);
+    srand(0); test_case<50,my_error,int>(10,100000);
+    srand(0); test_case<50,my_error,std::string>(10,100000);
 
     std::cout << std::endl;
-    srand(0); test_case<int,int,50>(90,100000);
-    srand(0); test_case<int,std::error_code,50>(90,100000);
-    srand(0); test_case<std::string,int,50>(90,100000);
-    srand(0); test_case<std::string,std::error_code,50>(90,100000);
+    srand(0); test_case<50,my_error,int>(90,100000);
+    srand(0); test_case<50,my_error,std::string>(90,100000);
 
     std::cout << std::endl;
-    srand(0); test_case<int,int,100>(10,100000);
-    srand(0); test_case<int,std::error_code,100>(10,100000);
-    srand(0); test_case<std::string,int,100>(10,100000);
-    srand(0); test_case<std::string,std::error_code,100>(10,100000);
+    srand(0); test_case<100,my_error,int>(10,100000);
+    srand(0); test_case<100,my_error,std::string>(10,100000);
 
     std::cout << std::endl;
-    srand(0); test_case<int,int,100>(90,100000);
-    srand(0); test_case<int,std::error_code,100>(90,100000);
-    srand(0); test_case<std::string,int,100>(90,100000);
-    srand(0); test_case<std::string,std::error_code,100>(90,100000);
+    srand(0); test_case<100,my_error,int>(90,100000);
+    srand(0); test_case<100,my_error,std::string>(90,100000);
 
     return 0;
 }
