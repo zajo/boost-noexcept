@@ -71,9 +71,7 @@ boost
                     public error_base,
                     public E
                     {
-#ifndef BOOST_NOEXCEPT_NO_EXCEPTIONS
                     void throw_exception_() { BOOST_NOEXCEPT_THROW_EXCEPTION(*this); }
-#endif
                     exception_info * get_exception_info() noexcept { return this; }
                     std::exception * get_std_exception() noexcept { return this; }
                     void * get_obj( void (*typeid_)() ) noexcept { return typeid_==&tid_<E const>?static_cast<E *>(this):0; }
@@ -97,9 +95,7 @@ boost
                     public error_base,
                     public E
                     {
-#ifndef BOOST_NOEXCEPT_NO_EXCEPTIONS
                     void throw_exception_() { BOOST_NOEXCEPT_THROW_EXCEPTION(*this); }
-#endif
                     exception_info * get_exception_info() noexcept { return this; }
                     std::exception * get_std_exception() noexcept { return this; }
                     void * get_obj( void (*typeid_)() ) noexcept { return typeid_==&tid_<E const>?static_cast<E *>(this):0; }
@@ -125,9 +121,7 @@ boost
                     public error_base,
                     public E
                     {
-#ifndef BOOST_NOEXCEPT_NO_EXCEPTIONS
                     void throw_exception_() { BOOST_NOEXCEPT_THROW_EXCEPTION(*this); }
-#endif
 #ifndef BOOST_NOEXCEPT_NO_EXCEPTION_INFO
                     exception_info * get_exception_info() noexcept { return this; }
 #endif
@@ -152,9 +146,7 @@ boost
                     public error_base,
                     public E
                     {
-#ifndef BOOST_NOEXCEPT_NO_EXCEPTIONS
                     void throw_exception_() { BOOST_NOEXCEPT_THROW_EXCEPTION(*this); }
-#endif
 #ifndef BOOST_NOEXCEPT_NO_EXCEPTION_INFO
                     exception_info * get_exception_info() noexcept { return this; }
 #endif
