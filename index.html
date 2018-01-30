@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.5">
+<meta name="generator" content="Asciidoctor 1.5.6.1">
 <meta name="author" content="Lightweight error handling without exceptions for C++11">
 <title>Noexcept</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
@@ -90,13 +90,12 @@ strong,b{font-weight:bold;line-height:inherit}
 small{font-size:60%;line-height:inherit}
 code{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;color:rgba(0,0,0,.9)}
 ul,ol,dl{font-size:1em;line-height:1.6;margin-bottom:1.25em;list-style-position:outside;font-family:inherit}
-ul,ol,ul.no-bullet,ol.no-bullet{margin-left:1.5em}
+ul,ol{margin-left:1.5em}
 ul li ul,ul li ol{margin-left:1.25em;margin-bottom:0;font-size:1em}
 ul.square li ul,ul.circle li ul,ul.disc li ul{list-style:inherit}
 ul.square{list-style-type:square}
 ul.circle{list-style-type:circle}
 ul.disc{list-style-type:disc}
-ul.no-bullet{list-style:none}
 ol li ul,ol li ol{margin-left:1.25em;margin-bottom:0}
 dl dt{margin-bottom:.3125em;font-weight:bold}
 dl dd{margin-bottom:1.25em}
@@ -132,7 +131,11 @@ strong strong{font-weight:400}
 kbd{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;display:inline-block;color:rgba(0,0,0,.8);font-size:.65em;line-height:1.45;background-color:#f7f7f7;border:1px solid #ccc;-webkit-border-radius:3px;border-radius:3px;-webkit-box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em white inset;box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em #fff inset;margin:0 .15em;padding:.2em .5em;vertical-align:middle;position:relative;top:-.1em;white-space:nowrap}
 .keyseq kbd:first-child{margin-left:0}
 .keyseq kbd:last-child{margin-right:0}
-.menuseq,.menu{color:rgba(0,0,0,.8)}
+.menuseq,.menuref{color:#000}
+.menuseq b:not(.caret),.menuref{font-weight:inherit}
+.menuseq{word-spacing:-.02em}
+.menuseq b.caret{font-size:1.25em;line-height:.8}
+.menuseq i.caret{font-weight:bold;text-align:center;width:.45em}
 b.button:before,b.button:after{position:relative;top:-1px;font-weight:400}
 b.button:before{content:"[";padding:0 3px 0 2px}
 b.button:after{content:"]";padding:0 2px 0 3px}
@@ -199,7 +202,7 @@ table.tableblock>caption.title{white-space:nowrap;overflow:visible;max-width:0}
 table.tableblock #preamble>.sectionbody>.paragraph:first-of-type p{font-size:inherit}
 .admonitionblock>table{border-collapse:separate;border:0;background:none;width:100%}
 .admonitionblock>table td.icon{text-align:center;width:80px}
-.admonitionblock>table td.icon img{max-width:none}
+.admonitionblock>table td.icon img{max-width:initial}
 .admonitionblock>table td.icon .title{font-weight:bold;font-family:"Open Sans","DejaVu Sans",sans-serif;text-transform:uppercase}
 .admonitionblock>table td.content{padding-left:1.125em;padding-right:1.25em;border-left:1px solid #ddddd8;color:rgba(0,0,0,.6)}
 .admonitionblock>table td.content>:last-child>:last-child{margin-bottom:0}
@@ -255,13 +258,13 @@ table.pyhltable .linenodiv{background:none!important;padding-right:0!important}
 table.tableblock{max-width:100%;border-collapse:separate}
 table.tableblock td>.paragraph:last-child p>p:last-child,table.tableblock th>p:last-child,table.tableblock td>p:last-child{margin-bottom:0}
 table.tableblock,th.tableblock,td.tableblock{border:0 solid #dedede}
-table.grid-all th.tableblock,table.grid-all td.tableblock{border-width:0 1px 1px 0}
-table.grid-all tfoot>tr>th.tableblock,table.grid-all tfoot>tr>td.tableblock{border-width:1px 1px 0 0}
-table.grid-cols th.tableblock,table.grid-cols td.tableblock{border-width:0 1px 0 0}
-table.grid-all *>tr>.tableblock:last-child,table.grid-cols *>tr>.tableblock:last-child{border-right-width:0}
-table.grid-rows th.tableblock,table.grid-rows td.tableblock{border-width:0 0 1px 0}
-table.grid-all tbody>tr:last-child>th.tableblock,table.grid-all tbody>tr:last-child>td.tableblock,table.grid-all thead:last-child>tr>th.tableblock,table.grid-rows tbody>tr:last-child>th.tableblock,table.grid-rows tbody>tr:last-child>td.tableblock,table.grid-rows thead:last-child>tr>th.tableblock{border-bottom-width:0}
-table.grid-rows tfoot>tr>th.tableblock,table.grid-rows tfoot>tr>td.tableblock{border-width:1px 0 0 0}
+table.grid-all>thead>tr>.tableblock,table.grid-all>tbody>tr>.tableblock{border-width:0 1px 1px 0}
+table.grid-all>tfoot>tr>.tableblock{border-width:1px 1px 0 0}
+table.grid-cols>*>tr>.tableblock{border-width:0 1px 0 0}
+table.grid-rows>thead>tr>.tableblock,table.grid-rows>tbody>tr>.tableblock{border-width:0 0 1px 0}
+table.grid-rows>tfoot>tr>.tableblock{border-width:1px 0 0 0}
+table.grid-all>*>tr>.tableblock:last-child,table.grid-cols>*>tr>.tableblock:last-child{border-right-width:0}
+table.grid-all>tbody>tr:last-child>.tableblock,table.grid-all>thead:last-child>tr>.tableblock,table.grid-rows>tbody>tr:last-child>.tableblock,table.grid-rows>thead:last-child>tr>.tableblock{border-bottom-width:0}
 table.frame-all{border-width:1px}
 table.frame-sides{border-width:0 1px}
 table.frame-topbot{border-width:1px 0}
@@ -282,10 +285,12 @@ ul li ol{margin-left:1.5em}
 dl dd{margin-left:1.125em}
 dl dd:last-child,dl dd:last-child>:last-child{margin-bottom:0}
 ol>li p,ul>li p,ul dd,ol dd,.olist .olist,.ulist .ulist,.ulist .olist,.olist .ulist{margin-bottom:.625em}
-ul.unstyled,ol.unnumbered,ul.checklist,ul.none{list-style-type:none}
-ul.unstyled,ol.unnumbered,ul.checklist{margin-left:.625em}
-ul.checklist li>p:first-child>.fa-square-o:first-child,ul.checklist li>p:first-child>.fa-check-square-o:first-child{width:1em;font-size:.85em}
-ul.checklist li>p:first-child>input[type="checkbox"]:first-child{width:1em;position:relative;top:1px}
+ul.checklist,ul.none,ol.none,ul.no-bullet,ol.no-bullet,ol.unnumbered,ul.unstyled,ol.unstyled{list-style-type:none}
+ul.no-bullet,ol.no-bullet,ol.unnumbered{margin-left:.625em}
+ul.unstyled,ol.unstyled{margin-left:0}
+ul.checklist{margin-left:.625em}
+ul.checklist li>p:first-child>.fa-square-o:first-child,ul.checklist li>p:first-child>.fa-check-square-o:first-child{width:1.25em;font-size:.8em;position:relative;bottom:.125em}
+ul.checklist li>p:first-child>input[type="checkbox"]:first-child{margin-right:.25em}
 ul.inline{margin:0 auto .625em auto;margin-left:-1.375em;margin-right:0;padding:0;list-style:none;overflow:hidden}
 ul.inline>li{list-style:none;float:left;margin-left:1.375em;display:block}
 ul.inline>li>*{display:block}
@@ -302,7 +307,8 @@ ol.lowergreek{list-style-type:lower-greek}
 td.hdlist1,td.hdlist2{vertical-align:top;padding:0 .625em}
 td.hdlist1{font-weight:bold;padding-bottom:1.25em}
 .literalblock+.colist,.listingblock+.colist{margin-top:-.5em}
-.colist>table tr>td:first-of-type{padding:0 .75em;line-height:1}
+.colist>table tr>td:first-of-type{padding:.4em .75em 0 .75em;line-height:1;vertical-align:top}
+.colist>table tr>td:first-of-type img{max-width:initial}
 .colist>table tr>td:last-of-type{padding:.25em 0}
 .thumb,.th{line-height:0;display:inline-block;border:solid 4px #fff;-webkit-box-shadow:0 0 0 1px #ddd;box-shadow:0 0 0 1px #ddd}
 .imageblock.left,.imageblock[style*="float: left"]{margin:.25em .625em 1.25em 0}
@@ -365,6 +371,7 @@ div.unbreakable{page-break-inside:avoid}
 .yellow{color:#bfbf00}
 .yellow-background{background-color:#fafa00}
 span.icon>.fa{cursor:default}
+a span.icon>.fa{cursor:inherit}
 .admonitionblock td.icon [class^="fa icon-"]{font-size:2.5em;text-shadow:1px 1px 2px rgba(0,0,0,.5);cursor:default}
 .admonitionblock td.icon .icon-note:before{content:"\f05a";color:#19407c}
 .admonitionblock td.icon .icon-tip:before{content:"\f0eb";text-shadow:1px 1px 2px rgba(155,155,0,.8);color:#111}
@@ -578,6 +585,7 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#configuration">Macros and configuration</a></li>
 <li><a href="#_building_and_installation">Building and installation</a></li>
 <li><a href="#_building_the_unit_tests_and_the_examples">Building the unit tests and the examples</a></li>
+<li><a href="#_benchmark">Benchmark</a></li>
 <li><a href="#qanda">Q&amp;A</a></li>
 <li><a href="#_acknowledgements">Acknowledgements</a></li>
 </ul>
@@ -720,7 +728,7 @@ For a comparison between various error-reporting libraries and proposals, see <a
 <h2 id="guarantee">No error gets ignored guarantee</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Noexcept will never ignore an error once it is reported. The handling of any given error may be postponed (e.g. using <code><a href="#try_">result&lt;T&gt;</a></code>), but eventually the program is required to recognize each and every error object and flag it as handled. Situations which would lead to a pending error being ignored are detected and result in a call to <code>std::terminate</code>.</p>
+<p>Noexcept will never ignore an error once it is reported. The handling of any given error may be postponed (e.g. using <code><a href="#try_">result&lt;T&gt; </a></code>), but eventually the program is required to recognize each and every error object and flag it as handled. Situations which would lead to a pending error being ignored are detected and result in a call to <code>std::terminate</code>.</p>
 </div>
 </div>
 </div>
@@ -737,7 +745,7 @@ For a comparison between various error-reporting libraries and proposals, see <a
 
 <span class="directive">using</span> <span class="keyword">namespace</span> boost::noexcept_;
 
-FILE * open_file( <span class="predefined-type">char</span> <span class="directive">const</span> * name ) noexcept {
+FILE * open_file( <span class="predefined-type">char</span> <span class="directive">const</span> * name ) <span class="directive">noexcept</span> {
     <span class="keyword">if</span>( FILE * f=fopen(name,<span class="string"><span class="delimiter">&quot;</span><span class="content">rb</span><span class="delimiter">&quot;</span></span>) )
         <span class="keyword">return</span> f;
     <span class="keyword">else</span>
@@ -806,7 +814,7 @@ If unhandled errors remain at the time the current thread terminates, Noexcept c
 
 <span class="directive">using</span> <span class="keyword">namespace</span> boost::noexcept_;
 
-std::ifstream open_stream( <span class="predefined-type">char</span> <span class="directive">const</span> * name ) noexcept {
+std::ifstream open_stream( <span class="predefined-type">char</span> <span class="directive">const</span> * name ) <span class="directive">noexcept</span> {
     std::ifstream f(name);
     <span class="keyword">if</span>( f.good() )
         <span class="keyword">return</span> f;  <i class="conum" data-value="1"></i><b>(1)</b>
@@ -814,7 +822,7 @@ std::ifstream open_stream( <span class="predefined-type">char</span> <span class
         <span class="keyword">return</span> throw_( std::error_code{ errno, std::generic_category() } );  <i class="conum" data-value="1"></i><b>(1)</b>
 }
 
-std::<span class="predefined-type">string</span> read_line( std::ifstream &amp;&amp; f ) noexcept {
+std::<span class="predefined-type">string</span> read_line( std::ifstream &amp;&amp; f ) <span class="directive">noexcept</span> {
     BOOST_NOEXCEPT_CHECK
     assert(f.good());  <i class="conum" data-value="2"></i><b>(2)</b>
     std::<span class="predefined-type">string</span> s;
@@ -825,7 +833,7 @@ std::<span class="predefined-type">string</span> read_line( std::ifstream &amp;&
         <span class="keyword">return</span> throw_( std::error_code{ errno, std::generic_category() } );  <i class="conum" data-value="3"></i><b>(3)</b>
 }
 
-std::<span class="predefined-type">string</span> read_string_from_file( <span class="predefined-type">char</span> <span class="directive">const</span> * name ) noexcept {
+std::<span class="predefined-type">string</span> read_string_from_file( <span class="predefined-type">char</span> <span class="directive">const</span> * name ) <span class="directive">noexcept</span> {
     <span class="keyword">return</span> read_line(open_stream(name));  <i class="conum" data-value="4"></i><b>(4)</b>
 }
 
@@ -894,9 +902,9 @@ std::<span class="predefined-type">string</span> read_string_from_file( <span cl
 <span class="directive">using</span> <span class="keyword">namespace</span> boost::noexcept_;
 
 <span class="keyword">struct</span> do_work_error { };
-<span class="predefined-type">int</span> do_work( lua_State * L ) noexcept;
+<span class="predefined-type">int</span> do_work( lua_State * L ) <span class="directive">noexcept</span>;
 
-std::shared_ptr&lt;lua_State&gt; init_lua_state() noexcept {  <i class="conum" data-value="1"></i><b>(1)</b>
+std::shared_ptr&lt;lua_State&gt; init_lua_state() <span class="directive">noexcept</span> {  <i class="conum" data-value="1"></i><b>(1)</b>
     std::shared_ptr&lt;lua_State&gt; L(lua_open(),&amp;lua_close);
     luaL_dostring( &amp;*L, <span class="string"><span class="delimiter">&quot;</span><span class="char">\
 </span><span class="char">\n</span><span class="content">      function call_do_work()</span><span class="char">\
@@ -906,7 +914,7 @@ std::shared_ptr&lt;lua_State&gt; init_lua_state() noexcept {  <i class="conum" d
     <span class="keyword">return</span> L;
 }
 
-<span class="predefined-type">int</span> do_work( lua_State * L ) noexcept {
+<span class="predefined-type">int</span> do_work( lua_State * L ) <span class="directive">noexcept</span> {
     <span class="predefined-type">bool</span> success=rand()%<span class="integer">2</span>;
     <span class="keyword">if</span>( success )
         <span class="keyword">return</span> lua_pushnumber(L,<span class="integer">42</span>), <span class="integer">1</span>;  <i class="conum" data-value="2"></i><b>(2)</b>
@@ -914,7 +922,7 @@ std::shared_ptr&lt;lua_State&gt; init_lua_state() noexcept {  <i class="conum" d
         <span class="keyword">return</span> throw_(do_work_error()), lua_error(L);  <i class="conum" data-value="3"></i><b>(3)</b>
 }
 
-<span class="predefined-type">int</span> call_lua( lua_State * L ) noexcept {  <i class="conum" data-value="4"></i><b>(4)</b>
+<span class="predefined-type">int</span> call_lua( lua_State * L ) <span class="directive">noexcept</span> {  <i class="conum" data-value="4"></i><b>(4)</b>
     lua_getfield( L, LUA_GLOBALSINDEX, <span class="string"><span class="delimiter">&quot;</span><span class="content">call_do_work</span><span class="delimiter">&quot;</span></span> );
     <span class="keyword">if</span>( <span class="predefined-type">int</span> err=lua_pcall(L,<span class="integer">0</span>,<span class="integer">1</span>,<span class="integer">0</span>) ) {
         lua_pop(L,<span class="integer">1</span>);
@@ -995,7 +1003,7 @@ std::shared_ptr&lt;lua_State&gt; init_lua_state() noexcept {  <i class="conum" d
 
 <span class="keyword">struct</span> erratic_error { <span class="predefined-type">int</span> error_code; };  <i class="conum" data-value="2"></i><b>(2)</b>
 
-boost::optional&lt;<span class="predefined-type">float</span>&gt; erratic_caller() noexcept {  <i class="conum" data-value="3"></i><b>(3)</b>
+boost::optional&lt;<span class="predefined-type">float</span>&gt; erratic_caller() <span class="directive">noexcept</span> {  <i class="conum" data-value="3"></i><b>(3)</b>
     <span class="predefined-type">float</span> answer;
     <span class="keyword">if</span>( <span class="predefined-type">int</span> err=erratic(&amp;answer) )
         <span class="keyword">return</span> throw_(erratic_error{err});
@@ -1065,7 +1073,7 @@ boost::optional&lt;<span class="predefined-type">float</span>&gt; erratic_caller
     <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">T</span>&gt;
     <span class="keyword">struct</span> throw_return {
 
-        <span class="directive">static</span> T value() noexcept;
+        <span class="directive">static</span> T value() <span class="directive">noexcept</span>;
 
     }
 
@@ -1077,24 +1085,24 @@ boost::optional&lt;<span class="predefined-type">float</span>&gt; erratic_caller
         <span class="directive">public</span>:
 
         <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">E</span>&gt;
-        throw_( E &amp;&amp; e ) noexcept;
+        throw_( E &amp;&amp; e ) <span class="directive">noexcept</span>;
 
         <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">E</span>&gt;
-        throw_( E &amp;&amp; e, <span class="predefined-type">char</span> <span class="directive">const</span> * file, <span class="predefined-type">int</span> line, <span class="predefined-type">char</span> <span class="directive">const</span> * function ) noexcept;
+        throw_( E &amp;&amp; e, <span class="predefined-type">char</span> <span class="directive">const</span> * file, <span class="predefined-type">int</span> line, <span class="predefined-type">char</span> <span class="directive">const</span> * function ) <span class="directive">noexcept</span>;
 
-        throw_() noexcept { }
+        throw_() <span class="directive">noexcept</span> { }
 
         <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">T</span>&gt;
-        <span class="directive">operator</span> T() noexcept;
+        <span class="directive">operator</span> T() <span class="directive">noexcept</span>;
 
     };
 
-    <span class="predefined-type">bool</span> has_current_error() noexcept;
+    <span class="predefined-type">bool</span> has_current_error() <span class="directive">noexcept</span>;
 
 } }
 
 <span class="preprocessor">#define</span> THROW_(e)\
-    ::boost::noexcept::throw_(e,__FILE__,__LINE__,BOOST_CURRENT_FUNCTION)
+    ::boost::<span class="directive">noexcept</span>::throw_(e,__FILE__,__LINE__,BOOST_CURRENT_FUNCTION)
 
 <span class="preprocessor">#define</span> BOOST_NOEXCEPT_CHECK\
     { <span class="keyword">if</span>( ::boost::noexcept_::has_current_error() )\
@@ -1121,17 +1129,17 @@ boost::optional&lt;<span class="predefined-type">float</span>&gt; erratic_caller
 
         <span class="directive">public</span>:
 
-        ~result() noexcept;
+        ~result() <span class="directive">noexcept</span>;
 
-        <span class="predefined-type">bool</span> has_error() <span class="directive">const</span> noexcept;
-        <span class="predefined-type">bool</span> has_unhandled_error <span class="directive">const</span> noexcept;
+        <span class="predefined-type">bool</span> has_error() <span class="directive">const</span> <span class="directive">noexcept</span>;
+        <span class="predefined-type">bool</span> has_unhandled_error <span class="directive">const</span> <span class="directive">noexcept</span>;
 
-        <span class="directive">explicit</span> <span class="directive">operator</span> <span class="predefined-type">bool</span>() <span class="directive">const</span> noexcept;
+        <span class="directive">explicit</span> <span class="directive">operator</span> <span class="predefined-type">bool</span>() <span class="directive">const</span> <span class="directive">noexcept</span>;
 
         <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">E</span>=std::exception&gt;
-        E * catch_() noexcept;
+        E * catch_() <span class="directive">noexcept</span>;
 
-        &lt;unspecified_return_type&gt; throw_() noexcept;
+        &lt;unspecified_return_type&gt; throw_() <span class="directive">noexcept</span>;
 
         <span class="directive">void</span> throw_exception();
 
@@ -1141,9 +1149,9 @@ boost::optional&lt;<span class="predefined-type">float</span>&gt; erratic_caller
     };
 
     <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">T</span>&gt;
-    result&lt;T&gt; try_( T &amp;&amp; res ) noexcept;
+    result&lt;T&gt; try_( T &amp;&amp; res ) <span class="directive">noexcept</span>;
 
-    result&lt;<span class="directive">void</span>&gt; current_error() noexcept;
+    result&lt;<span class="directive">void</span>&gt; current_error() <span class="directive">noexcept</span>;
 
 } }</code></pre>
 </div>
@@ -1164,7 +1172,7 @@ boost::optional&lt;<span class="predefined-type">float</span>&gt; erratic_caller
     <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">T</span>&gt;
     <span class="keyword">struct</span> throw_return {
 
-        <span class="directive">static</span> T value() noexcept;
+        <span class="directive">static</span> T value() <span class="directive">noexcept</span>;
 
     }
 
@@ -1176,24 +1184,24 @@ boost::optional&lt;<span class="predefined-type">float</span>&gt; erratic_caller
         <span class="directive">public</span>:
 
         <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">E</span>&gt;
-        throw_( E &amp;&amp; e ) noexcept;
+        throw_( E &amp;&amp; e ) <span class="directive">noexcept</span>;
 
         <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">E</span>&gt;
-        throw_( E &amp;&amp; e, <span class="predefined-type">char</span> <span class="directive">const</span> * file, <span class="predefined-type">int</span> line, <span class="predefined-type">char</span> <span class="directive">const</span> * function ) noexcept;
+        throw_( E &amp;&amp; e, <span class="predefined-type">char</span> <span class="directive">const</span> * file, <span class="predefined-type">int</span> line, <span class="predefined-type">char</span> <span class="directive">const</span> * function ) <span class="directive">noexcept</span>;
 
-        throw_() noexcept { }
+        throw_() <span class="directive">noexcept</span> { }
 
         <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">T</span>&gt;
-        <span class="directive">operator</span> T() noexcept;
+        <span class="directive">operator</span> T() <span class="directive">noexcept</span>;
 
     };
 
-    <span class="predefined-type">bool</span> has_current_error() noexcept;
+    <span class="predefined-type">bool</span> has_current_error() <span class="directive">noexcept</span>;
 
 } }
 
 <span class="preprocessor">#define</span> THROW_(e)\
-    ::boost::noexcept::throw_(e,__FILE__,__LINE__,BOOST_CURRENT_FUNCTION)
+    ::boost::<span class="directive">noexcept</span>::throw_(e,__FILE__,__LINE__,BOOST_CURRENT_FUNCTION)
 
 <span class="preprocessor">#define</span> BOOST_NOEXCEPT_CHECK\
     { <span class="keyword">if</span>( ::boost::noexcept_::has_current_error() )\
@@ -1248,13 +1256,13 @@ boost::optional&lt;<span class="predefined-type">float</span>&gt; erratic_caller
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">E</span>&gt;
-throw_( E &amp;&amp; e ) noexcept;
+throw_( E &amp;&amp; e ) <span class="directive">noexcept</span>;
 
 <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">E</span>&gt;
-throw_( E &amp;&amp; e, <span class="predefined-type">char</span> <span class="directive">const</span> * file, <span class="predefined-type">int</span> line, <span class="predefined-type">char</span> <span class="directive">const</span> * function ) noexcept;
+throw_( E &amp;&amp; e, <span class="predefined-type">char</span> <span class="directive">const</span> * file, <span class="predefined-type">int</span> line, <span class="predefined-type">char</span> <span class="directive">const</span> * function ) <span class="directive">noexcept</span>;
 
 <span class="preprocessor">#define</span> THROW_(e)\
-    ::boost::noexcept::throw_(e,__FILE__,__LINE__,BOOST_CURRENT_FUNCTION)</code></pre>
+    ::boost::<span class="directive">noexcept</span>::throw_(e,__FILE__,__LINE__,BOOST_CURRENT_FUNCTION)</code></pre>
 </div>
 </div>
 <div class="dlist">
@@ -1275,7 +1283,7 @@ throw_( E &amp;&amp; e, <span class="predefined-type">char</span> <span class="d
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++">throw_() noexcept;</code></pre>
+<pre class="CodeRay highlight"><code data-lang="c++">throw_() <span class="directive">noexcept</span>;</code></pre>
 </div>
 </div>
 <div class="dlist">
@@ -1305,7 +1313,7 @@ This is different from the <code><a href="#result_throw_">throw_</a></code> memb
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">T</span>&gt;
-<span class="directive">operator</span> T() noexcept;</code></pre>
+<span class="directive">operator</span> T() <span class="directive">noexcept</span>;</code></pre>
 </div>
 </div>
 <div class="dlist">
@@ -1326,7 +1334,7 @@ This is different from the <code><a href="#result_throw_">throw_</a></code> memb
 <h4 id="has_current_error">has_current_error()</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">bool</span> has_current_error() noexcept;</code></pre>
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">bool</span> has_current_error() <span class="directive">noexcept</span>;</code></pre>
 </div>
 </div>
 <div class="dlist">
@@ -1372,17 +1380,17 @@ This is different from the <code><a href="#result_throw_">throw_</a></code> memb
 
         <span class="directive">public</span>:
 
-        ~result() noexcept;
+        ~result() <span class="directive">noexcept</span>;
 
-        <span class="predefined-type">bool</span> has_error() <span class="directive">const</span> noexcept;
-        <span class="predefined-type">bool</span> has_unhandled_error <span class="directive">const</span> noexcept;
+        <span class="predefined-type">bool</span> has_error() <span class="directive">const</span> <span class="directive">noexcept</span>;
+        <span class="predefined-type">bool</span> has_unhandled_error <span class="directive">const</span> <span class="directive">noexcept</span>;
 
-        <span class="directive">explicit</span> <span class="directive">operator</span> <span class="predefined-type">bool</span>() <span class="directive">const</span> noexcept;
+        <span class="directive">explicit</span> <span class="directive">operator</span> <span class="predefined-type">bool</span>() <span class="directive">const</span> <span class="directive">noexcept</span>;
 
         <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">E</span>=std::exception&gt;
-        E * catch_() noexcept;
+        E * catch_() <span class="directive">noexcept</span>;
 
-        &lt;unspecified_return_type&gt; throw_() noexcept;
+        &lt;unspecified_return_type&gt; throw_() <span class="directive">noexcept</span>;
 
         <span class="directive">void</span> throw_exception();
 
@@ -1392,9 +1400,9 @@ This is different from the <code><a href="#result_throw_">throw_</a></code> memb
     };
 
     <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">T</span>&gt;
-    result&lt;T&gt; try_( T &amp;&amp; res ) noexcept;
+    result&lt;T&gt; try_( T &amp;&amp; res ) <span class="directive">noexcept</span>;
 
-    result&lt;<span class="directive">void</span>&gt; current_error() noexcept;
+    result&lt;<span class="directive">void</span>&gt; current_error() <span class="directive">noexcept</span>;
 
 } }</code></pre>
 </div>
@@ -1432,7 +1440,7 @@ This is different from the <code><a href="#result_throw_">throw_</a></code> memb
 <h4 id="result_dtor">result&lt;T&gt; destructor</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++">~result() noexcept;</code></pre>
+<pre class="CodeRay highlight"><code data-lang="c++">~result() <span class="directive">noexcept</span>;</code></pre>
 </div>
 </div>
 <div class="ulist">
@@ -1464,7 +1472,7 @@ This is different from the <code><a href="#result_throw_">throw_</a></code> memb
 <h4 id="result_has_error">result&lt;T&gt;::has_error()</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">bool</span> has_error() <span class="directive">const</span> noexcept;</code></pre>
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">bool</span> has_error() <span class="directive">const</span> <span class="directive">noexcept</span>;</code></pre>
 </div>
 </div>
 <div class="dlist">
@@ -1481,7 +1489,7 @@ This is different from the <code><a href="#result_throw_">throw_</a></code> memb
 <h4 id="result_has_unhandled_error">result&lt;T&gt;::has_unhandled_error()</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">bool</span> has_unhandled_error() <span class="directive">const</span> noexcept;</code></pre>
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">bool</span> has_unhandled_error() <span class="directive">const</span> <span class="directive">noexcept</span>;</code></pre>
 </div>
 </div>
 <div class="dlist">
@@ -1510,7 +1518,7 @@ The error contained in a <code>result</code> is marked as handled when <code><a 
 <h4 id="result_operator_bool">result&lt;T&gt;::operator bool()</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="directive">explicit</span> <span class="directive">operator</span> <span class="predefined-type">bool</span>() <span class="directive">const</span> noexcept;</code></pre>
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="directive">explicit</span> <span class="directive">operator</span> <span class="predefined-type">bool</span>() <span class="directive">const</span> <span class="directive">noexcept</span>;</code></pre>
 </div>
 </div>
 <div class="dlist">
@@ -1528,7 +1536,7 @@ The error contained in a <code>result</code> is marked as handled when <code><a 
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">E</span>=std::exception&gt;
-E * catch_() noexcept;</code></pre>
+E * catch_() <span class="directive">noexcept</span>;</code></pre>
 </div>
 </div>
 <div class="dlist">
@@ -1561,7 +1569,7 @@ E * catch_() noexcept;</code></pre>
 <h4 id="result_throw_">result&lt;T&gt;::throw_()</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++">&lt;unspecified_return_type&gt; throw_() noexcept;</code></pre>
+<pre class="CodeRay highlight"><code data-lang="c++">&lt;unspecified_return_type&gt; throw_() <span class="directive">noexcept</span>;</code></pre>
 </div>
 </div>
 <div class="dlist">
@@ -1637,9 +1645,9 @@ T &amp; get();</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">T</span>&gt;
-result&lt;T&gt; try_( T &amp;&amp; res ) noexcept;
+result&lt;T&gt; try_( T &amp;&amp; res ) <span class="directive">noexcept</span>;
 
-result&lt;<span class="directive">void</span>&gt; void_try_() noexcept;</code></pre>
+result&lt;<span class="directive">void</span>&gt; void_try_() <span class="directive">noexcept</span>;</code></pre>
 </div>
 </div>
 <div class="dlist">
@@ -1758,8 +1766,8 @@ result&lt;<span class="directive">void</span>&gt; void_try_() noexcept;</code></
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++">std::vector&lt;std::<span class="predefined-type">string</span>&gt; read_file( FILE * f ) noexcept;
-<span class="predefined-type">int</span> count_words( std::vector&lt;std::<span class="predefined-type">string</span>&gt; <span class="directive">const</span> &amp; lines ) noexcept;</code></pre>
+<pre class="CodeRay highlight"><code data-lang="c++">std::vector&lt;std::<span class="predefined-type">string</span>&gt; read_file( FILE * f ) <span class="directive">noexcept</span>;
+<span class="predefined-type">int</span> count_words( std::vector&lt;std::<span class="predefined-type">string</span>&gt; <span class="directive">const</span> &amp; lines ) <span class="directive">noexcept</span>;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1767,7 +1775,7 @@ result&lt;<span class="directive">void</span>&gt; void_try_() noexcept;</code></
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">int</span> count_words_in_file( FILE * f ) noexcept {
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">int</span> count_words_in_file( FILE * f ) <span class="directive">noexcept</span> {
     <span class="keyword">return</span> count_words( read_file(f) );
 }</code></pre>
 </div>
@@ -1792,7 +1800,7 @@ Specifically, we need to be able to tell the difference between <code>read_file<
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">int</span> count_words_in_file( FILE * f ) noexcept {
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">int</span> count_words_in_file( FILE * f ) <span class="directive">noexcept</span> {
     <span class="keyword">if</span>( <span class="directive">auto</span> r = try_( read_file(f) ) )
         <span class="keyword">return</span> count_words( r.get() );
     <span class="keyword">else</span>
@@ -1817,7 +1825,7 @@ Specifically, we need to be able to tell the difference between <code>read_file<
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">int</span> count_words( std::vector&lt;std::<span class="predefined-type">string</span>&gt; <span class="directive">const</span> &amp; lines ) noexcept {
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">int</span> count_words( std::vector&lt;std::<span class="predefined-type">string</span>&gt; <span class="directive">const</span> &amp; lines ) <span class="directive">noexcept</span> {
     BOOST_NOEXCEPT_CHECK
     <span class="comment">//No errors, continue with counting words.</span>
     ....
@@ -1830,7 +1838,7 @@ Specifically, we need to be able to tell the difference between <code>read_file<
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">int</span> count_words_in_file( FILE * f ) noexcept {
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">int</span> count_words_in_file( FILE * f ) <span class="directive">noexcept</span> {
     <span class="keyword">return</span> count_words( read_file(f) );
 }</code></pre>
 </div>
@@ -1859,28 +1867,28 @@ The macro <code>BOOST_NOEXCEPT_CHECK_VOID</code> can be used similarly in <code>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="directive">void</span> f1() noexcept {
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="directive">void</span> f1() <span class="directive">noexcept</span> {
     BOOST_NOEXCEPT_CHECK_VOID
     ....
     <span class="keyword">if</span>( !f1_succeeds )
         <span class="keyword">return</span> (<span class="directive">void</span>) throw_( error1() );
 }
 
-<span class="directive">void</span> f2() noexcept {
+<span class="directive">void</span> f2() <span class="directive">noexcept</span> {
     BOOST_NOEXCEPT_CHECK_VOID
     ....
     <span class="keyword">if</span>( !f2_succeeds )
         <span class="keyword">return</span> (<span class="directive">void</span>) throw_( error2() );
 }
 
-<span class="directive">void</span> f3() noexcept {
+<span class="directive">void</span> f3() <span class="directive">noexcept</span> {
     BOOST_NOEXCEPT_CHECK_VOID
     ....
     <span class="keyword">if</span>( !f3_succeeds )
         <span class="keyword">return</span> (<span class="directive">void</span>) throw_( error3() );
 }
 
-<span class="directive">void</span> caller() noexcept {
+<span class="directive">void</span> caller() <span class="directive">noexcept</span> {
     <span class="comment">//No need to check for errors here, since f1, f2 and f3 each check for errors:</span>
     f1();
     f2();
@@ -1896,7 +1904,7 @@ The macro <code>BOOST_NOEXCEPT_CHECK_VOID</code> can be used similarly in <code>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">bool</span> f1() noexcept {
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">bool</span> f1() <span class="directive">noexcept</span> {
     BOOST_NOEXCEPT_CHECK
     ....
     <span class="keyword">if</span>( f1_succeeds )
@@ -1905,7 +1913,7 @@ The macro <code>BOOST_NOEXCEPT_CHECK_VOID</code> can be used similarly in <code>
         <span class="keyword">return</span> throw_( error1() );
 }
 
-<span class="predefined-type">bool</span> f2() noexcept {
+<span class="predefined-type">bool</span> f2() <span class="directive">noexcept</span> {
     BOOST_NOEXCEPT_CHECK
     ....
     <span class="keyword">if</span>( f2_succeeds )
@@ -1914,7 +1922,7 @@ The macro <code>BOOST_NOEXCEPT_CHECK_VOID</code> can be used similarly in <code>
         <span class="keyword">return</span> throw_( error2() );
 }
 
-<span class="predefined-type">bool</span> f3() noexcept {
+<span class="predefined-type">bool</span> f3() <span class="directive">noexcept</span> {
     BOOST_NOEXCEPT_CHECK
     ....
     <span class="keyword">if</span>( f3_succeeds )
@@ -1929,7 +1937,7 @@ The macro <code>BOOST_NOEXCEPT_CHECK_VOID</code> can be used similarly in <code>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">bool</span> caller() noexcept {
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">bool</span> caller() <span class="directive">noexcept</span> {
     <span class="keyword">return</span>
         f1() &amp;&amp;
         f2() &amp;&amp;
@@ -2006,9 +2014,9 @@ std::exception::what: my_error
 <pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">class</span> <span class="class">file_read_error</span> {
   std::<span class="predefined-type">string</span> fn_;
   <span class="directive">public</span>:
-  <span class="directive">explicit</span> file_read_error( std::<span class="predefined-type">string</span> &amp;&amp; fn ) noexcept:
+  <span class="directive">explicit</span> file_read_error( std::<span class="predefined-type">string</span> &amp;&amp; fn ) <span class="directive">noexcept</span>:
     fn_(std::move(fn)) { }
-  std::<span class="predefined-type">string</span> <span class="directive">const</span> &amp; file_name() <span class="directive">const</span> noexcept { <span class="keyword">return</span> fn_; }
+  std::<span class="predefined-type">string</span> <span class="directive">const</span> &amp; file_name() <span class="directive">const</span> <span class="directive">noexcept</span> { <span class="keyword">return</span> fn_; }
 };</code></pre>
 </div>
 </div>
@@ -2027,7 +2035,7 @@ std::exception::what: my_error
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">bool</span> read_file(FILE * f) noexcept {
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">bool</span> read_file(FILE * f) <span class="directive">noexcept</span> {
   ....
   size_t nr=fread(buf,<span class="integer">1</span>,count,f);
   <span class="keyword">if</span>(ferror(f))
@@ -2052,7 +2060,7 @@ std::exception::what: my_error
 
 <span class="directive">using</span> <span class="keyword">namespace</span> boost::noexcept_;
 
-<span class="predefined-type">bool</span> read_file(FILE * f) noexcept {
+<span class="predefined-type">bool</span> read_file(FILE * f) <span class="directive">noexcept</span> {
     ....
     size_t nr=fread(buf,<span class="integer">1</span>,count,f);
     <span class="keyword">if</span>(ferror(f))
@@ -2060,7 +2068,7 @@ std::exception::what: my_error
     ....
 }
 
-<span class="predefined-type">bool</span> process_file(<span class="predefined-type">char</span> <span class="directive">const</span> * name) noexcept {
+<span class="predefined-type">bool</span> process_file(<span class="predefined-type">char</span> <span class="directive">const</span> * name) <span class="directive">noexcept</span> {
     <span class="keyword">if</span>( FILE * fp=fopen(name,<span class="string"><span class="delimiter">&quot;</span><span class="content">rt</span><span class="delimiter">&quot;</span></span>) ) {
         std::shared_ptr&lt;FILE&gt; f(fp,fclose);
 
@@ -2087,7 +2095,7 @@ std::exception::what: my_error
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">bool</span> do_work() noexcept {
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">bool</span> do_work() <span class="directive">noexcept</span> {
     <span class="keyword">return</span> process_file(<span class="string"><span class="delimiter">&quot;</span><span class="content">file.txt</span><span class="delimiter">&quot;</span></span>);
 }
 
@@ -2144,7 +2152,7 @@ std::exception::what: my_error
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">int</span> compute() noexcept {
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">int</span> compute() <span class="directive">noexcept</span> {
     <span class="keyword">if</span>( rand()%<span class="integer">2</span> )
         <span class="keyword">return</span> <span class="integer">42</span>;
     <span class="keyword">else</span>
@@ -2248,7 +2256,7 @@ std::generate_n( std::inserter(fut,fut.end()), <span class="integer">100</span>,
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="preprocessor">#define</span> BOOST_NOEXCEPT_THREAD_LOCAL(type,object) <span class="directive">static</span> thread_local type object</code></pre>
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="preprocessor">#define</span> BOOST_NOEXCEPT_THREAD_LOCAL(type,object) <span class="directive">static</span> <span class="directive">thread_local</span> type object</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2266,7 +2274,7 @@ std::generate_n( std::inserter(fut,fut.end()), <span class="integer">100</span>,
 </div>
 </div>
 <div class="paragraph">
-<p>If <code>#defined</code>, Noexcept will not use <code>dynamic_cast</code> (and errors bound by <code><a href="#catch_">catch_&lt;T&gt;</a>()</code> must match <code>T</code> exactly).</p>
+<p>If <code>#defined</code>, Noexcept will not use <code>dynamic_cast</code> (and errors bound by <code><a href="#catch_">catch_&lt;T&gt; </a>()</code> must match <code>T</code> exactly).</p>
 </div>
 <div class="paragraph">
 <p>If <code>BOOST_NOEXCEPT_NO_RTTI</code> is not explicitly <code>#defined</code>, the availability of RTTI is determined using <code>BOOST_NO_RTTI</code>.</p>
@@ -2304,6 +2312,147 @@ std::generate_n( std::inserter(fut,fut.end()), <span class="integer">100</span>,
 <div class="sectionbody">
 <div class="paragraph">
 <p>The unit tests and the examples can be built within the Boost framework: clone Noexcept under the <code>libs</code> subdirectory in your boost installation, then <code>cd</code> into <code>noexcept/test</code> and execute <code>b2</code> as usual.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_benchmark">Benchmark</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Error handling library benchmarks are tricky to write and with limited usefulness as design exploration tool, but since <em>speed!!!</em> is a hot topic of discussion, Noexcept includes a benchmark program called <code>deep_stack</code>. It can propagate different types of return values and error objects across configurable depth of function calls. In addition:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If exception handling is disabled, <code>deep_stack</code> uses Noexcept to propagate errors, otherwise it uses C++ exceptions.</p>
+</li>
+<li>
+<p>By default inlining is disabled, which simulates propagating errors across different compilation units. If <code>BOOST_NOEXCEPT_INLINE_FORCEINLINE</code> is <code>#defined</code>, the function calls are inlined, which simulates propagating errors within a single compilation unit.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Below is the result of running <code>deep_stack</code>, compiled with <code>Apple LLVM version 9.0.0 (clang-900.0.39.2)</code>, on an old-ish Macbook Pro, using a variety of compiler command lines (assuming the current working directory is <code>${BOOST_ROOT}/libs/noexcept/benchmark</code>).</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">clang++ -O3 -std=C++11 -I../include -I ../../.. deep_stack.cpp -fno-exceptions</div>
+<div class="content">
+<pre>Using Noexcept
+
+void test_case(int, int) [ValueType = int, ErrorType = int, Depth = 50], count=100000, success %=10: 10ms
+void test_case(int, int) [ValueType = int, ErrorType = std::__1::error_code, Depth = 50], count=100000, success %=10: 10ms
+void test_case(int, int) [ValueType = std::__1::basic_string&lt;char&gt;, ErrorType = int, Depth = 50], count=100000, success %=10: 13ms
+void test_case(int, int) [ValueType = std::__1::basic_string&lt;char&gt;, ErrorType = std::__1::error_code, Depth = 50], count=100000, success %=10: 15ms
+
+void test_case(int, int) [ValueType = int, ErrorType = int, Depth = 50], count=100000, success %=90: 8ms
+void test_case(int, int) [ValueType = int, ErrorType = std::__1::error_code, Depth = 50], count=100000, success %=90: 8ms
+void test_case(int, int) [ValueType = std::__1::basic_string&lt;char&gt;, ErrorType = int, Depth = 50], count=100000, success %=90: 12ms
+void test_case(int, int) [ValueType = std::__1::basic_string&lt;char&gt;, ErrorType = std::__1::error_code, Depth = 50], count=100000, success %=90: 14ms
+
+void test_case(int, int) [ValueType = int, ErrorType = int, Depth = 100], count=100000, success %=10: 22ms
+void test_case(int, int) [ValueType = int, ErrorType = std::__1::error_code, Depth = 100], count=100000, success %=10: 18ms
+void test_case(int, int) [ValueType = std::__1::basic_string&lt;char&gt;, ErrorType = int, Depth = 100], count=100000, success %=10: 27ms
+void test_case(int, int) [ValueType = std::__1::basic_string&lt;char&gt;, ErrorType = std::__1::error_code, Depth = 100], count=100000, success %=10: 25ms
+
+void test_case(int, int) [ValueType = int, ErrorType = int, Depth = 100], count=100000, success %=90: 16ms
+void test_case(int, int) [ValueType = int, ErrorType = std::__1::error_code, Depth = 100], count=100000, success %=90: 16ms
+void test_case(int, int) [ValueType = std::__1::basic_string&lt;char&gt;, ErrorType = int, Depth = 100], count=100000, success %=90: 22ms
+void test_case(int, int) [ValueType = std::__1::basic_string&lt;char&gt;, ErrorType = std::__1::error_code, Depth = 100], count=100000, success %=90: 24ms</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">clang++ -O3 -std=C++11 -I../include -I ../../.. deep_stack.cpp</div>
+<div class="content">
+<pre>Using C++ exception handling
+
+void test_case(int, int) [ValueType = int, ErrorType = int, Depth = 50], count=100000, success %=10: 101ms
+void test_case(int, int) [ValueType = int, ErrorType = std::__1::error_code, Depth = 50], count=100000, success %=10: 108ms
+void test_case(int, int) [ValueType = std::__1::basic_string&lt;char&gt;, ErrorType = int, Depth = 50], count=100000, success %=10: 625ms
+void test_case(int, int) [ValueType = std::__1::basic_string&lt;char&gt;, ErrorType = std::__1::error_code, Depth = 50], count=100000, success %=10: 659ms
+
+void test_case(int, int) [ValueType = int, ErrorType = int, Depth = 50], count=100000, success %=90: 18ms
+void test_case(int, int) [ValueType = int, ErrorType = std::__1::error_code, Depth = 50], count=100000, success %=90: 19ms
+void test_case(int, int) [ValueType = std::__1::basic_string&lt;char&gt;, ErrorType = int, Depth = 50], count=100000, success %=90: 82ms
+void test_case(int, int) [ValueType = std::__1::basic_string&lt;char&gt;, ErrorType = std::__1::error_code, Depth = 50], count=100000, success %=90: 79ms
+
+void test_case(int, int) [ValueType = int, ErrorType = int, Depth = 100], count=100000, success %=10: 108ms
+void test_case(int, int) [ValueType = int, ErrorType = std::__1::error_code, Depth = 100], count=100000, success %=10: 110ms
+void test_case(int, int) [ValueType = std::__1::basic_string&lt;char&gt;, ErrorType = int, Depth = 100], count=100000, success %=10: 1181ms
+void test_case(int, int) [ValueType = std::__1::basic_string&lt;char&gt;, ErrorType = std::__1::error_code, Depth = 100], count=100000, success %=10: 1171ms
+
+void test_case(int, int) [ValueType = int, ErrorType = int, Depth = 100], count=100000, success %=90: 24ms
+void test_case(int, int) [ValueType = int, ErrorType = std::__1::error_code, Depth = 100], count=100000, success %=90: 26ms
+void test_case(int, int) [ValueType = std::__1::basic_string&lt;char&gt;, ErrorType = int, Depth = 100], count=100000, success %=90: 140ms
+void test_case(int, int) [ValueType = std::__1::basic_string&lt;char&gt;, ErrorType = std::__1::error_code, Depth = 100], count=100000, success %=90: 147ms</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">clang++ -O3 -std=C++11 -I../include -I ../../.. deep_stack.cpp -fno-exceptions -DBENCHMARK_INLINE=BOOST_NOEXCEPT_INLINE_FORCEINLINE</div>
+<div class="content">
+<pre>Using Noexcept
+
+void test_case(int, int) [ValueType = int, ErrorType = int, Depth = 50], count=100000, success %=10: 2ms
+void test_case(int, int) [ValueType = int, ErrorType = std::__1::error_code, Depth = 50], count=100000, success %=10: 3ms
+void test_case(int, int) [ValueType = std::__1::basic_string&lt;char&gt;, ErrorType = int, Depth = 50], count=100000, success %=10: 3ms
+void test_case(int, int) [ValueType = std::__1::basic_string&lt;char&gt;, ErrorType = std::__1::error_code, Depth = 50], count=100000, success %=10: 3ms
+
+void test_case(int, int) [ValueType = int, ErrorType = int, Depth = 50], count=100000, success %=90: 1ms
+void test_case(int, int) [ValueType = int, ErrorType = std::__1::error_code, Depth = 50], count=100000, success %=90: 1ms
+void test_case(int, int) [ValueType = std::__1::basic_string&lt;char&gt;, ErrorType = int, Depth = 50], count=100000, success %=90: 2ms
+void test_case(int, int) [ValueType = std::__1::basic_string&lt;char&gt;, ErrorType = std::__1::error_code, Depth = 50], count=100000, success %=90: 2ms
+
+void test_case(int, int) [ValueType = int, ErrorType = int, Depth = 100], count=100000, success %=10: 2ms
+void test_case(int, int) [ValueType = int, ErrorType = std::__1::error_code, Depth = 100], count=100000, success %=10: 2ms
+void test_case(int, int) [ValueType = std::__1::basic_string&lt;char&gt;, ErrorType = int, Depth = 100], count=100000, success %=10: 2ms
+void test_case(int, int) [ValueType = std::__1::basic_string&lt;char&gt;, ErrorType = std::__1::error_code, Depth = 100], count=100000, success %=10: 2ms
+
+void test_case(int, int) [ValueType = int, ErrorType = int, Depth = 100], count=100000, success %=90: 1ms
+void test_case(int, int) [ValueType = int, ErrorType = std::__1::error_code, Depth = 100], count=100000, success %=90: 2ms
+void test_case(int, int) [ValueType = std::__1::basic_string&lt;char&gt;, ErrorType = int, Depth = 100], count=100000, success %=90: 2ms
+void test_case(int, int) [ValueType = std::__1::basic_string&lt;char&gt;, ErrorType = std::__1::error_code, Depth = 100], count=100000, success %=90: 2ms</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">clang++ -O3 -std=C++11 -I../include -I ../../.. deep_stack.cpp -DBENCHMARK_INLINE=BOOST_NOEXCEPT_INLINE_FORCEINLINE</div>
+<div class="content">
+<pre>Using C++ exception handling
+
+void test_case(int, int) [ValueType = int, ErrorType = int, Depth = 50], count=100000, success %=10: 109ms
+void test_case(int, int) [ValueType = int, ErrorType = std::__1::error_code, Depth = 50], count=100000, success %=10: 108ms
+void test_case(int, int) [ValueType = std::__1::basic_string&lt;char&gt;, ErrorType = int, Depth = 50], count=100000, success %=10: 87ms
+void test_case(int, int) [ValueType = std::__1::basic_string&lt;char&gt;, ErrorType = std::__1::error_code, Depth = 50], count=100000, success %=10: 92ms
+
+void test_case(int, int) [ValueType = int, ErrorType = int, Depth = 50], count=100000, success %=90: 10ms
+void test_case(int, int) [ValueType = int, ErrorType = std::__1::error_code, Depth = 50], count=100000, success %=90: 9ms
+void test_case(int, int) [ValueType = std::__1::basic_string&lt;char&gt;, ErrorType = int, Depth = 50], count=100000, success %=90: 9ms
+void test_case(int, int) [ValueType = std::__1::basic_string&lt;char&gt;, ErrorType = std::__1::error_code, Depth = 50], count=100000, success %=90: 10ms
+
+void test_case(int, int) [ValueType = int, ErrorType = int, Depth = 100], count=100000, success %=10: 95ms
+void test_case(int, int) [ValueType = int, ErrorType = std::__1::error_code, Depth = 100], count=100000, success %=10: 97ms
+void test_case(int, int) [ValueType = std::__1::basic_string&lt;char&gt;, ErrorType = int, Depth = 100], count=100000, success %=10: 98ms
+void test_case(int, int) [ValueType = std::__1::basic_string&lt;char&gt;, ErrorType = std::__1::error_code, Depth = 100], count=100000, success %=10: 92ms
+
+void test_case(int, int) [ValueType = int, ErrorType = int, Depth = 100], count=100000, success %=90: 9ms
+void test_case(int, int) [ValueType = int, ErrorType = std::__1::error_code, Depth = 100], count=100000, success %=90: 9ms
+void test_case(int, int) [ValueType = std::__1::basic_string&lt;char&gt;, ErrorType = int, Depth = 100], count=100000, success %=90: 9ms
+void test_case(int, int) [ValueType = std::__1::basic_string&lt;char&gt;, ErrorType = std::__1::error_code, Depth = 100], count=100000, success %=90: 10ms</pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -2422,7 +2571,7 @@ If control is entering a scope where exception handling is enabled, you can conv
 </li>
 <li>
 <p><em>Passing errors through thread-local storage doesn&#8217;t work if the consumption of the result of a function call (success or error) can not be consumed immediately. What if I need to postpone that until later?</em></p>
-<p>The <code><a href="#try_">result&lt;T&gt;</a></code> template solves this exact problem. See <a href="#programming_techniques">Programming techniques and guidelines</a>.</p>
+<p>The <code><a href="#try_">result&lt;T&gt; </a></code> template solves this exact problem. See <a href="#programming_techniques">Programming techniques and guidelines</a>.</p>
 </li>
 </ol>
 </div>
