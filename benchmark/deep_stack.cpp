@@ -144,7 +144,7 @@ void test_case( int success_percentage, int count )
         {
             benchmark<ValueType,ErrorType,Depth>::test_function(success_percentage);
         }
-    catch( ErrorType & )
+        catch( ErrorType & )
         {
         }
 #endif
