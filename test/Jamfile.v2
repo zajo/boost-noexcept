@@ -9,7 +9,6 @@ import path ;
 project
     : requirements
         <link>static
-        <source>/boost/thread
         <cxxflags>-std=c++11
         <toolset>gcc:<linkflags>-pthread
 #        <cxxflags>-DBOOST_NOEXCEPT_THROW_EXCEPTION(x)=throw(x)
