@@ -578,7 +578,7 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#configuration">Macros and configuration</a></li>
 <li><a href="#_building_and_installation">Building and installation</a></li>
 <li><a href="#_building_the_unit_tests_and_the_examples">Building the unit tests and the examples</a></li>
-<li><a href="#_benchmark">Benchmark</a></li>
+<li><a href="#benchmark">Benchmark</a></li>
 <li><a href="#qanda">Q&amp;A</a></li>
 <li><a href="#_acknowledgements">Acknowledgements</a></li>
 </ul>
@@ -695,7 +695,7 @@ Noexcept is not part of Boost.
 </ul>
 </div>
 <div class="paragraph">
-<p>For these reasons, Noexcept does not define a special return type. Programmers may use any type whatsoever, the only requirement is that it provides a special state&#8201;&#8212;&#8201;a value that can be returned in case of a failure. As a bonus, this virtually eliminates the chance of Noexcept impacting the performance of passing values up the call chain.</p>
+<p>For these reasons, Noexcept does not define a special return type. Programmers may use any type whatsoever, the only requirement is that it provides a special state&#8201;&#8212;&#8201;a value that can be returned in case of a failure. Besides facilitating interoperability, this virtually eliminates the chance of Noexcept impacting the performance of passing values up the call chain.</p>
 </div>
 <div class="paragraph">
 <p>When a failure is detected, the error object is created in thread-local storage rather than passed up one level at a time. It is destroyed when control reaches an error-handling function that recognizes it and recovers from the failure.</p>
@@ -710,7 +710,7 @@ Noexcept is not part of Boost.
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For a comparison between various error-reporting libraries and proposals, see <a href="#alternatives">Alternatives to Noexcept</a>.
+For a comparison between various error-reporting libraries and proposals, see <a href="#alternatives">Alternatives to Noexcept</a>. There is also a <a href="#benchmark">benchmark program</a>.
 </td>
 </tr>
 </table>
@@ -1236,7 +1236,7 @@ boost::optional&lt;<span class="predefined-type">float</span>&gt; erratic_caller
 <p>If <code>T</code> is not <code>bool</code> and <code>std::is_integral&lt;T&gt;::value</code> is <code>true</code>, then <code>throw_return&lt;T&gt;::value()</code> returns <code>static_cast&lt;T&gt;(-1)</code>.</p>
 </li>
 <li>
-<p>Otherwise the it returns <code>T()</code>.</p>
+<p>Otherwise it returns <code>T()</code>.</p>
 </li>
 </ul>
 </div>
@@ -2162,7 +2162,8 @@ std::exception::what: my_error
 
 <span class="comment">//Create and launch 100 tasks:</span>
 std::generate_n( std::inserter(fut,fut.end()), <span class="integer">100</span>, [ ] {
-    <span class="comment">//Call compute() and capture the result with into a result&lt;int&gt;:</span>
+
+    <span class="comment">//Call compute() and capture the result into a result&lt;int&gt;:</span>
     std::packaged_task&lt;result&lt;<span class="predefined-type">int</span>&gt;()&gt; task( [ ] {
         <span class="keyword">return</span> try_(compute());
     } );
@@ -2171,6 +2172,7 @@ std::generate_n( std::inserter(fut,fut.end()), <span class="integer">100</span>,
     <span class="directive">auto</span> f=task.get_future();
     std::thread(std::move(task)).detach();
     <span class="keyword">return</span> f;
+
 } );</code></pre>
 </div>
 </div>
@@ -2309,7 +2311,7 @@ std::generate_n( std::inserter(fut,fut.end()), <span class="integer">100</span>,
 </div>
 </div>
 <div class="sect1">
-<h2 id="_benchmark">Benchmark</h2>
+<h2 id="benchmark">Benchmark</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Error handling library benchmarks are tricky to write and with limited usefulness as design exploration tool, but since <em>speed!!!</em> is a hot topic of discussion, Noexcept includes a benchmark program called <code>deep_stack</code>. It can propagate different types of return values and error objects across configurable depth of function calls. In addition:</p>
@@ -2333,28 +2335,26 @@ std::generate_n( std::inserter(fut,fut.end()), <span class="integer">100</span>,
 <div class="exampleblock">
 <div class="content">
 <div class="listingblock">
-<div class="title">clang++ -std=C++11 -O3 -I../include -I../../.. ./deep_stack.cpp -fno-exceptions</div>
+<div class="title">clang++ -O3 -I../include -I../../.. ./deep_stack.cpp -fno-exceptions</div>
 <div class="content">
 <pre>Using Noexcept <i class="conum" data-value="1"></i><b>(1)</b>
 
-void test_case(int, int) [Depth = 50, ErrorType = my_error, ValueType = int], count=100000, success %=10: 10ms
-void test_case(int, int) [Depth = 50, ErrorType = my_error, ValueType = std::__1::basic_string&lt;char&gt;], count=100000, success %=10: 37ms
+void test_case(int, int) [Depth = 10, ErrorType = my_error, ValueType = int], count=420000, success %=10: 14ms
+void test_case(int, int) [Depth = 10, ErrorType = my_error, ValueType = int], count=420000, success %=90: 9ms
+void test_case(int, int) [Depth = 30, ErrorType = my_error, ValueType = int], count=420000, success %=10: 26ms
+void test_case(int, int) [Depth = 30, ErrorType = my_error, ValueType = int], count=420000, success %=90: 22ms
 
-void test_case(int, int) [Depth = 50, ErrorType = my_error, ValueType = int], count=100000, success %=90: 8ms
-void test_case(int, int) [Depth = 50, ErrorType = my_error, ValueType = std::__1::basic_string&lt;char&gt;], count=100000, success %=90: 36ms
-
-void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = int], count=100000, success %=10: 17ms
-void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = std::__1::basic_string&lt;char&gt;], count=100000, success %=10: 90ms
-
-void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = int], count=100000, success %=90: 15ms
-void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = std::__1::basic_string&lt;char&gt;], count=100000, success %=90: 85ms</pre>
+void test_case(int, int) [Depth = 10, ErrorType = my_error, ValueType = std::__1::basic_string&lt;char&gt;], count=420000, success %=10: 20ms
+void test_case(int, int) [Depth = 10, ErrorType = my_error, ValueType = std::__1::basic_string&lt;char&gt;], count=420000, success %=90: 16ms
+void test_case(int, int) [Depth = 30, ErrorType = my_error, ValueType = std::__1::basic_string&lt;char&gt;], count=420000, success %=10: 83ms
+void test_case(int, int) [Depth = 30, ErrorType = my_error, ValueType = std::__1::basic_string&lt;char&gt;], count=420000, success %=90: 76ms</pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Exception handling <strong>disabled</strong>, inlining <strong>disabled</strong>, using Noexcept to propagate errors across 50 or 100 stack frames, with 10% or 90% chance of the operation being successful (vs. failing), returning <code>int</code> or <code>string</code> in case of success.</td>
+<td>Exception handling <strong>disabled</strong>, inlining <strong>disabled</strong>, using Noexcept to propagate errors across 10 or 30 stack frames, with 10% or 90% chance of the operation being successful (vs. failing), returning <code>int</code> or <code>string</code> in case of success.</td>
 </tr>
 </table>
 </div>
@@ -2363,28 +2363,26 @@ void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = std::__
 <div class="exampleblock">
 <div class="content">
 <div class="listingblock">
-<div class="title">clang++ -O3 -std=C++11 -I../include -I ../../.. deep_stack.cpp</div>
+<div class="title">clang++ -O3 -I../include -I ../../.. deep_stack.cpp</div>
 <div class="content">
 <pre>Using C++ exception handling <i class="conum" data-value="1"></i><b>(1)</b>
 
-void test_case(int, int) [Depth = 50, ErrorType = my_error, ValueType = int], count=100000, success %=10: 96ms
-void test_case(int, int) [Depth = 50, ErrorType = my_error, ValueType = std::__1::basic_string&lt;char&gt;], count=100000, success %=10: 580ms
+void test_case(int, int) [Depth = 10, ErrorType = my_error, ValueType = int], count=420000, success %=10: 371ms
+void test_case(int, int) [Depth = 10, ErrorType = my_error, ValueType = int], count=420000, success %=90: 45ms
+void test_case(int, int) [Depth = 30, ErrorType = my_error, ValueType = int], count=420000, success %=10: 397ms
+void test_case(int, int) [Depth = 30, ErrorType = my_error, ValueType = int], count=420000, success %=90: 57ms
 
-void test_case(int, int) [Depth = 50, ErrorType = my_error, ValueType = int], count=100000, success %=90: 16ms
-void test_case(int, int) [Depth = 50, ErrorType = my_error, ValueType = std::__1::basic_string&lt;char&gt;], count=100000, success %=90: 98ms
-
-void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = int], count=100000, success %=10: 109ms
-void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = std::__1::basic_string&lt;char&gt;], count=100000, success %=10: 1115ms
-
-void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = int], count=100000, success %=90: 24ms
-void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = std::__1::basic_string&lt;char&gt;], count=100000, success %=90: 200ms</pre>
+void test_case(int, int) [Depth = 10, ErrorType = my_error, ValueType = std::__1::basic_string&lt;char&gt;], count=420000, success %=10: 792ms
+void test_case(int, int) [Depth = 10, ErrorType = my_error, ValueType = std::__1::basic_string&lt;char&gt;], count=420000, success %=90: 95ms
+void test_case(int, int) [Depth = 30, ErrorType = my_error, ValueType = std::__1::basic_string&lt;char&gt;], count=420000, success %=10: 1708ms
+void test_case(int, int) [Depth = 30, ErrorType = my_error, ValueType = std::__1::basic_string&lt;char&gt;], count=420000, success %=90: 239ms</pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Exception handling <strong>enabled</strong>, inlining <strong>disabled</strong>, using <code>throw</code> to propagate errors across 50 or 100 stack frames, with 10% or 90% chance of the operation being successful (vs. failing), returning <code>int</code> or <code>string</code> in case of success.</td>
+<td>Exception handling <strong>enabled</strong>, inlining <strong>disabled</strong>, using <code>throw</code> to propagate errors across 10 or 30 stack frames, with 10% or 90% chance of the operation being successful (vs. failing), returning <code>int</code> or <code>string</code> in case of success.</td>
 </tr>
 </table>
 </div>
@@ -2393,28 +2391,26 @@ void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = std::__
 <div class="exampleblock">
 <div class="content">
 <div class="listingblock">
-<div class="title">clang++ -O3 -std=C++11 -I../include -I ../../.. deep_stack.cpp -fno-exceptions -DBENCHMARK_INLINE=BOOST_NOEXCEPT_INLINE_FORCEINLINE</div>
+<div class="title">clang++ -O3 -I../include -I ../../.. deep_stack.cpp -fno-exceptions -DBENCHMARK_INLINE=BOOST_NOEXCEPT_INLINE_FORCEINLINE</div>
 <div class="content">
 <pre>Using Noexcept <i class="conum" data-value="1"></i><b>(1)</b>
 
-void test_case(int, int) [Depth = 50, ErrorType = my_error, ValueType = int], count=100000, success %=10: 3ms
-void test_case(int, int) [Depth = 50, ErrorType = my_error, ValueType = std::__1::basic_string&lt;char&gt;], count=100000, success %=10: 3ms
+void test_case(int, int) [Depth = 10, ErrorType = my_error, ValueType = int], count=420000, success %=10: 11ms
+void test_case(int, int) [Depth = 10, ErrorType = my_error, ValueType = int], count=420000, success %=90: 6ms
+void test_case(int, int) [Depth = 30, ErrorType = my_error, ValueType = int], count=420000, success %=10: 11ms
+void test_case(int, int) [Depth = 30, ErrorType = my_error, ValueType = int], count=420000, success %=90: 7ms
 
-void test_case(int, int) [Depth = 50, ErrorType = my_error, ValueType = int], count=100000, success %=90: 1ms
-void test_case(int, int) [Depth = 50, ErrorType = my_error, ValueType = std::__1::basic_string&lt;char&gt;], count=100000, success %=90: 1ms
-
-void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = int], count=100000, success %=10: 2ms
-void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = std::__1::basic_string&lt;char&gt;], count=100000, success %=10: 2ms
-
-void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = int], count=100000, success %=90: 1ms
-void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = std::__1::basic_string&lt;char&gt;], count=100000, success %=90: 2ms</pre>
+void test_case(int, int) [Depth = 10, ErrorType = my_error, ValueType = std::__1::basic_string&lt;char&gt;], count=420000, success %=10: 11ms
+void test_case(int, int) [Depth = 10, ErrorType = my_error, ValueType = std::__1::basic_string&lt;char&gt;], count=420000, success %=90: 8ms
+void test_case(int, int) [Depth = 30, ErrorType = my_error, ValueType = std::__1::basic_string&lt;char&gt;], count=420000, success %=10: 12ms
+void test_case(int, int) [Depth = 30, ErrorType = my_error, ValueType = std::__1::basic_string&lt;char&gt;], count=420000, success %=90: 7ms</pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Exception handling <strong>disabled</strong>, inlining <strong>enabled</strong>, using Noexcept to propagate errors across 50 or 100 levels of inlined function calls, with 10% or 90% chance of the operation being successful (vs. failing), returning <code>int</code> or <code>string</code> in case of success.</td>
+<td>Exception handling <strong>disabled</strong>, inlining <strong>enabled</strong>, using Noexcept to propagate errors across 10 or 30 levels of inlined function calls, with 10% or 90% chance of the operation being successful (vs. failing), returning <code>int</code> or <code>string</code> in case of success.</td>
 </tr>
 </table>
 </div>
@@ -2423,28 +2419,26 @@ void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = std::__
 <div class="exampleblock">
 <div class="content">
 <div class="listingblock">
-<div class="title">clang++ -O3 -std=C++11 -I../include -I ../../.. deep_stack.cpp -DBENCHMARK_INLINE=BOOST_NOEXCEPT_INLINE_FORCEINLINE</div>
+<div class="title">clang++ -O3 -I../include -I ../../.. deep_stack.cpp -DBENCHMARK_INLINE=BOOST_NOEXCEPT_INLINE_FORCEINLINE</div>
 <div class="content">
 <pre>Using C++ exception handling <i class="conum" data-value="1"></i><b>(1)</b>
 
-void test_case(int, int) [Depth = 50, ErrorType = my_error, ValueType = int], count=100000, success %=10: 88ms
-void test_case(int, int) [Depth = 50, ErrorType = my_error, ValueType = std::__1::basic_string&lt;char&gt;], count=100000, success %=10: 83ms
+void test_case(int, int) [Depth = 10, ErrorType = my_error, ValueType = int], count=420000, success %=10: 339ms
+void test_case(int, int) [Depth = 10, ErrorType = my_error, ValueType = int], count=420000, success %=90: 38ms
+void test_case(int, int) [Depth = 30, ErrorType = my_error, ValueType = int], count=420000, success %=10: 337ms
+void test_case(int, int) [Depth = 30, ErrorType = my_error, ValueType = int], count=420000, success %=90: 39ms
 
-void test_case(int, int) [Depth = 50, ErrorType = my_error, ValueType = int], count=100000, success %=90: 9ms
-void test_case(int, int) [Depth = 50, ErrorType = my_error, ValueType = std::__1::basic_string&lt;char&gt;], count=100000, success %=90: 9ms
-
-void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = int], count=100000, success %=10: 83ms
-void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = std::__1::basic_string&lt;char&gt;], count=100000, success %=10: 82ms
-
-void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = int], count=100000, success %=90: 8ms
-void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = std::__1::basic_string&lt;char&gt;], count=100000, success %=90: 9ms</pre>
+void test_case(int, int) [Depth = 10, ErrorType = my_error, ValueType = std::__1::basic_string&lt;char&gt;], count=420000, success %=10: 334ms
+void test_case(int, int) [Depth = 10, ErrorType = my_error, ValueType = std::__1::basic_string&lt;char&gt;], count=420000, success %=90: 41ms
+void test_case(int, int) [Depth = 30, ErrorType = my_error, ValueType = std::__1::basic_string&lt;char&gt;], count=420000, success %=10: 335ms
+void test_case(int, int) [Depth = 30, ErrorType = my_error, ValueType = std::__1::basic_string&lt;char&gt;], count=420000, success %=90: 40ms</pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Exception handling <strong>enabled</strong>, inlining <strong>enabled</strong>, using <code>throw</code> to propagate errors across 50 or 100 levels of inlined function calls, with 10% or 90% chance of the operation being successful (vs. failing), returning <code>int</code> or <code>string</code> in case of success.</td>
+<td>Exception handling <strong>enabled</strong>, inlining <strong>enabled</strong>, using <code>throw</code> to propagate errors across 10 or 30 levels of inlined function calls, with 10% or 90% chance of the operation being successful (vs. failing), returning <code>int</code> or <code>string</code> in case of success.</td>
 </tr>
 </table>
 </div>
