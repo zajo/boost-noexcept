@@ -167,20 +167,16 @@ int main( int argc, char const * argv[ ] )
     std::cout << "Using Outcome" << std::endl;
 
     std::cout << std::endl;
-    srand(0); test_case<50,my_error,int>(10,100000);
-    srand(0); test_case<50,my_error,std::string>(10,100000);
+    srand(0); test_case<10,my_error,int>(10,420000);
+    srand(0); test_case<10,my_error,int>(90,420000);
+    srand(0); test_case<30,my_error,int>(10,420000);
+    srand(0); test_case<30,my_error,int>(90,420000);
 
     std::cout << std::endl;
-    srand(0); test_case<50,my_error,int>(90,100000);
-    srand(0); test_case<50,my_error,std::string>(90,100000);
-
-    std::cout << std::endl;
-    srand(0); test_case<100,my_error,int>(10,100000);
-    srand(0); test_case<100,my_error,std::string>(10,100000);
-
-    std::cout << std::endl;
-    srand(0); test_case<100,my_error,int>(90,100000);
-    srand(0); test_case<100,my_error,std::string>(90,100000);
+    srand(0); test_case<10,my_error,std::string>(10,420000);
+    srand(0); test_case<10,my_error,std::string>(90,420000);
+    srand(0); test_case<30,my_error,std::string>(10,420000);
+    srand(0); test_case<30,my_error,std::string>(90,420000);
 
     return 0;
 }
