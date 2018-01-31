@@ -54,13 +54,13 @@ In addition, such design would lead to problems specific to C and {CPP}:
 * It is intrusive, so it couldn't be used in many practical cases, for example when reporting errors from a C callback.
 * {CPP} programmers do not even agree on what string type they should use, so interoperability between the different parts of a large program is going to be a problem.
 
-For these reasons, Noexcept does not define a special return type. Programmers may use any type whatsoever, the only requirement is that it provides a special state -- a value that can be returned in case of a failure. As a bonus, this virtually eliminates the chance of Noexcept impacting the performance of passing values up the call chain.
+For these reasons, Noexcept does not define a special return type. Programmers may use any type whatsoever, the only requirement is that it provides a special state -- a value that can be returned in case of a failure. Besides facilitating interoperability, this virtually eliminates the chance of Noexcept impacting the performance of passing values up the call chain.
 
 When a failure is detected, the error object is created in thread-local storage rather than passed up one level at a time. It is destroyed when control reaches an error-handling function that recognizes it and recovers from the failure.
 
 Further rationale for using TLS for transporting error objects is that errors are semantically very different from successful results. In a typical program, there may be very many results of different types produced, transformed, processed, used in different computations and algorithms, passed up and down the call chain. In contrast, the path taken by an error object is much simpler -- and it is (mostly, sometimes even exclusively) of interest to only two contexts: the function that detects and reports the error, and the function which recognizes it and is able to handle it. For that reason, it makes sense to push errors to the side, so they are less intrusive yet still available for access if needed.
 
-NOTE: For a comparison between various error-reporting libraries and proposals, see <<alternatives,Alternatives to Noexcept>>.
+NOTE: For a comparison between various error-reporting libraries and proposals, see <<alternatives,Alternatives to Noexcept>>. There is also a <<benchmark,benchmark program>>.
 
 [[guarantee]]
 == No error gets ignored guarantee
@@ -175,7 +175,7 @@ The `throw_` object itself converts to any type so it can be used in `return` ex
 The `throw_return<T>` template may be specialized to specify the value to be returned to the caller when `throw_` is used to report a failure. The main template is defined such that:
 
 * If `T` is not `bool` and `std::is_integral<T>::value` is `true`, then `throw_return<T>::value()` returns `static_cast<T>(-1)`.
-* Otherwise the it returns `T()`.
+* Otherwise it returns `T()`.
 
 The `throw_` class has the following members:
 
@@ -767,7 +767,8 @@ std::vector<std::future<result<int> > > fut;
 
 //Create and launch 100 tasks:
 std::generate_n( std::inserter(fut,fut.end()), 100, [ ] {
-    //Call compute() and capture the result with into a result<int>:
+
+    //Call compute() and capture the result into a result<int>:
     std::packaged_task<result<int>()> task( [ ] {
         return try_(compute());
     } );
@@ -776,6 +777,7 @@ std::generate_n( std::inserter(fut,fut.end()), 100, [ ] {
     auto f=task.get_future();
     std::thread(std::move(task)).detach();
     return f;
+
 } );
 ----
 
@@ -873,6 +875,7 @@ Noexcept is a header-only library and requires no building or installation.
 
 The unit tests and the examples can be built within the Boost framework: clone Noexcept under the `libs` subdirectory in your boost installation, then `cd` into `noexcept/test` and execute `b2` as usual.
 
+[[benchmark]]
 == Benchmark
 
 Error handling library benchmarks are tricky to write and with limited usefulness as design exploration tool, but since _speed!!!_ is a hot topic of discussion, Noexcept includes a benchmark program called `deep_stack`. It can propagate different types of return values and error objects across configurable depth of function calls. In addition:
@@ -885,83 +888,75 @@ Below is the result of running `deep_stack`, compiled with `Apple LLVM version 9
 The source code of `deep_stack` is available https://github.com/zajo/boost-noexcept/blob/master/benchmark/deep_stack.cpp[here].
 
 ====
-.clang++ -std={cpp}11 -O3 -I../include -I../../.. ./deep_stack.cpp -fno-exceptions
+.clang++ -O3 -I../include -I../../.. ./deep_stack.cpp -fno-exceptions
 ----
 Using Noexcept <1>
 
-void test_case(int, int) [Depth = 50, ErrorType = my_error, ValueType = int], count=100000, success %=10: 10ms
-void test_case(int, int) [Depth = 50, ErrorType = my_error, ValueType = std::__1::basic_string<char>], count=100000, success %=10: 37ms
+void test_case(int, int) [Depth = 10, ErrorType = my_error, ValueType = int], count=420000, success %=10: 14ms
+void test_case(int, int) [Depth = 10, ErrorType = my_error, ValueType = int], count=420000, success %=90: 9ms
+void test_case(int, int) [Depth = 30, ErrorType = my_error, ValueType = int], count=420000, success %=10: 26ms
+void test_case(int, int) [Depth = 30, ErrorType = my_error, ValueType = int], count=420000, success %=90: 22ms
 
-void test_case(int, int) [Depth = 50, ErrorType = my_error, ValueType = int], count=100000, success %=90: 8ms
-void test_case(int, int) [Depth = 50, ErrorType = my_error, ValueType = std::__1::basic_string<char>], count=100000, success %=90: 36ms
-
-void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = int], count=100000, success %=10: 17ms
-void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = std::__1::basic_string<char>], count=100000, success %=10: 90ms
-
-void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = int], count=100000, success %=90: 15ms
-void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = std::__1::basic_string<char>], count=100000, success %=90: 85ms
+void test_case(int, int) [Depth = 10, ErrorType = my_error, ValueType = std::__1::basic_string<char>], count=420000, success %=10: 20ms
+void test_case(int, int) [Depth = 10, ErrorType = my_error, ValueType = std::__1::basic_string<char>], count=420000, success %=90: 16ms
+void test_case(int, int) [Depth = 30, ErrorType = my_error, ValueType = std::__1::basic_string<char>], count=420000, success %=10: 83ms
+void test_case(int, int) [Depth = 30, ErrorType = my_error, ValueType = std::__1::basic_string<char>], count=420000, success %=90: 76ms
 ----
-<1> Exception handling *disabled*, inlining *disabled*, using Noexcept to propagate errors across 50 or 100 stack frames, with 10% or 90% chance of the operation being successful (vs. failing), returning `int` or `string` in case of success.
+<1> Exception handling *disabled*, inlining *disabled*, using Noexcept to propagate errors across 10 or 30 stack frames, with 10% or 90% chance of the operation being successful (vs. failing), returning `int` or `string` in case of success.
 ====
 
 ====
-.clang++ -O3 -std={cpp}11 -I../include -I ../../.. deep_stack.cpp
+.clang++ -O3 -I../include -I ../../.. deep_stack.cpp
 ----
 Using C++ exception handling <1>
 
-void test_case(int, int) [Depth = 50, ErrorType = my_error, ValueType = int], count=100000, success %=10: 96ms
-void test_case(int, int) [Depth = 50, ErrorType = my_error, ValueType = std::__1::basic_string<char>], count=100000, success %=10: 580ms
+void test_case(int, int) [Depth = 10, ErrorType = my_error, ValueType = int], count=420000, success %=10: 371ms
+void test_case(int, int) [Depth = 10, ErrorType = my_error, ValueType = int], count=420000, success %=90: 45ms
+void test_case(int, int) [Depth = 30, ErrorType = my_error, ValueType = int], count=420000, success %=10: 397ms
+void test_case(int, int) [Depth = 30, ErrorType = my_error, ValueType = int], count=420000, success %=90: 57ms
 
-void test_case(int, int) [Depth = 50, ErrorType = my_error, ValueType = int], count=100000, success %=90: 16ms
-void test_case(int, int) [Depth = 50, ErrorType = my_error, ValueType = std::__1::basic_string<char>], count=100000, success %=90: 98ms
-
-void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = int], count=100000, success %=10: 109ms
-void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = std::__1::basic_string<char>], count=100000, success %=10: 1115ms
-
-void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = int], count=100000, success %=90: 24ms
-void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = std::__1::basic_string<char>], count=100000, success %=90: 200ms
+void test_case(int, int) [Depth = 10, ErrorType = my_error, ValueType = std::__1::basic_string<char>], count=420000, success %=10: 792ms
+void test_case(int, int) [Depth = 10, ErrorType = my_error, ValueType = std::__1::basic_string<char>], count=420000, success %=90: 95ms
+void test_case(int, int) [Depth = 30, ErrorType = my_error, ValueType = std::__1::basic_string<char>], count=420000, success %=10: 1708ms
+void test_case(int, int) [Depth = 30, ErrorType = my_error, ValueType = std::__1::basic_string<char>], count=420000, success %=90: 239ms
 ----
-<1> Exception handling *enabled*, inlining *disabled*, using `throw` to propagate errors across 50 or 100 stack frames, with 10% or 90% chance of the operation being successful (vs. failing), returning `int` or `string` in case of success.
+<1> Exception handling *enabled*, inlining *disabled*, using `throw` to propagate errors across 10 or 30 stack frames, with 10% or 90% chance of the operation being successful (vs. failing), returning `int` or `string` in case of success.
 ====
 
 ====
-.clang++ -O3 -std={cpp}11 -I../include -I ../../.. deep_stack.cpp -fno-exceptions -DBENCHMARK_INLINE=BOOST_NOEXCEPT_INLINE_FORCEINLINE
+.clang++ -O3 -I../include -I ../../.. deep_stack.cpp -fno-exceptions -DBENCHMARK_INLINE=BOOST_NOEXCEPT_INLINE_FORCEINLINE
 ----
 Using Noexcept <1>
 
-void test_case(int, int) [Depth = 50, ErrorType = my_error, ValueType = int], count=100000, success %=10: 3ms
-void test_case(int, int) [Depth = 50, ErrorType = my_error, ValueType = std::__1::basic_string<char>], count=100000, success %=10: 3ms
+void test_case(int, int) [Depth = 10, ErrorType = my_error, ValueType = int], count=420000, success %=10: 11ms
+void test_case(int, int) [Depth = 10, ErrorType = my_error, ValueType = int], count=420000, success %=90: 6ms
+void test_case(int, int) [Depth = 30, ErrorType = my_error, ValueType = int], count=420000, success %=10: 11ms
+void test_case(int, int) [Depth = 30, ErrorType = my_error, ValueType = int], count=420000, success %=90: 7ms
 
-void test_case(int, int) [Depth = 50, ErrorType = my_error, ValueType = int], count=100000, success %=90: 1ms
-void test_case(int, int) [Depth = 50, ErrorType = my_error, ValueType = std::__1::basic_string<char>], count=100000, success %=90: 1ms
-
-void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = int], count=100000, success %=10: 2ms
-void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = std::__1::basic_string<char>], count=100000, success %=10: 2ms
-
-void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = int], count=100000, success %=90: 1ms
-void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = std::__1::basic_string<char>], count=100000, success %=90: 2ms
+void test_case(int, int) [Depth = 10, ErrorType = my_error, ValueType = std::__1::basic_string<char>], count=420000, success %=10: 11ms
+void test_case(int, int) [Depth = 10, ErrorType = my_error, ValueType = std::__1::basic_string<char>], count=420000, success %=90: 8ms
+void test_case(int, int) [Depth = 30, ErrorType = my_error, ValueType = std::__1::basic_string<char>], count=420000, success %=10: 12ms
+void test_case(int, int) [Depth = 30, ErrorType = my_error, ValueType = std::__1::basic_string<char>], count=420000, success %=90: 7ms
 ----
-<1> Exception handling *disabled*, inlining *enabled*, using Noexcept to propagate errors across 50 or 100 levels of inlined function calls, with 10% or 90% chance of the operation being successful (vs. failing), returning `int` or `string` in case of success.
+<1> Exception handling *disabled*, inlining *enabled*, using Noexcept to propagate errors across 10 or 30 levels of inlined function calls, with 10% or 90% chance of the operation being successful (vs. failing), returning `int` or `string` in case of success.
 ====
 
 ====
-.clang++ -O3 -std={cpp}11 -I../include -I ../../.. deep_stack.cpp -DBENCHMARK_INLINE=BOOST_NOEXCEPT_INLINE_FORCEINLINE
+.clang++ -O3 -I../include -I ../../.. deep_stack.cpp -DBENCHMARK_INLINE=BOOST_NOEXCEPT_INLINE_FORCEINLINE
 ----
 Using C++ exception handling <1>
 
-void test_case(int, int) [Depth = 50, ErrorType = my_error, ValueType = int], count=100000, success %=10: 88ms
-void test_case(int, int) [Depth = 50, ErrorType = my_error, ValueType = std::__1::basic_string<char>], count=100000, success %=10: 83ms
+void test_case(int, int) [Depth = 10, ErrorType = my_error, ValueType = int], count=420000, success %=10: 339ms
+void test_case(int, int) [Depth = 10, ErrorType = my_error, ValueType = int], count=420000, success %=90: 38ms
+void test_case(int, int) [Depth = 30, ErrorType = my_error, ValueType = int], count=420000, success %=10: 337ms
+void test_case(int, int) [Depth = 30, ErrorType = my_error, ValueType = int], count=420000, success %=90: 39ms
 
-void test_case(int, int) [Depth = 50, ErrorType = my_error, ValueType = int], count=100000, success %=90: 9ms
-void test_case(int, int) [Depth = 50, ErrorType = my_error, ValueType = std::__1::basic_string<char>], count=100000, success %=90: 9ms
-
-void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = int], count=100000, success %=10: 83ms
-void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = std::__1::basic_string<char>], count=100000, success %=10: 82ms
-
-void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = int], count=100000, success %=90: 8ms
-void test_case(int, int) [Depth = 100, ErrorType = my_error, ValueType = std::__1::basic_string<char>], count=100000, success %=90: 9ms
+void test_case(int, int) [Depth = 10, ErrorType = my_error, ValueType = std::__1::basic_string<char>], count=420000, success %=10: 334ms
+void test_case(int, int) [Depth = 10, ErrorType = my_error, ValueType = std::__1::basic_string<char>], count=420000, success %=90: 41ms
+void test_case(int, int) [Depth = 30, ErrorType = my_error, ValueType = std::__1::basic_string<char>], count=420000, success %=10: 335ms
+void test_case(int, int) [Depth = 30, ErrorType = my_error, ValueType = std::__1::basic_string<char>], count=420000, success %=90: 40ms
 ----
-<1> Exception handling *enabled*, inlining *enabled*, using `throw` to propagate errors across 50 or 100 levels of inlined function calls, with 10% or 90% chance of the operation being successful (vs. failing), returning `int` or `string` in case of success.
+<1> Exception handling *enabled*, inlining *enabled*, using `throw` to propagate errors across 10 or 30 levels of inlined function calls, with 10% or 90% chance of the operation being successful (vs. failing), returning `int` or `string` in case of success.
 ====
 
 [[qanda]]
