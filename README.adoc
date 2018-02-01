@@ -415,7 +415,7 @@ There are many function return types which usually fit this guideline quite natu
 * `HANDLE` (Windows system objects)
 * `int` and any integral type (-1 is invalid count, length, magnitude, size, width, height, file descriptor, etc.)
 
-NOTE: `shared_ptr<T>` deserves special mentioning here because the possibility to use custom deleters make it extremely deployable as the return value from any factory function which allocates any type of resource.
+TIP: `shared_ptr<T>` deserves special mentioning here because the possibility to use custom deleters make it extremely deployable as the return value from any factory function which allocates any type of resource.
 
 Other types that have an empty state may require more careful consideration:
 
@@ -443,9 +443,7 @@ int count_words_in_file( FILE * f ) noexcept {
     return count_words( read_file(f) );
 }
 ----
-That's because we must check if `read_file` was successful.
-
-NOTE: Specifically, we need to be able to tell the difference between `read_file` returning an empty `vector` (using `<<throw_,throw_>>`) because it failed to read the file, and it returning an empty `vector` because the file was empty.
+That's because we must check if `read_file` was successful. Specifically, we need to be able to tell the difference between `read_file` returning an empty `vector` (using `<<throw_,throw_>>`) because it failed to read the file, and it returning an empty `vector` because the file was empty.
 
 In terms of Noexcept, we could use:
 
@@ -582,7 +580,7 @@ bool caller() noexcept {
 
 Noexcept is compatible with `link:http://www.boost.org/doc/libs/release/libs/exception/doc/diagnostic_information.html[boost::diagnostic_information]()` without being coupled with it.
 
-NOTE: `boost::diagnostic_information` does not require exception handling.
+TIP: `boost::diagnostic_information` does not require exception handling to be enabled.
 
 One possible use case is to print diagnostic information about unhandled errors that reach the `main` function:
 
